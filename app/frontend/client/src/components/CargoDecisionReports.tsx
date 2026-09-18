@@ -33,15 +33,19 @@ import { formatDate, formatMoney, formatNumber } from "@/lib/pricing";
 import {
   AlertTriangle,
   Boxes,
+  ChevronDown,
+  ChevronUp,
   FileSpreadsheet,
   MapPinned,
   Printer,
   ReceiptText,
   Route,
+  Share2,
   ShipWheel,
   WalletCards,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { shareReport } from "@/lib/shareReport";
 
 const stagePdfColors: Record<CostStageKey, string> = {
   factory: "#145B8C",
@@ -83,6 +87,8 @@ export default function CargoDecisionReports() {
   >("all");
   const [selectedRunId, setSelectedRunId] = useState("");
   const [loading, setLoading] = useState(true);
+  const [openCompare, setOpenCompare] = useState(true);
+  const [openBreakdown, setOpenBreakdown] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -150,6 +156,34 @@ export default function CargoDecisionReports() {
     (sum, row) => sum + row.missingLines.length,
     0
   );
+
+  const shareComparison = () =>
+    shareReport(
+      t("cargo.routesComparison"),
+      [
+        `${t("cargo.compareRoutesCount")}: ${routeRows.length}`,
+        bestTotal
+          ? `${t("cargo.kpiLowestShipment")}: ${formatMoney(bestTotal.totalCost, bestTotal.run.currency)} — ${bestTotal.routeLabel}`
+          : "",
+      ]
+        .filter(Boolean)
+        .join("\n"),
+      t
+    );
+
+  const shareBreakdown = () => {
+    if (!selectedDetail || !breakdown) return;
+    return shareReport(
+      t("cargo.shipmentCostBreakdown"),
+      [
+        selectedDetail.run.name || selectedDetail.run.reference,
+        `${t("cargo.totalWord")}: ${formatMoney(breakdown.totalCost, selectedDetail.run.currency)}`,
+      ]
+        .filter(Boolean)
+        .join("\n"),
+      t
+    );
+  };
 
   const exportRoutes = () => {
     exportExcel({
@@ -477,7 +511,32 @@ export default function CargoDecisionReports() {
             title={t("cargo.routesComparison")}
             hint={t("cargo.bestIsCheapestNote")}
             stamp={t("cargo.routeMatrix")}
+            action={
+              <div className="flex flex-wrap items-center gap-1.5">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-card"
+                  onClick={() => void shareComparison()}
+                  disabled={routeRows.length === 0}
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                  {t("reports.share")}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  onClick={() => setOpenCompare(v => !v)}
+                  aria-label={openCompare ? t("reports.collapseAll") : t("reports.expandAll")}
+                >
+                  {openCompare ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </Button>
+              </div>
+            }
           >
+            {openCompare ? (
+            <>
             <div className="space-y-2 md:hidden">
               {routeRows.map((row, index) => (
                 <article
@@ -615,13 +674,40 @@ export default function CargoDecisionReports() {
                 </tbody>
               </table>
             </div>
+            </>
+          ) : null}
           </SectionCard>
 
           <SectionCard
             title={t("cargo.shipmentCostBreakdown")}
             hint={t("cargo.breakdownPickHint")}
             stamp={t("pricing.calculate")}
+            action={
+              <div className="flex flex-wrap items-center gap-1.5">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-card"
+                  onClick={() => void shareBreakdown()}
+                  disabled={!selectedDetail || !breakdown}
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                  {t("reports.share")}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  onClick={() => setOpenBreakdown(v => !v)}
+                  aria-label={openBreakdown ? t("reports.collapseAll") : t("reports.expandAll")}
+                >
+                  {openBreakdown ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </Button>
+              </div>
+            }
           >
+            {openBreakdown ? (
+            <>
             <div className="mb-4 max-w-xl space-y-1.5">
               <Label>{t("cargo.cargoCostFile")}</Label>
               <Select
@@ -798,6 +884,8 @@ export default function CargoDecisionReports() {
                 </table>
               </div>
             )}
+            </>
+          ) : null}
           </SectionCard>
 
           <div className="flex items-start gap-2 rounded border border-border bg-secondary/40 px-3 py-2.5 text-[11px] text-muted-foreground">

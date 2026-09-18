@@ -1,6 +1,8 @@
 const dict: Record<string, string> = {
   "reports.byLastCalc": "Per last calculation",
+  "reports.collapseAll": "Collapse all",
   "reports.costWord": "Cost",
+  "reports.expandAll": "Expand all",
   "reports.exportExcel": "Export Excel",
   "reports.exportPdf": "Export PDF",
   "reports.fileName": "smart-trader-report",
@@ -9,12 +11,19 @@ const dict: Record<string, string> = {
   "reports.marginShort": "Margin",
   "reports.pdfSubtitle": "Items, partners, specifications and prices statement",
   "reports.resultWord": "result",
+  "reports.searchReports": "Search report results...",
+  "reports.share": "Share",
+  "reports.shareFailed": "Share failed",
+  "reports.shared": "Report summary copied",
+  "reports.showReport": "Visible reports",
   "reports.sourceNote": "Cost and selling price come from the latest saved calculation per item, while supplier price uses the item's recorded price 1. All data stays on your device.",
   "reports.subtitle": "Compare price, cost and margin from one register",
   "reports.supplierCurrencyNote": "Supplier price is shown in its original currency as recorded for the item; this value is not converted to the local currency.",
   "reports.supplierCurrencyWord": "Supplier currency",
   "reports.supplierOriginal": "Original supplier price",
   "reports.title": "Smart reports",
+  "reports.viewDecisions": "Decision & route reports",
+  "reports.viewItems": "Item analysis",
 };
 
 export default dict;

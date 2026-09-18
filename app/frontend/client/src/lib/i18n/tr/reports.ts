@@ -1,6 +1,8 @@
 const dict: Record<string, string> = {
   "reports.byLastCalc": "Son hesaplamaya göre",
+  "reports.collapseAll": "Tümünü daralt",
   "reports.costWord": "Maliyet",
+  "reports.expandAll": "Tümünü aç",
   "reports.exportExcel": "Excel'e aktar",
   "reports.exportPdf": "PDF'e aktar",
   "reports.fileName": "akilli-tacar-raporu",
@@ -9,12 +11,19 @@ const dict: Record<string, string> = {
   "reports.marginShort": "Marj",
   "reports.pdfSubtitle": "Ürünler, taraflar, özellikler ve fiyatlar listesi",
   "reports.resultWord": "sonuç",
+  "reports.searchReports": "Rapor sonuçlarında ara...",
+  "reports.share": "Paylaş",
+  "reports.shareFailed": "Paylaşılamadı",
+  "reports.shared": "Rapor özeti kopyalandı",
+  "reports.showReport": "Görünür raporlar",
   "reports.sourceNote": "Maliyet ve satış fiyatı her ürün için son kaydedilen hesaplamadan alınır; tedarikçi fiyatı ürünün kayıtlı 1. fiyatını kullanır. Tüm veriler cihazınızda kalır.",
   "reports.subtitle": "Fiyat, maliyet ve kârı tek defterden karşılaştırın",
   "reports.supplierCurrencyNote": "Tedarikçi fiyatı, ürün için kaydedildiği orijinal para biriminde gösterilir ve yerel paraya dönüştürülmez.",
   "reports.supplierCurrencyWord": "Tedarikçi para birimi",
   "reports.supplierOriginal": "Orijinal tedarikçi fiyatı",
   "reports.title": "Akıllı raporlar",
+  "reports.viewDecisions": "Karar ve güzergâh raporları",
+  "reports.viewItems": "Ürün analizi",
 };
 
 export default dict;
