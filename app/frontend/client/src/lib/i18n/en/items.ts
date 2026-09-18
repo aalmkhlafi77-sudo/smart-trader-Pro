@@ -15,7 +15,7 @@ const dict: Record<string, string> = {
   "items.edit": "Edit item",
   "items.editItem": "Edit item",
   "items.example12": "Example: 12",
-  "items.exchangeShort": "Rate",
+  "items.exchangeShort": "FX",
   "items.generalCategory": "General",
   "items.imagesAttachments": "Images & attachments",
   "items.inheritedFromPartner": "Inherited from partner",
