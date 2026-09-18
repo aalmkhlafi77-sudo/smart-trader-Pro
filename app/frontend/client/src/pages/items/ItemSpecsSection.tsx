@@ -48,10 +48,10 @@ export function ItemSpecsSection({
                   ? "bg-[var(--port-green)] text-white"
                   : "bg-secondary text-muted-foreground hover:text-[var(--ink)]"
               }`}
-              title={s.isKey ? "مواصفة قرار معتمدة" : "اجعلها مواصفة قرار"}
+              title={s.isKey ? t("items.keySpecOn") : t("items.makeKeySpec")}
             >
               <Star className={`h-3 w-3 ${s.isKey ? "fill-white" : ""}`} />
-              {s.isKey ? "قرار" : "عادي"}
+              {s.isKey ? t("items.keySpec") : t("items.standardSpec")}
             </button>
             <span className="w-24 shrink-0 font-semibold truncate text-[var(--ink)]">
               {s.label}
@@ -83,7 +83,7 @@ export function ItemSpecsSection({
 
         {unusedTemplates.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5 pt-1">
-            <span className="text-[10px] text-muted-foreground">قوالب مقترحة:</span>
+            <span className="text-[10px] text-muted-foreground">{t("items.suggestedTemplates")}</span>
             {unusedTemplates.slice(0, 4).map(tpl => (
               <Button
                 key={tpl.id}
@@ -96,9 +96,9 @@ export function ItemSpecsSection({
                 <Plus className="h-2.5 w-2.5 mr-0.5" />
                 {tpl.label}
                 {tpl.isKeyDefault === 1 && (
-                  <StatusPill tone="success" className="ml-1 py-0 px-1 text-[8px]">
-                    قرار
-                  </StatusPill>
+                    <StatusPill tone="success" className="ml-1 py-0 px-1 text-[8px]">
+                      {t("items.keySpec")}
+                    </StatusPill>
                 )}
               </Button>
             ))}

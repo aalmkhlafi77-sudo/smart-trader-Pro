@@ -29,6 +29,9 @@ const currencyKey = (currency: string) =>
     يوان: "currency.cny",
   })[currency];
 
+/** قيمة العملة الاحتياطية للعرض (نص عربي مخزَّن) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
+const FALLBACK_CURRENCY = "دولار";
+
 export function EntityTable({
   rows,
   attachmentCounts,
@@ -111,7 +114,7 @@ export function EntityTable({
       cell: row => (
         <div className="flex flex-col text-xs">
           <span className="font-semibold text-[var(--port-green)]">
-            {currencyLabel(row.defaultCurrency ?? "دولار")}
+            {currencyLabel(row.defaultCurrency ?? FALLBACK_CURRENCY)}
           </span>
           <span className="text-[10px] text-muted-foreground" dir="ltr">
             {t("common.exchangeRate")}: {row.defaultExchangeRate ?? 3.75}

@@ -16,8 +16,16 @@ const I18N_DIR = join(SRC, "lib", "i18n").split(sep).join("/");
 
 /** أسماء متغيرات/خصائص يُسمح بالعربية داخل نطاق تعريفها (بيانات محمية). */
 const ALLOW_DEC: Record<string, string[]> = {
-  "pages/Entities.tsx": ["CURRENCY_CODE_MAP"],
-  "pages/Items.tsx": ["BASE_CURRENCIES"],
+  // قيم عملات/وحدات مخزَّنة (نصوص عربية) في ملفات S1 — الترحيل إلى ISO مؤجَّل إلى S5
+  "pages/currencyData.ts": ["CURRENCY_OPTIONS"],
+  "pages/Entities.tsx": ["ENTITY_DATA_DEFAULTS"],
+  "pages/Items.tsx": ["ITEM_DATA_DEFAULTS"],
+  "pages/entities/EntityTable.tsx": ["FALLBACK_CURRENCY"],
+  "pages/entities/EntityViewDialog.tsx": ["FALLBACK_CURRENCY"],
+  "pages/items/ItemTable.tsx": ["FALLBACK_CURRENCY"],
+  "pages/items/ItemViewDialog.tsx": ["REPORT_CURRENCY"],
+  "pages/prices/PriceLevelsForm.tsx": ["FALLBACK_CURRENCY"],
+  "pages/prices/PriceTable.tsx": ["FALLBACK_CURRENCY"],
   "pages/Pricing.tsx": ["COST_BLUEPRINTS"],
   "pages/Reports.tsx": ["lookupSpec"],
   "pages/Settings.tsx": ["BASE_LOCAL", "BASE_FOREIGN"],
@@ -30,43 +38,6 @@ const ALLOW_EXACT: Record<string, string[]> = {
   "lib/cargoDecisionReports.ts": ["الجمارك"],
   // سلاسل أرقام شرقية/فارسية للتحويل للأرقام اللاتينية (أرقام لا نصوص واجهة)
   "components/EnglishDatePicker.tsx": ["٠١٢٣٤٥٦٧٨٩", "۰۱۲۳۴۵۶۷۸۹"],
-  // قيم عملة كقيم بيانات مخزنة (ISO ترحيل مؤجل S5)
-  "pages/Entities.tsx": ["دولار"],
-  "pages/entities/EntityForm.tsx": ["دولار", "ريال", "يورو", "يوان"],
-  "pages/entities/EntityTable.tsx": ["دولار"],
-  "pages/entities/EntityViewDialog.tsx": ["دولار"],
-  "pages/Items.tsx": ["دولار", "وحدة"],
-  "pages/items/ItemForm.tsx": ["دولار", "ريال", "يورو", "يوان", "متر مربع / وحدة"],
-  // نصوص واجهة داخلية مؤقتة في مكونات S1 — تُنقل لمفاتيح i18n في S6
-  "pages/items/ItemSpecsSection.tsx": [
-    "مواصفة قرار معتمدة",
-    "اجعلها مواصفة قرار",
-    "قرار",
-    "عادي",
-    "قوالب مقترحة:",
-  ],
-  "pages/items/ItemTable.tsx": ["عام", "دولار", "جمارك:", "سري", "عادي"],
-  "pages/items/ItemViewDialog.tsx": [
-    "عام",
-    "(صرف:",
-    "قرار",
-    "سعر 1",
-    "سعر 2",
-    "سعر 3",
-    "سعر 4",
-    "آخر احتساب تكلفة:",
-    "تكلفة الوحدة:",
-    "ريال",
-  ],
-  "pages/prices/PriceHistoryTable.tsx": ["المستوى", "سعر"],
-  "pages/prices/PriceLevelsForm.tsx": [
-    "دولار",
-    "مستوى سعر",
-    "آخر سعر مؤرخ",
-    "مصدر / ملاحظة",
-    "مورد/عرض أسعار",
-  ],
-  "pages/prices/PriceTable.tsx": ["عام", "دولار", "آخر سعر مؤرخ", "(سعر", "المستويات 1 - 4"],
   "pages/Pricing.tsx": ["بحري", "بري", "جوي", "دولار", "ريال", "وحدة"],
   "pages/Reports.tsx": ["دولار"],
   "components/LogisticsTemplatesSettingsCard.tsx": [

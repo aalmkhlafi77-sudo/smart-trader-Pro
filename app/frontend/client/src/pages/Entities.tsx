@@ -12,6 +12,9 @@ import { EntityForm, type EntityFormData } from "./entities/EntityForm";
 import { EntityTable } from "./entities/EntityTable";
 import { EntityViewDialog } from "./entities/EntityViewDialog";
 
+/** قيمة العملة الافتراضية المخزَّنة (نص عربي) — الترحيل إلى رموز ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
+const ENTITY_DATA_DEFAULTS = { currency: "دولار" };
+
 const emptyForm: EntityFormData = {
   name: "",
   kind: "supplier",
@@ -21,7 +24,7 @@ const emptyForm: EntityFormData = {
   email: "",
   contactPerson: "",
   notes: "",
-  defaultCurrency: "دولار",
+  defaultCurrency: ENTITY_DATA_DEFAULTS.currency,
   defaultExchangeRate: "3.75",
 };
 
@@ -82,7 +85,7 @@ export default function Entities() {
       email: form.email.trim(),
       contactPerson: form.contactPerson.trim(),
       notes: form.notes.trim(),
-      defaultCurrency: form.defaultCurrency?.trim?.() || "دولار",
+      defaultCurrency: form.defaultCurrency?.trim?.() || ENTITY_DATA_DEFAULTS.currency,
       defaultExchangeRate: Number(form.defaultExchangeRate) || 0,
       createdAt: existing?.createdAt ?? nowIso(),
       updatedAt: nowIso(),
@@ -104,7 +107,7 @@ export default function Entities() {
       email: row.email,
       contactPerson: row.contactPerson,
       notes: row.notes,
-      defaultCurrency: row.defaultCurrency ?? "دولار",
+      defaultCurrency: row.defaultCurrency ?? ENTITY_DATA_DEFAULTS.currency,
       defaultExchangeRate: String(row.defaultExchangeRate ?? 3.75),
     });
     window.scrollTo({ top: 0, behavior: "smooth" });

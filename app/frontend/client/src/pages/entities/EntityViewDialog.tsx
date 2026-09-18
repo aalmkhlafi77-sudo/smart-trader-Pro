@@ -19,6 +19,9 @@ const KINDS: { value: EntityKind; labelKey: string }[] = [
   { value: "other", labelKey: "entities.kind.other" },
 ];
 
+/** قيمة العملة الاحتياطية للعرض (نص عربي مخزَّن) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
+const FALLBACK_CURRENCY = "دولار";
+
 export function EntityViewDialog({
   viewRow,
   linkedCount,
@@ -66,7 +69,7 @@ export function EntityViewDialog({
             },
             {
               k: t("common.purchasesettings"),
-              v: `${viewRow.defaultCurrency ?? "دولار"} · ${viewRow.defaultExchangeRate ?? 3.75}`,
+              v: `${viewRow.defaultCurrency ?? FALLBACK_CURRENCY} · ${viewRow.defaultExchangeRate ?? 3.75}`,
               ltr: true,
             },
             {

@@ -6,6 +6,7 @@ import {
   NumberField,
   FormGrid,
   FormSection,
+  InheritedValue,
 } from "@/components/patterns";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import AttachmentsPanel from "@/components/AttachmentsPanel";
 import type { EntityKind } from "@/lib/db";
+import { CURRENCY_OPTIONS } from "../currencyData";
 
 export interface EntityFormData {
   name: string;
@@ -138,17 +140,18 @@ export function EntityForm({
             hint={t("common.copiedautomaticallytoani")}
             control={
               <Select
-                value={form.defaultCurrency || "دولار"}
+                value={form.defaultCurrency || CURRENCY_OPTIONS[0].value}
                 onValueChange={v => setForm({ ...form, defaultCurrency: v })}
               >
                 <SelectTrigger className="field-input w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="دولار">{t("currency.usd")}</SelectItem>
-                  <SelectItem value="ريال">{t("currency.sar")}</SelectItem>
-                  <SelectItem value="يورو">{t("currency.eur")}</SelectItem>
-                  <SelectItem value="يوان">{t("currency.cny")}</SelectItem>
+                  {CURRENCY_OPTIONS.map(o => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {t(o.labelKey)}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             }
@@ -168,6 +171,17 @@ export function EntityForm({
             }
           />
         </FormGrid>
+        <InheritedValue
+          className="mt-3"
+          label={t("entities.willInherit")}
+          value={
+            <span>
+              {form.defaultCurrency || CURRENCY_OPTIONS[0].value} ·{" "}
+              <span dir="ltr">{form.defaultExchangeRate || "3.75"}</span>
+            </span>
+          }
+          tone="inherited"
+        />
       </FormSection>
 
       {/* 4. الشخص المسؤول · الهاتف · البريد */}

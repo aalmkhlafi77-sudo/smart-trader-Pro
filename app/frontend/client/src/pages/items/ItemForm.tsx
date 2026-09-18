@@ -3,11 +3,10 @@ import { Plus, X, ChevronDown, ChevronUp } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Field,
-  NumberField,
-  RateField,
   FormGrid,
   FormSection,
   EntityPicker,
+  InheritedValue,
 } from "@/components/patterns";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,6 +20,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import AttachmentsPanel from "@/components/AttachmentsPanel";
 import type { CategoryRow, EntityRow, SpecTemplateRow } from "@/lib/db";
+import { ItemCurrencySection } from "./ItemCurrencySection";
 import { ItemSpecsSection } from "./ItemSpecsSection";
 
 export interface ItemFormData {
@@ -128,11 +128,6 @@ export function ItemForm({
         <div className="mt-3">
           <Field
             label={t("items.selectPartner")}
-            hint={
-              selectedEntity
-                ? `${t("common.copiedautomaticallytoani")}: ${selectedEntity.defaultCurrency} (${selectedEntity.defaultExchangeRate})`
-                : undefined
-            }
             control={
               <EntityPicker
                 value={form.entityId === "none" ? "" : form.entityId}
@@ -151,6 +146,20 @@ export function ItemForm({
               />
             }
           />
+          {selectedEntity ? (
+            <InheritedValue
+              className="mt-3"
+              label={t("items.inheritedFromPartner")}
+              value={
+                <span>
+                  {selectedEntity.defaultCurrency} ·{" "}
+                  <span dir="ltr">{selectedEntity.defaultExchangeRate}</span>
+                </span>
+              }
+              source={selectedEntity.name}
+              tone="inherited"
+            />
+          ) : null}
         </div>
 
         {/* 3. التصنيف* · 4. وحدة القياس* */}
@@ -182,7 +191,7 @@ export function ItemForm({
                 className="field-input"
                 value={form.unit}
                 onChange={e => setForm({ ...form, unit: e.target.value })}
-                placeholder="متر مربع / وحدة"
+                placeholder={t("items.unitExample")}
               />
             }
           />
@@ -190,50 +199,7 @@ export function ItemForm({
       </FormSection>
 
       {/* 5. عملة السعر (موروثة قابلة للتجاوز) · سعر الصرف · نسبة الجمارك % */}
-      <FormSection
-        title={t("items.currencyApproval")}
-        note={selectedEntity ? `${t("common.copiedautomaticallytoani")} (${selectedEntity.name})` : undefined}
-      >
-        <FormGrid cols={3}>
-          <Field
-            label={t("items.priceCurrency")}
-            control={
-              <Select
-                value={form.currency || "دولار"}
-                onValueChange={v => setForm({ ...form, currency: v })}
-              >
-                <SelectTrigger className="field-input w-full"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="دولار">{t("currency.usd")}</SelectItem>
-                  <SelectItem value="ريال">{t("currency.sar")}</SelectItem>
-                  <SelectItem value="يورو">{t("currency.eur")}</SelectItem>
-                  <SelectItem value="يوان">{t("currency.cny")}</SelectItem>
-                </SelectContent>
-              </Select>
-            }
-          />
-          <Field
-            label={t("items.referenceRate")}
-            control={
-              <NumberField
-                value={form.defaultExchangeRate}
-                onChange={e => setForm({ ...form, defaultExchangeRate: e.target.value })}
-              />
-            }
-          />
-          <Field
-            label={t("items.customsRate")}
-            hint={t("items.customsRateHint")}
-            control={
-              <RateField
-                value={form.customsRate}
-                onChange={e => setForm({ ...form, customsRate: e.target.value })}
-                placeholder={t("items.example12")}
-              />
-            }
-          />
-        </FormGrid>
-      </FormSection>
+      <ItemCurrencySection form={form} setForm={setForm} />
 
       {/* 6. المواصفات الفنية */}
       <ItemSpecsSection

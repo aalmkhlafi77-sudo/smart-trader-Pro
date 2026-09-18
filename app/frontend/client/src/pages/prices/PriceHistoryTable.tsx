@@ -23,9 +23,9 @@ export function PriceHistoryTable({
   const columns: Column<PriceHistoryRow>[] = [
     {
       key: "level",
-      header: "المستوى",
+      header: t("prices.levelHeader"),
       cell: row => (
-        <StatusPill tone="neutral">سعر {row.priceLevel}</StatusPill>
+        <StatusPill tone="neutral">{t("prices.price")} {row.priceLevel}</StatusPill>
       ),
     },
     {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Eye, Pencil, Copy, Calculator, Trash2, Paperclip, EyeOff } from "lucide-react";
+import { Search, Eye, Pencil, Copy, Calculator, Trash2, Paperclip } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { DataTable, StatusPill, type Column } from "@/components/patterns";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,9 @@ import {
 } from "@/components/ui/select";
 import EmptyHint from "@/components/EmptyHint";
 import type { CategoryRow, EntityRow, ItemRow, ItemSpecRow } from "@/lib/db";
+
+/** قيمة العملة الاحتياطية للعرض (نص عربي مخزَّن) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
+const FALLBACK_CURRENCY = "دولار";
 
 export function ItemTable({
   items,
@@ -41,7 +44,6 @@ export function ItemTable({
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterEntity, setFilterEntity] = useState("all");
-  const [discreet, setDiscreet] = useState(false);
 
   const entityName = (id: string | null) =>
     entities.find(e => e.id === id)?.name ?? t("items.noPartner");
@@ -79,11 +81,11 @@ export function ItemTable({
       cell: row => (
         <div className="flex flex-col gap-0.5">
           <span className="font-bold text-[var(--ink)]">
-            {discreet ? "••••••••" : row.name}
+            {row.name}
           </span>
           <div className="flex items-center gap-1.5 flex-wrap text-[11px] text-muted-foreground">
             {row.code && <span dir="ltr">[{row.code}]</span>}
-            <StatusPill tone="neutral">{row.category || "عام"}</StatusPill>
+            <StatusPill tone="neutral">{row.category || t("items.generalCategory")}</StatusPill>
             {(attachmentCounts[row.id] ?? 0) > 0 && (
               <span className="inline-flex items-center gap-1 text-[10px] text-[var(--guidance)]">
                 <Paperclip className="h-3 w-3" />
@@ -99,7 +101,7 @@ export function ItemTable({
       header: t("entities.title"),
       cell: row => (
         <span className="text-xs text-muted-foreground">
-          {discreet ? "••••" : entityName(row.entityId)}
+          {entityName(row.entityId)}
         </span>
       ),
     },
@@ -110,7 +112,7 @@ export function ItemTable({
         const itemSpecs = specsByItem[row.id] ?? [];
         const keySpecs = itemSpecs.filter(s => s.isKey === 1);
         const displaySpecs = keySpecs.length > 0 ? keySpecs : itemSpecs.slice(0, 2);
-        if (discreet || displaySpecs.length === 0) {
+        if (displaySpecs.length === 0) {
           return <span className="text-xs text-muted-foreground">—</span>;
         }
         return (
@@ -134,11 +136,11 @@ export function ItemTable({
       cell: row => (
         <div className="flex flex-col text-xs">
           <span className="font-semibold text-[var(--port-green)]">
-            {row.currency || "دولار"}
+            {row.currency || FALLBACK_CURRENCY}
           </span>
           {row.customsRate != null && (
             <span className="text-[10px] text-muted-foreground" dir="ltr">
-              جمارك: {(row.customsRate * 100).toFixed(0)}%
+              {t("items.customsShort")}: {(row.customsRate * 100).toFixed(0)}%
             </span>
           )}
         </div>
@@ -229,16 +231,6 @@ export function ItemTable({
             ))}
           </SelectContent>
         </Select>
-        <Button
-          size="sm"
-          variant={discreet ? "default" : "outline"}
-          className="h-9 text-xs px-2.5"
-          onClick={() => setDiscreet(v => !v)}
-          title={t("items.meetingModeNote")}
-        >
-          <EyeOff className="h-3.5 w-3.5 mr-1" />
-          {discreet ? "سري" : "عادي"}
-        </Button>
       </div>
 
       {filtered.length === 0 ? (

@@ -25,6 +25,9 @@ export interface PriceDraft {
   source?: string;
 }
 
+/** قيمة العملة الاحتياطية للعرض (نص عربي مخزَّن) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
+const FALLBACK_CURRENCY = "دولار";
+
 interface PriceLevelsFormProps {
   items: ItemRow[];
   selectedId: string;
@@ -103,7 +106,7 @@ export function PriceLevelsForm({
               options={items.map(item => ({
                 value: item.id,
                 label: item.name,
-                hint: `${item.code ? `[${item.code}] ` : ""}${item.currency || "دولار"}`,
+                hint: `${item.code ? `[${item.code}] ` : ""}${item.currency || FALLBACK_CURRENCY}`,
               }))}
             />
           }
@@ -114,7 +117,7 @@ export function PriceLevelsForm({
           <div className="mt-3">
             <InheritedValue
               label={t("items.priceCurrency")}
-              value={selectedItem.currency || "دولار"}
+              value={selectedItem.currency || FALLBACK_CURRENCY}
               source={selectedItem.name}
               tone="inherited"
             />
@@ -142,10 +145,10 @@ export function PriceLevelsForm({
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-bold text-[var(--ink)]">
-                      مستوى سعر {level}
+                      {t("prices.priceLevel")} {level}
                     </span>
                     {isActive ? (
-                      <StatusPill tone="success">آخر سعر مؤرخ</StatusPill>
+                      <StatusPill tone="success">{t("prices.latestDated")}</StatusPill>
                     ) : null}
                   </div>
 
@@ -171,13 +174,13 @@ export function PriceLevelsForm({
                       }
                     />
                     <Field
-                      label="مصدر / ملاحظة"
+                      label={t("prices.sourceNote")}
                       control={
                         <Input
                           className="field-input text-xs"
                           value={d.source || ""}
                           onChange={e => updateDraft(index, { source: e.target.value })}
-                          placeholder="مورد/عرض أسعار"
+                          placeholder={t("prices.sourceExample")}
                         />
                       }
                     />

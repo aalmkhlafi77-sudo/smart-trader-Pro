@@ -30,6 +30,7 @@ const dict: Record<string, string> = {
   "entities.type": "Tür",
   "entities.update": "Tarafı güncelle",
   "entities.updated": "Taraf güncellendi",
+  "entities.willInherit": "Her yeni ürüne aktarılacak",
 };
 
 export default dict;

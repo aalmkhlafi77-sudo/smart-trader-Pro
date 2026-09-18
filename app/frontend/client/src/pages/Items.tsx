@@ -22,13 +22,16 @@ import { ItemForm, type ItemFormData, type SpecDraft } from "./items/ItemForm";
 import { ItemTable } from "./items/ItemTable";
 import { ItemViewDialog } from "./items/ItemViewDialog";
 
+/** القيم الافتراضية المخزَّنة (نصوص عربية) — الترحيل إلى رموز ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
+const ITEM_DATA_DEFAULTS = { unit: "وحدة", currency: "دولار" };
+
 const emptyForm: ItemFormData = {
   name: "",
   code: "",
   category: "",
   entityId: "none",
-  unit: "وحدة",
-  currency: "دولار",
+  unit: ITEM_DATA_DEFAULTS.unit,
+  currency: ITEM_DATA_DEFAULTS.currency,
   defaultExchangeRate: "3.75",
   customsRate: "",
   notes: "",
@@ -111,8 +114,8 @@ export default function Items() {
       code: form.code.trim(),
       category: form.category.trim(),
       entityId: form.entityId === "none" ? null : form.entityId,
-      unit: form.unit.trim() || "وحدة",
-      currency: form.currency?.trim?.() || "دولار",
+      unit: form.unit.trim() || ITEM_DATA_DEFAULTS.unit,
+      currency: form.currency?.trim?.() || ITEM_DATA_DEFAULTS.currency,
       defaultExchangeRate: Number(form.defaultExchangeRate) || 0,
       customsRate: form.customsRate.trim() === "" ? null : Math.max(0, Number(form.customsRate) || 0) / 100,
       notes: form.notes.trim(),

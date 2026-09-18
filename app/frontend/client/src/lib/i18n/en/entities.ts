@@ -30,6 +30,7 @@ const dict: Record<string, string> = {
   "entities.type": "Type",
   "entities.update": "Update partner",
   "entities.updated": "Partner updated",
+  "entities.willInherit": "Will be inherited by each new item",
 };
 
 export default dict;

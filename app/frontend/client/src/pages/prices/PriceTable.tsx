@@ -8,6 +8,9 @@ import { formatMoney } from "@/lib/pricing";
 import { latestDatedItemPrice } from "@/lib/latestItemPrice";
 import type { ItemPriceRow, ItemRow } from "@/lib/db";
 
+/** قيمة العملة الاحتياطية للعرض (نص عربي مخزَّن) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
+const FALLBACK_CURRENCY = "دولار";
+
 export function PriceTable({
   items,
   prices,
@@ -43,7 +46,7 @@ export function PriceTable({
           <span className="font-bold text-[var(--ink)]">{row.name}</span>
           <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
             {row.code && <span dir="ltr">[{row.code}]</span>}
-            <span>{row.category || "عام"}</span>
+            <span>{row.category || t("items.generalCategory")}</span>
           </div>
         </div>
       ),
@@ -53,13 +56,13 @@ export function PriceTable({
       header: t("items.priceCurrency"),
       cell: row => (
         <span className="text-xs font-semibold text-[var(--port-green)]">
-          {row.currency || "دولار"}
+          {row.currency || FALLBACK_CURRENCY}
         </span>
       ),
     },
     {
       key: "latestPrice",
-      header: "آخر سعر مؤرخ",
+      header: t("prices.latestDated"),
       cell: row => {
         const p = priceMap[row.id];
         const latest = latestDatedItemPrice(p ?? null);
@@ -70,7 +73,7 @@ export function PriceTable({
               {formatMoney(latest.price, row.currency)}
             </span>
             <span className="text-[9px] text-muted-foreground" dir="ltr">
-              {latest.effectiveDate} (سعر {latest.level})
+              {latest.effectiveDate} ({t("prices.price")} {latest.level})
             </span>
           </div>
         );
@@ -78,7 +81,7 @@ export function PriceTable({
     },
     {
       key: "levels",
-      header: "المستويات 1 - 4",
+      header: t("prices.levelsRange"),
       cell: row => {
         const p = priceMap[row.id];
         if (!p) return <span className="text-xs text-muted-foreground">—</span>;
