@@ -1,71 +1,20 @@
-/**
- * شاشة الجهات — اتجاه التصميم: "دفتر الميناء"
- * حقول الإدخال بخلفية كهرمانية، والقوائم تُعرض كصحائف سجل. الهاتف أولاً.
- */
-
+import { useEffect, useState } from "react";
+import { Plus, X } from "lucide-react";
+import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
-import AttachmentsPanel from "@/components/AttachmentsPanel";
-import EmptyHint from "@/components/EmptyHint";
-import {
-  DensityToggle,
-  RecordMenu,
-  useRecordDensity,
-} from "@/components/RecordControls";
-import SectionCard from "@/components/SectionCard";
+import { PageShell, SectionCard } from "@/components/patterns";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { db, type EntityKind, type EntityRow } from "@/lib/db";
+import { db, type EntityRow } from "@/lib/db";
 import { newId, nowIso } from "@/lib/id";
-import { formatDateTime } from "@/lib/pricing";
 import { useSessionDraft } from "@/hooks/useSessionDraft";
-import {
-  Eye,
-  Paperclip,
-  Pencil,
-  Plus,
-  Search,
-  SlidersHorizontal,
-  Trash2,
-  X,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { EntityForm, type EntityFormData } from "./entities/EntityForm";
+import { EntityTable } from "./entities/EntityTable";
+import { EntityViewDialog } from "./entities/EntityViewDialog";
 
-const KINDS: { value: EntityKind; labelKey: string }[] = [
-  { value: "supplier", labelKey: "entities.kind.supplier" },
-  { value: "customer", labelKey: "entities.kind.customer" },
-  { value: "factory", labelKey: "entities.kind.factory" },
-  { value: "other", labelKey: "entities.kind.other" },
-];
-
-const currencyKey = (currency: string) =>
-  ({
-    دولار: "currency.usd",
-    ريال: "currency.sar",
-    يورو: "currency.eur",
-    يوان: "currency.cny",
-  })[currency];
-
-const emptyForm = {
+const emptyForm: EntityFormData = {
   name: "",
-  kind: "supplier" as EntityKind,
+  kind: "supplier",
   country: "",
   city: "",
   phone: "",
@@ -78,33 +27,19 @@ const emptyForm = {
 
 export default function Entities() {
   const { t } = useLanguage();
-  const kindLabel = (kind: EntityKind) =>
-    t(
-      KINDS.find(entry => entry.value === kind)?.labelKey ??
-        "entities.kind.other"
-    );
-  const currencyLabel = (currency: string) => {
-    const key = currencyKey(currency);
-    return key ? t(key) : currency;
-  };
   const [rows, setRows] = useState<EntityRow[]>([]);
-  const [form, setForm, clearFormDraft] = useSessionDraft(
+  const [form, setForm, clearFormDraft] = useSessionDraft<EntityFormData>(
     "smart-trader:draft:entity-form",
     emptyForm
   );
   const [editingId, setEditingId, clearEditingDraft] = useSessionDraft<
     string | null
   >("smart-trader:draft:entity-editing", null);
-  const [search, setSearch] = useState("");
   const [viewRow, setViewRow] = useState<EntityRow | null>(null);
   const [linkedCount, setLinkedCount] = useState(0);
-  const [filterKind, setFilterKind] = useState<string>("all");
-  const [showFilters, setShowFilters] = useState(false);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [attachmentCounts, setAttachmentCounts] = useState<
     Record<string, number>
   >({});
-  const [density, setDensity] = useRecordDensity();
 
   const load = async () => {
     await db.init();
@@ -175,7 +110,6 @@ export default function Entities() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  /** عرض بطاقة الجهة كاملة دون الدخول في وضع التعديل */
   const view = async (row: EntityRow) => {
     const items = await db.listItems();
     setLinkedCount(items.filter(i => i.entityId === row.id).length);
@@ -196,491 +130,69 @@ export default function Entities() {
     await load();
   };
 
-  /** بحث متقدم: يشمل كل حقول الجهة مع تصفية حسب النوع */
-  const filtered = rows.filter(r => {
-    const q = search.trim().toLowerCase();
-    if (q) {
-      const haystack = [
-        r.name,
-        r.country,
-        r.city,
-        r.contactPerson,
-        r.phone,
-        r.email,
-        r.notes,
-      ]
-        .join(" ")
-        .toLowerCase();
-      if (!haystack.includes(q)) return false;
-    }
-    if (filterKind !== "all" && r.kind !== filterKind) return false;
-    return true;
-  });
-
   return (
     <AppLayout title={t("entities.title")} subtitle={t("entities.subtitle")}>
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,380px)_1fr] items-start">
-        <SectionCard
-          title={editingId ? t("entities.edit") : t("entities.add")}
-          hint={t("common.amberfieldsareenteredbyt")}
-          stamp={t("common.entryform")}
-          action={
-            <Button
-              size="sm"
-              variant="outline"
-              className="bg-card"
-              onClick={reset}
-            >
-              {editingId ? (
-                <X className="h-4 w-4" />
-              ) : (
-                <Plus className="h-4 w-4" />
-              )}
-              {editingId ? t("entities.discardDraft") : t("common.newWork")}
-            </Button>
-          }
-        >
-          <div className="space-y-3">
-            <div className="form-cluster">
-              <div className="form-cluster-heading">
-                <p className="form-cluster-title">
-                  {t("common.partneridentity")}
-                </p>
-                <p className="form-cluster-note">
-                  {t("common.nametypeandlocation")}
-                </p>
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="ent-name">{t("entities.name")}</Label>
-                <Input
-                  id="ent-name"
-                  className="field-input"
-                  value={form.name}
-                  onChange={e => setForm({ ...form, name: e.target.value })}
-                  placeholder={t("common.examplealnokhbacompany")}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label>{t("entities.type")}</Label>
-                <Select
-                  value={form.kind}
-                  onValueChange={v =>
-                    setForm({ ...form, kind: v as EntityKind })
-                  }
-                >
-                  <SelectTrigger className="field-input w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {KINDS.map(k => (
-                      <SelectItem key={k.value} value={k.value}>
-                        {t(k.labelKey)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="ent-country">{t("entities.country")}</Label>
-                  <Input
-                    id="ent-country"
-                    className="field-input"
-                    value={form.country}
-                    onChange={e =>
-                      setForm({ ...form, country: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="ent-city">{t("entities.city")}</Label>
-                  <Input
-                    id="ent-city"
-                    className="field-input"
-                    value={form.city}
-                    onChange={e => setForm({ ...form, city: e.target.value })}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="form-cluster">
-              <div className="form-cluster-heading">
-                <p className="form-cluster-title">
-                  {t("common.contactdetails")}
-                </p>
-                <p className="form-cluster-note">
-                  {t("common.adddetailsthathelpyouret")}
-                </p>
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="ent-contact">{t("entities.contact")}</Label>
-                <Input
-                  id="ent-contact"
-                  className="field-input"
-                  value={form.contactPerson}
-                  onChange={e =>
-                    setForm({ ...form, contactPerson: e.target.value })
-                  }
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="ent-phone">{t("entities.phone")}</Label>
-                  <Input
-                    id="ent-phone"
-                    className="field-input"
-                    dir="ltr"
-                    value={form.phone}
-                    onChange={e => setForm({ ...form, phone: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="ent-email">{t("entities.email")}</Label>
-                  <Input
-                    id="ent-email"
-                    className="field-input"
-                    dir="ltr"
-                    value={form.email}
-                    onChange={e => setForm({ ...form, email: e.target.value })}
-                  />
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="ent-notes">{t("common.notes")}</Label>
-                <Textarea
-                  id="ent-notes"
-                  className="field-input min-h-20"
-                  value={form.notes}
-                  onChange={e => setForm({ ...form, notes: e.target.value })}
-                />
-              </div>
-            </div>
-            <div className="form-cluster">
-              <div className="form-cluster-heading">
-                <p className="form-cluster-title">
-                  {t("entities.defaultPurchase")}
-                </p>
-                <p className="form-cluster-note">
-                  {t("common.copiedautomaticallytoani")}
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label>{t("entities.defaultCurrency")}</Label>
-                  <Select
-                    value={form.defaultCurrency || "دولار"}
-                    onValueChange={value =>
-                      setForm({ ...form, defaultCurrency: value })
-                    }
-                  >
-                    <SelectTrigger className="field-input w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="دولار">{t("currency.usd")}</SelectItem>
-                      <SelectItem value="ريال">{t("currency.sar")}</SelectItem>
-                      <SelectItem value="يورو">{t("currency.eur")}</SelectItem>
-                      <SelectItem value="يوان">{t("currency.cny")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="ent-rate">{t("common.exchangeRate")}</Label>
-                  <Input
-                    id="ent-rate"
-                    type="number"
-                    step="0.0001"
-                    min="0"
-                    dir="ltr"
-                    className="field-input"
-                    value={form.defaultExchangeRate ?? "3.75"}
-                    onChange={e =>
-                      setForm({ ...form, defaultExchangeRate: e.target.value })
-                    }
-                    placeholder={t("common.example375")}
-                  />
-                </div>
-              </div>
-            </div>
-            <Button onClick={save} className="form-action-bar w-full">
-              <Plus className="h-4 w-4" />
-              {editingId ? t("entities.update") : t("entities.save")}
-            </Button>
-          </div>
-        </SectionCard>
-
-        <SectionCard
-          title={`${t("entities.record")} (${rows.length})`}
-          hint={t("common.savedonthisdevice")}
-          stamp={t("common.partnerledger")}
-          action={
-            <div className="flex items-center gap-1.5">
-              <DensityToggle
-                value={density}
-                onChange={setDensity}
-                className="hidden sm:inline-flex"
-              />
+      <PageShell
+        title={t("entities.title")}
+        description={t("entities.subtitle")}
+        crumbs={[
+          { label: t("nav.dashboard"), href: "/" },
+          { label: t("entities.title") },
+        ]}
+      >
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,380px)_1fr] items-start">
+          <SectionCard
+            title={editingId ? t("entities.edit") : t("entities.add")}
+            description={t("common.amberfieldsareenteredbyt")}
+            stamp={t("common.entryform")}
+            actions={
               <Button
                 size="sm"
                 variant="outline"
                 className="bg-card"
-                onClick={() => setShowFilters(v => !v)}
+                onClick={reset}
               >
-                <SlidersHorizontal className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">{t("common.filter")}</span>
+                {editingId ? (
+                  <X className="h-4 w-4" />
+                ) : (
+                  <Plus className="h-4 w-4" />
+                )}
+                {editingId ? t("entities.discardDraft") : t("common.newWork")}
               </Button>
-            </div>
-          }
-        >
-          <div className="mb-3 space-y-2">
-            <div className="relative">
-              <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                className="field-input pr-9"
-                placeholder={t("common.searchbynamecountrycityo")}
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
-            </div>
-            {showFilters ? (
-              <div className="rounded border border-border bg-secondary/40 p-2.5 space-y-1">
-                <Label className="text-[11px]">{t("common.partnertype")}</Label>
-                <Select value={filterKind} onValueChange={setFilterKind}>
-                  <SelectTrigger className="h-8 bg-card w-full sm:w-56">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t("common.alltypes")}</SelectItem>
-                    {KINDS.map(k => (
-                      <SelectItem key={k.value} value={k.value}>
-                        {t(k.labelKey)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-[11px] text-muted-foreground pt-1">
-                  {t("entities.results")} {filtered.length} {t("entities.of")}{" "}
-                  {rows.length}
-                </p>
-              </div>
-            ) : null}
-          </div>
-          {filtered.length === 0 ? (
-            <EmptyHint text={t("common.nomatchingpartnersaddone")} />
-          ) : (
-            <ul className="space-y-2.5">
-              {filtered.map(row => (
-                <li
-                  key={row.id}
-                  className="record-card cursor-pointer rounded-[0.45rem] px-3.5 py-3"
-                  onClick={() =>
-                    setExpandedId(current =>
-                      current === row.id ? null : row.id
-                    )
-                  }
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-semibold text-sm text-[var(--ink)]">
-                          {row.name}
-                        </p>
-                        <span className="rounded bg-secondary px-1.5 py-0.5 text-[10px] text-secondary-foreground">
-                          {kindLabel(row.kind)}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-muted-foreground mt-1">
-                        {[row.country, row.city, row.contactPerson]
-                          .filter(Boolean)
-                          .join(" — ") || t("entities.noAdditional")}
-                      </p>
-                      <p className="mt-1 text-[10px] font-semibold text-[var(--port-green)]">
-                        {currencyLabel(row.defaultCurrency ?? "دولار")} ·{" "}
-                        {t("common.exchangeRate")}{" "}
-                        {row.defaultExchangeRate ?? 3.75}
-                      </p>
-                      {(attachmentCounts[row.id] ?? 0) > 0 ? (
-                        <span className="mt-1 inline-flex items-center gap-1 rounded border border-[var(--port-green)]/35 bg-[var(--port-green-soft)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--ink-deep)]">
-                          <Paperclip className="h-2.5 w-2.5" />
-                          {attachmentCounts[row.id]} {t("common.attachments2")}
-                        </span>
-                      ) : null}
-                      {row.phone ? (
-                        <p
-                          className="text-[11px] text-muted-foreground"
-                          dir="ltr"
-                        >
-                          {row.phone}
-                        </p>
-                      ) : null}
-                    </div>
-                    <div
-                      className="action-strip shrink-0"
-                      onClick={event => event.stopPropagation()}
-                    >
-                      <RecordMenu
-                        actions={[
-                          {
-                            label: t("common.viewfullcard"),
-                            icon: Eye,
-                            onSelect: () => void view(row),
-                          }, // i18n-deep
-                          {
-                            label: t("common.attachments"),
-                            icon: Paperclip,
-                            onSelect: () => setExpandedId(row.id),
-                          }, // i18n-deep
-                          {
-                            label: t("entities.editPartner"),
-                            icon: Pencil,
-                            onSelect: () => edit(row),
-                          }, // i18n-deep
-                          {
-                            label: t("common.deletepartner"),
-                            icon: Trash2,
-                            destructive: true,
-                            separatorBefore: true,
-                            onSelect: () => void remove(row),
-                          }, // i18n-deep
-                        ]}
-                      />
-                    </div>
-                  </div>
-                  {density === "detailed" || expandedId === row.id ? (
-                    <div className="mt-3 grid gap-2 border-t border-dashed border-border pt-3 text-[11px] text-muted-foreground sm:grid-cols-2">
-                      <p>
-                        <span className="font-semibold text-[var(--ink)]">
-                          {t("common.contact")}:
-                        </span>{" "}
-                        {row.contactPerson || "—"}
-                      </p>
-                      <p dir="ltr">
-                        <span className="font-semibold text-[var(--ink)]">
-                          {row.phone ? "TEL" : "EMAIL"}:
-                        </span>{" "}
-                        {row.phone || row.email || "—"}
-                      </p>
-                      <p>
-                        <span className="font-semibold text-[var(--ink)]">
-                          {t("common.purchasesettings")}:
-                        </span>{" "}
-                        {row.defaultCurrency ?? "دولار"} ·{" "}
-                        <span dir="ltr">{row.defaultExchangeRate ?? 3.75}</span>
-                      </p>
-                      {row.notes ? (
-                        <p className="sm:col-span-2">
-                          <span className="font-semibold text-[var(--ink)]">
-                            {t("common.notes")}:
-                          </span>{" "}
-                          {row.notes}
-                        </p>
-                      ) : null}
-                      <div
-                        className="sm:col-span-2"
-                        onClick={event => event.stopPropagation()}
-                      >
-                        <AttachmentsPanel
-                          entityId={row.id}
-                          compact
-                          onChanged={() => void load()}
-                        />
-                      </div>
-                    </div>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          )}
-        </SectionCard>
-      </div>
+            }
+          >
+            <EntityForm
+              form={form}
+              setForm={setForm}
+              editingId={editingId}
+              onSave={save}
+              onReset={reset}
+              onAttachmentsChanged={() => void load()}
+            />
+          </SectionCard>
 
-      <Dialog
-        open={viewRow !== null}
-        onOpenChange={o => !o && setViewRow(null)}
-      >
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="font-display text-[var(--ink)]">
-              {viewRow?.name ?? ""}
-            </DialogTitle>
-            <DialogDescription>
-              {viewRow ? kindLabel(viewRow.kind) : ""} —{" "}
-              {t("common.partnercard")}
-            </DialogDescription>
-          </DialogHeader>
-          {viewRow ? (
-            <div className="space-y-0.5">
-              {[
-                { k: t("entities.country"), v: viewRow.country }, // i18n-deep
-                { k: t("entities.city"), v: viewRow.city }, // i18n-deep
-                { k: t("entities.contact"), v: viewRow.contactPerson }, // i18n-deep
-                { k: t("entities.phone"), v: viewRow.phone, ltr: true }, // i18n-deep
-                { k: t("entities.email"), v: viewRow.email, ltr: true }, // i18n-deep
-                {
-                  k: t("common.linkeditems"),
-                  v: String(linkedCount),
-                  ltr: true,
-                }, // i18n-deep
-                {
-                  k: t("common.purchasesettings"),
-                  v: `${viewRow.defaultCurrency ?? "دولار"} · ${viewRow.defaultExchangeRate ?? 3.75}`,
-                  ltr: true,
-                }, // i18n-deep
-                {
-                  k: t("common.lastupdated"),
-                  v: formatDateTime(viewRow.updatedAt),
-                  ltr: true,
-                }, // i18n-deep
-              ].map(f => (
-                <div
-                  key={f.k}
-                  className="flex items-center justify-between gap-3 border-b border-border/70 py-2"
-                >
-                  <span className="text-xs text-muted-foreground">{f.k}</span>
-                  <span
-                    className="text-sm text-[var(--ink)]"
-                    dir={f.ltr ? "ltr" : undefined}
-                  >
-                    {f.v || "—"}
-                  </span>
-                </div>
-              ))}
-              {viewRow.notes ? (
-                <div className="pt-3">
-                  <p className="text-xs text-muted-foreground mb-1">
-                    {t("common.notes")}
-                  </p>
-                  <p className="rounded bg-secondary/50 px-3 py-2 text-sm">
-                    {viewRow.notes}
-                  </p>
-                </div>
-              ) : null}
-              <div className="pt-3">
-                <AttachmentsPanel entityId={viewRow.id} compact />
-              </div>
-              <div className="flex gap-2 pt-4">
-                <Button
-                  className="flex-1"
-                  onClick={() => {
-                    edit(viewRow);
-                    setViewRow(null);
-                  }}
-                >
-                  <Pencil className="h-4 w-4" />
-                  {t("common.edit")}
-                </Button>
-                <Button
-                  variant="outline"
-                  className="bg-card"
-                  onClick={() => setViewRow(null)}
-                >
-                  {t("common.close")}
-                </Button>
-              </div>
-            </div>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+          <SectionCard
+            title={`${t("entities.record")} (${rows.length})`}
+            description={t("common.savedonthisdevice")}
+            stamp={t("common.partnerledger")}
+          >
+            <EntityTable
+              rows={rows}
+              attachmentCounts={attachmentCounts}
+              onView={row => void view(row)}
+              onEdit={edit}
+              onDelete={row => void remove(row)}
+            />
+          </SectionCard>
+        </div>
+      </PageShell>
+
+      <EntityViewDialog
+        viewRow={viewRow}
+        linkedCount={linkedCount}
+        onClose={() => setViewRow(null)}
+        onEdit={edit}
+      />
     </AppLayout>
   );
 }
