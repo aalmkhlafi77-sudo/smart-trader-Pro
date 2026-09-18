@@ -186,6 +186,22 @@ export const priceAtLevel = (row: ItemPriceRow | undefined, level: PriceLevel) =
   return values[level];
 };
 
+/**
+ * المستوى الافتراضي لحفظ سعر محسوب: أول مستوى فارغ (لا يمس أسعار المورد الأصلية)،
+ * وعند امتلاء المستويات الأربعة يُترك مستوى الصنف الحالي (استبدال صريح مسجَّل في history).
+ */
+export const firstEmptyLevel = (
+  row: ItemPriceRow | null | undefined,
+  fallback: PriceLevel
+): PriceLevel => {
+  const levels: PriceLevel[] = [1, 2, 3, 4];
+  if (!row) return fallback;
+  const empty = levels.find(
+    level => priceAtLevel(row, level).price == null
+  );
+  return empty ?? fallback;
+};
+
 export const optionValue = (value: string) => value || "__none__";
 export const fromOption = (value: string) => (value === "__none__" ? "" : value);
 

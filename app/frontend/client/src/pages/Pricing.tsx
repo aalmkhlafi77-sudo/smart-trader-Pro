@@ -19,6 +19,7 @@ import {
   persistRun,
   persistSalePrices,
 } from "./cargo/cargoPersistence";
+import { firstEmptyLevel } from "./cargo/shared";
 
 const STEPS = [
   { id: "load", labelKey: "cargo.stepTitleLoad" },
@@ -102,7 +103,10 @@ export default function Pricing() {
       );
       setPriceSaveLevels(
         Object.fromEntries(
-          file.cargoItems.map(item => [item.itemId, item.priceLevel])
+          file.cargoItems.map(item => [
+            item.itemId,
+            firstEmptyLevel(priceRows[item.itemId], item.priceLevel),
+          ])
         )
       );
       setShowPriceSave(true);

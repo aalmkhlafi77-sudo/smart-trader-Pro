@@ -64,7 +64,7 @@ export function ItemViewDialog({
             <div className="flex justify-between">
               <span className="text-muted-foreground">{t("items.priceCurrency")}:</span>
               <span className="font-semibold text-[var(--port-green)]">
-                {currencyLabel(viewItem.currency, t)} ({t("items.exchangeShort")}: {viewItem.defaultExchangeRate ?? 3.75})
+                {currencyLabel(viewPrice?.currency ?? viewItem.currency, t)} ({t("items.exchangeShort")}: {viewItem.defaultExchangeRate ?? 3.75})
               </span>
             </div>
             {viewItem.customsRate != null && (
@@ -114,7 +114,7 @@ export function ItemViewDialog({
                   <div key={idx} className="rounded border border-border bg-card p-1.5">
                     <span className="text-[10px] text-muted-foreground">{t("prices.price")} {idx + 1}</span>
                     <p className="font-bold text-[var(--ink)] text-xs mt-0.5" dir="ltr">
-                      {lvl.p != null ? formatMoney(lvl.p, currencyLabel(viewItem.currency, t)) : "—"}
+                      {lvl.p != null ? formatMoney(lvl.p, currencyLabel(viewPrice?.currency ?? viewItem.currency, t)) : "—"}
                     </p>
                     {lvl.d && <span className="text-[9px] text-muted-foreground">{lvl.d}</span>}
                   </div>

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import {
   db,
+  type CargoCostItemRow,
   type EntityRow,
   type ItemPriceRow,
   type ItemRow,
@@ -110,14 +111,51 @@ export default function Reports() {
     let cancelled = false;
     (async () => {
       await db.init();
-      const [itemList, entityList, priceList, runList, templateList] =
+      const [itemList, entityList, priceList, legacyRuns, cargoRuns, templateList] =
         await Promise.all([
           db.listItems(),
           db.listEntities(),
           db.listPrices(),
           db.listPricingRuns(),
+          db.listCargoCostRuns(),
           db.listSpecTemplates(),
         ]);
+      // ملفات الحمولة (cargo) هي مصدر حسابات التكلفة الحالي؛ تُحوَّل لصفوف
+      // بالشكل القديم نفسه دون مساس منطق العرض والفلاتر أدناه.
+      const cargoItemsNested = await Promise.all(
+        cargoRuns.map(run => db.listCargoCostItems(run.id))
+      );
+      const fromCargo: PricingRunRow[] = cargoRuns.flatMap((run, index) =>
+        cargoItemsNested[index].map((item: CargoCostItemRow) => ({
+          id: `${run.id}:${item.id}`,
+          itemId: item.itemId,
+          itemName: item.itemName,
+          priceLevel: item.priceLevel,
+          unitPriceForeign: item.unitPrice,
+          exchangeRate: item.exchangeRate,
+          quantity: item.quantity,
+          freight: 0,
+          freightCurrency: "",
+          shippingRoute: "",
+          shippingType: "",
+          freightLocal: 0,
+          customsRate: item.customsRate,
+          clearance: 0,
+          transport: 0,
+          otherCosts: 0,
+          marginRate: run.marginRate,
+          goodsValue: item.goodsValue,
+          customsAmount: 0,
+          totalContainerCost: item.finalUnitCost * item.quantity,
+          unitCost: item.finalUnitCost,
+          suggestedPrice: item.suggestedPrice,
+          currency: run.currency,
+          notes: run.notes,
+          createdAt: run.updatedAt,
+          updatedAt: run.updatedAt,
+        }))
+      );
+      const runList = [...legacyRuns, ...fromCargo];
       const specs: Record<string, ItemSpecRow[]> = {};
       for (const item of itemList)
         specs[item.id] = await db.listSpecsByItem(item.id);

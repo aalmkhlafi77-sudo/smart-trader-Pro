@@ -33,6 +33,7 @@ interface PriceLevelsFormProps {
   items: ItemRow[];
   selectedId: string;
   onSelectId: (id: string) => void;
+  rowCurrency?: string;
   drafts: PriceDraft[];
   setDrafts: (d: PriceDraft[]) => void;
   notes: string;
@@ -48,6 +49,7 @@ export function PriceLevelsForm({
   items,
   selectedId,
   onSelectId,
+  rowCurrency,
   drafts,
   setDrafts,
   notes,
@@ -61,6 +63,9 @@ export function PriceLevelsForm({
   const { t } = useLanguage();
   const [showExtra, setShowExtra] = useState(false);
   const selectedItem = items.find(i => i.id === selectedId) ?? null;
+  // عملة الأرقام المحررة = عملة صف السعر المخزَّن، وعند غيابه عملة الصنف
+  const priceCurrency =
+    rowCurrency || selectedItem?.currency || FALLBACK_CURRENCY;
 
   // حساب آخر سعر مؤرخ بين المستويات الأربعة
   const simulatedRow: ItemPriceRow | null = selectedItem
@@ -118,7 +123,7 @@ export function PriceLevelsForm({
           <div className="mt-3">
             <InheritedValue
               label={t("items.priceCurrency")}
-              value={currencyLabel(selectedItem.currency || FALLBACK_CURRENCY, t)}
+              value={currencyLabel(priceCurrency, t)}
               source={selectedItem.name}
               tone="inherited"
             />
@@ -159,7 +164,7 @@ export function PriceLevelsForm({
                       control={
                         <CurrencyField
                           value={d.price}
-                          suffix={currencyLabel(selectedItem.currency, t)}
+                          suffix={currencyLabel(priceCurrency, t)}
                           onChange={e => updateDraft(index, { price: e.target.value })}
                           placeholder="0.00"
                         />
@@ -249,7 +254,7 @@ export function PriceLevelsForm({
 
       {/* 6. سجل التغيرات أسفل النموذج */}
       {selectedItem && (
-        <PriceHistoryTable history={history} currency={selectedItem.currency} />
+        <PriceHistoryTable history={history} />
       )}
     </div>
   );

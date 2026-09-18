@@ -1,14 +1,13 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { DataTable, StatusPill, type Column } from "@/components/patterns";
 import { formatMoney } from "@/lib/pricing";
+import { currencyLabel } from "@/lib/currency";
 import type { PriceHistoryRow } from "@/lib/db";
 
 export function PriceHistoryTable({
   history,
-  currency,
 }: {
   history: PriceHistoryRow[];
-  currency: string;
 }) {
   const { t } = useLanguage();
 
@@ -33,7 +32,7 @@ export function PriceHistoryTable({
       header: t("prices.price"),
       cell: row => (
         <span className="font-bold text-xs" dir="ltr">
-          {row.price != null ? formatMoney(row.price, currency) : "—"}
+          {row.price != null ? formatMoney(row.price, currencyLabel(row.currency, t)) : "—"}
         </span>
       ),
     },

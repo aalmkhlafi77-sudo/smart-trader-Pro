@@ -9,7 +9,7 @@ import {
 } from "@/lib/db";
 import { newId, nowIso } from "@/lib/id";
 import type { CargoCheck, CargoCostDraft, CargoDraft } from "./shared";
-import { FREIGHT_LINE_NAME } from "./shared";
+import { FREIGHT_LINE_NAME, firstEmptyLevel } from "./shared";
 import { parseNumber } from "@/lib/pricing";
 
 export async function fetchCargoDraft(runId: string): Promise<CargoDraft | null> {
@@ -185,8 +185,9 @@ export async function persistSalePrices(args: {
   const timestamp = nowIso();
   await Promise.all(
     selected.map(async cargoItem => {
-      const level = levels[cargoItem.itemId] ?? cargoItem.priceLevel;
       const current = priceRows[cargoItem.itemId];
+      const level =
+        levels[cargoItem.itemId] ?? firstEmptyLevel(current, cargoItem.priceLevel);
       const value =
         result.items.find(row => row.itemId === cargoItem.itemId)?.suggestedPrice ?? 0;
       const fields =
