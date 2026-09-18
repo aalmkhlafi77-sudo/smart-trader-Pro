@@ -25,6 +25,11 @@ const ALLOW_DEC: Record<string, string[]> = {
 
 /** نصوص عربية حرفية يُسمح بها في ملف بعينه (قيم بيانات/عملات/أنواع نقل). */
 const ALLOW_EXACT: Record<string, string[]> = {
+  // مفاتيح منطقية داخلية في دوال التسعير والتقارير لا نصوص واجهة (ممنوع مساس المنطق)
+  "lib/cargoPricing.ts": ["الجمارك"],
+  "lib/cargoDecisionReports.ts": ["الجمارك"],
+  // سلاسل أرقام شرقية/فارسية للتحويل للأرقام اللاتينية (أرقام لا نصوص واجهة)
+  "components/EnglishDatePicker.tsx": ["٠١٢٣٤٥٦٧٨٩", "۰۱۲۳۴۵۶۷۸۹"],
   "pages/Entities.tsx": ["دولار"],
   "pages/Items.tsx": ["دولار"],
   "pages/Pricing.tsx": ["بحري", "بري", "جوي", "دولار", "ريال", "وحدة"],
