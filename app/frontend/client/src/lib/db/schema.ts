@@ -4,7 +4,7 @@
  * لا كائنات متداخلة، المفاتيح نصية، التواريخ ISO، القيم المالية أرقام.
  */
 
-export const SCHEMA_VERSION = 10;
+export const SCHEMA_VERSION = 11;
 export const DB_NAME = "smart_trader_db";
 
 export type EntityKind = "supplier" | "customer" | "factory" | "other";
@@ -29,7 +29,7 @@ export interface EntityRow {
   email: string;
   contactPerson: string;
   notes: string;
-  /** عملة الشراء المرجعية لهذه الجهة، تُورَّث للصنف الجديد المرتبط بها. */
+  /** عملة الشراء المرجعية لهذه الجهة (رمز ISO منذ v11)، تُورَّث للصنف الجديد المرتبط بها. */
   defaultCurrency: string;
   /** سعر الصرف المرجعي لهذه الجهة، يُستخدم افتراضياً في الصنف والحاسبة. */
   defaultExchangeRate: number;
@@ -437,6 +437,78 @@ export interface MetaRow {
   updatedAt: string;
 }
 
+/** عملة مرجعية برمز ISO — بذرة S5، تُستخدم للعرض والقوائم بدل النصوص العربية المخزَّنة سابقاً. */
+export interface CurrencyRow {
+  code: string;
+  symbol: string;
+  decimals: number;
+  active: number;
+}
+
+/** وحدة قياس — بذرة S5 من الوحدات الأساسية وما وُجد فعلياً في قوالب المواصفات. */
+export interface UnitRow {
+  id: string;
+  name: string;
+  kind: string;
+  factorToBase: number;
+  baseUnit: string;
+}
+
+/** جهة اتصال تابعة لجهة — جدول S5 الجديد، بلا واجهة بعد. */
+export interface EntityContactRow {
+  id: string;
+  entityId: string;
+  name: string;
+  role: string;
+  phone: string;
+  email: string;
+  isPrimary: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * خريطة ترحيل S5: قيم العملات النصية العربية المخزَّنة في v10 إلى رموز ISO.
+ * أي قيمة غير معروفة تُترك كما هي وتُسجَّل في تحذير الترحيل (لا تُفقَد بصمت).
+ * ملاحظة: "دينار" غامضة (عدة دول) فتُترك عمداً دون تحويل.
+ */
+export const AR_CURRENCY_TO_ISO: Record<string, string> = {
+  دولار: "USD",
+  ريال: "SAR",
+  يورو: "EUR",
+  يوان: "CNY",
+  درهم: "AED",
+  جنيه: "EGP",
+  روبية: "INR",
+};
+
+export function mapCurrencyToISO(value: unknown): string {
+  if (typeof value !== "string") return "";
+  const key = value.trim();
+  return AR_CURRENCY_TO_ISO[key] ?? value;
+}
+
+/** بذر جدول العملات — الحد الأدنى المطلوب: USD, SAR, EUR, CNY, TRY, AED, EGP. */
+export const DEFAULT_CURRENCIES: CurrencyRow[] = [
+  { code: "USD", symbol: "$", decimals: 2, active: 1 },
+  { code: "SAR", symbol: "ر.س", decimals: 2, active: 1 },
+  { code: "EUR", symbol: "€", decimals: 2, active: 1 },
+  { code: "CNY", symbol: "¥", decimals: 2, active: 1 },
+  { code: "TRY", symbol: "₺", decimals: 2, active: 1 },
+  { code: "AED", symbol: "د.إ", decimals: 2, active: 1 },
+  { code: "EGP", symbol: "ج.م", decimals: 2, active: 1 },
+  { code: "INR", symbol: "₹", decimals: 2, active: 1 },
+];
+
+/** بذر الوحدات الأساسية (كتلة + عدّ) — تُستكمل بالوحدات المشتقة فعلياً من القوالب أثناء الترحيل. */
+export const DEFAULT_UNITS: UnitRow[] = [
+  { id: "u_gram", name: "جرام", kind: "mass", factorToBase: 1, baseUnit: "جرام" },
+  { id: "u_kg", name: "كجم", kind: "mass", factorToBase: 1000, baseUnit: "جرام" },
+  { id: "u_ton", name: "طن", kind: "mass", factorToBase: 1000000, baseUnit: "جرام" },
+  { id: "u_unit", name: "وحدة", kind: "count", factorToBase: 1, baseUnit: "وحدة" },
+  { id: "u_piece", name: "قطعة", kind: "count", factorToBase: 1, baseUnit: "وحدة" },
+];
+
 export const TABLES = {
   entities: "entities",
   categories: "categories",
@@ -461,6 +533,9 @@ export const TABLES = {
   priceListItems: "price_list_items",
   settings: "settings",
   meta: "meta",
+  currencies: "currencies",
+  units: "units",
+  entityContacts: "entity_contacts",
 } as const;
 
 export type TableName = (typeof TABLES)[keyof typeof TABLES];
@@ -595,5 +670,17 @@ CREATE TABLE IF NOT EXISTS settings (
 );
 CREATE TABLE IF NOT EXISTS meta (
   id TEXT PRIMARY KEY, schemaVersion INTEGER, lastBackupAt TEXT, updatedAt TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS currencies (
+  code TEXT PRIMARY KEY, symbol TEXT, decimals INTEGER, active INTEGER
+);
+CREATE TABLE IF NOT EXISTS units (
+  id TEXT PRIMARY KEY, name TEXT, kind TEXT, factorToBase REAL, baseUnit TEXT
+);
+CREATE TABLE IF NOT EXISTS entity_contacts (
+  id TEXT PRIMARY KEY, entityId TEXT NOT NULL, name TEXT, role TEXT,
+  phone TEXT, email TEXT, isPrimary INTEGER DEFAULT 0,
+  createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL,
+  FOREIGN KEY (entityId) REFERENCES entities(id)
 );
 `;

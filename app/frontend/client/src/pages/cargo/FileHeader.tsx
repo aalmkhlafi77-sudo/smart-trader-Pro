@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import SectionCard from "@/components/SectionCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { currencyLabel } from "@/lib/currency";
 import type { CargoDraft, OperationType } from "./shared";
 
 export function FileHeader({
@@ -72,7 +73,7 @@ export function FileHeader({
             className="flex min-h-11 items-center rounded border border-border bg-secondary/45 px-3 text-xs font-semibold text-[var(--ink)]"
             dir="ltr"
           >
-            {localCurrency}
+            {currencyLabel(localCurrency, t)}
           </span>
         </div>
       </div>

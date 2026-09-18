@@ -21,16 +21,17 @@ import {
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { db } from "@/lib/db";
+import { currencyLabel } from "@/lib/currency";
 import { nowIso } from "@/lib/id";
 import { parseNumber } from "@/lib/pricing";
 import { SamplePreview } from "./financial/SamplePreview";
 
-/** العملات المخزَّنة (نصوص عربية) — الترحيل إلى رموز ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
+/** العملات المخزَّنة برموز ISO (منذ S5) — "دينار" القديمة الغامضة أُسقطت من الخيارات مع بقاء قراءتها. */
 const FINANCE_DATA = {
-  localOptions: ["ريال", "درهم", "دينار", "جنيه"],
-  foreignOptions: ["دولار", "يورو", "يوان", "روبية"],
-  fallbackLocal: "ريال",
-  fallbackForeign: "دولار",
+  localOptions: ["SAR", "AED", "EGP"],
+  foreignOptions: ["USD", "EUR", "CNY", "INR"],
+  fallbackLocal: "SAR",
+  fallbackForeign: "USD",
 };
 
 export default function SettingsFinancial() {
@@ -164,7 +165,7 @@ export default function SettingsFinancial() {
             <SelectContent>
               {options.map(c => (
                 <SelectItem key={c} value={c}>
-                  {c}
+                  {currencyLabel(c, t)}
                 </SelectItem>
               ))}
               <SelectItem value="__new__">
@@ -246,7 +247,7 @@ export default function SettingsFinancial() {
             >
               <div className="space-y-3">
                 <Field
-                  label={`${t("common.exchangeRate")} (${foreignCurrency} ${t("common.to")} ${localCurrency})`}
+                  label={`${t("common.exchangeRate")} (${currencyLabel(foreignCurrency, t)} ${t("common.to")} ${currencyLabel(localCurrency, t)})`}
                   hint={t("settings.useRate")}
                   control={
                     <NumberField

@@ -3,6 +3,7 @@ import { Pencil, Plus, Trash2, Truck } from "lucide-react";
 import { DataTable, StatusPill, type Column } from "@/components/patterns";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { currencyLabel } from "@/lib/currency";
 import {
   db,
   type LogisticsLocationRow,
@@ -75,7 +76,7 @@ export function RatesTab({
       header: t("cargo.amount"),
       cell: row => (
         <span className="font-bold tabular-nums" dir="ltr">
-          {row.amount.toLocaleString("en-US")} {row.currency}
+          {row.amount.toLocaleString("en-US")} {currencyLabel(row.currency, t)}
         </span>
       ),
     },

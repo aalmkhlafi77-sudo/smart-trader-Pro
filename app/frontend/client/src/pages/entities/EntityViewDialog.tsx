@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import AttachmentsPanel from "@/components/AttachmentsPanel";
 import { formatDateTime } from "@/lib/pricing";
+import { currencyLabel } from "@/lib/currency";
 import type { EntityKind, EntityRow } from "@/lib/db";
 
 const KINDS: { value: EntityKind; labelKey: string }[] = [
@@ -19,8 +20,8 @@ const KINDS: { value: EntityKind; labelKey: string }[] = [
   { value: "other", labelKey: "entities.kind.other" },
 ];
 
-/** قيمة العملة الاحتياطية للعرض (نص عربي مخزَّن) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
-const FALLBACK_CURRENCY = "دولار";
+/** قيمة العملة الاحتياطية للعرض (رمز ISO منذ S5). */
+const FALLBACK_CURRENCY = "USD";
 
 export function EntityViewDialog({
   viewRow,
@@ -69,7 +70,7 @@ export function EntityViewDialog({
             },
             {
               k: t("common.purchasesettings"),
-              v: `${viewRow.defaultCurrency ?? FALLBACK_CURRENCY} · ${viewRow.defaultExchangeRate ?? 3.75}`,
+              v: `${currencyLabel(viewRow.defaultCurrency ?? FALLBACK_CURRENCY, t)} · ${viewRow.defaultExchangeRate ?? 3.75}`,
               ltr: true,
             },
             {

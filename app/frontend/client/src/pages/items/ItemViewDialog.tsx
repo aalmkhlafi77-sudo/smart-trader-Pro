@@ -11,9 +11,10 @@ import { Button } from "@/components/ui/button";
 import AttachmentsPanel from "@/components/AttachmentsPanel";
 import { formatDateTime, formatMoney } from "@/lib/pricing";
 import type { EntityRow, ItemPriceRow, ItemRow, ItemSpecRow, PricingRunRow } from "@/lib/db";
+import { currencyLabel } from "@/lib/currency";
 
-/** عملة عرض تقرير التكلفة (نص عربي مخزَّن) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
-const REPORT_CURRENCY = "ريال";
+/** عملة عرض تقرير التكلفة (رمز ISO منذ S5). */
+const REPORT_CURRENCY = "SAR";
 
 export function ItemViewDialog({
   viewItem,
@@ -63,7 +64,7 @@ export function ItemViewDialog({
             <div className="flex justify-between">
               <span className="text-muted-foreground">{t("items.priceCurrency")}:</span>
               <span className="font-semibold text-[var(--port-green)]">
-                {viewItem.currency} ({t("items.exchangeShort")}: {viewItem.defaultExchangeRate ?? 3.75})
+                {currencyLabel(viewItem.currency, t)} ({t("items.exchangeShort")}: {viewItem.defaultExchangeRate ?? 3.75})
               </span>
             </div>
             {viewItem.customsRate != null && (
@@ -113,7 +114,7 @@ export function ItemViewDialog({
                   <div key={idx} className="rounded border border-border bg-card p-1.5">
                     <span className="text-[10px] text-muted-foreground">{t("prices.price")} {idx + 1}</span>
                     <p className="font-bold text-[var(--ink)] text-xs mt-0.5" dir="ltr">
-                      {lvl.p != null ? formatMoney(lvl.p, viewItem.currency) : "—"}
+                      {lvl.p != null ? formatMoney(lvl.p, currencyLabel(viewItem.currency, t)) : "—"}
                     </p>
                     {lvl.d && <span className="text-[9px] text-muted-foreground">{lvl.d}</span>}
                   </div>
@@ -132,7 +133,7 @@ export function ItemViewDialog({
                 </span>
               </div>
               <p className="mt-1 text-sm font-extrabold text-[var(--ink)]" dir="ltr">
-                {t("items.unitCostIs")} {formatMoney(viewRun.unitCost, REPORT_CURRENCY)}
+                {t("items.unitCostIs")} {formatMoney(viewRun.unitCost, currencyLabel(REPORT_CURRENCY, t))}
               </p>
             </div>
           )}

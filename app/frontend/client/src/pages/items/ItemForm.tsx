@@ -20,6 +20,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import AttachmentsPanel from "@/components/AttachmentsPanel";
 import type { CategoryRow, EntityRow, SpecTemplateRow } from "@/lib/db";
+import { currencyLabel } from "@/lib/currency";
 import { ItemCurrencySection } from "./ItemCurrencySection";
 import { ItemSpecsSection } from "./ItemSpecsSection";
 
@@ -140,7 +141,7 @@ export function ItemForm({
                   ...entities.map(e => ({
                     value: e.id,
                     label: e.name,
-                    hint: `${e.defaultCurrency} · ${e.defaultExchangeRate}`,
+                    hint: `${currencyLabel(e.defaultCurrency, t)} · ${e.defaultExchangeRate}`,
                   })),
                 ]}
               />
@@ -152,7 +153,7 @@ export function ItemForm({
               label={t("items.inheritedFromPartner")}
               value={
                 <span>
-                  {selectedEntity.defaultCurrency} ·{" "}
+                  {currencyLabel(selectedEntity.defaultCurrency, t)} ·{" "}
                   <span dir="ltr">{selectedEntity.defaultExchangeRate}</span>
                 </span>
               }

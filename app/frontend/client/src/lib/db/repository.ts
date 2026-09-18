@@ -12,6 +12,8 @@ import type {
   CargoCostLineRow,
   CargoCostRunRow,
   CategoryRow,
+  CurrencyRow,
+  EntityContactRow,
   EntityRow,
   ItemPriceRow,
   ItemRow,
@@ -28,6 +30,7 @@ import type {
   SpecTemplateRow,
   NoteRow,
   TaskRow,
+  UnitRow,
 } from "./schema";
 
 export interface BackupPayload {
@@ -58,6 +61,9 @@ export interface BackupPayload {
     price_list_items: PriceListItemRow[];
     settings: SettingsRow[];
     meta: MetaRow[];
+    currencies: CurrencyRow[];
+    units: UnitRow[];
+    entity_contacts: EntityContactRow[];
   };
 }
 
@@ -156,6 +162,16 @@ export interface Repository {
 
   getSettings(): Promise<SettingsRow>;
   saveSettings(row: SettingsRow): Promise<void>;
+
+  listCurrencies(): Promise<CurrencyRow[]>;
+  saveCurrency(row: CurrencyRow): Promise<void>;
+
+  listUnits(): Promise<UnitRow[]>;
+  saveUnit(row: UnitRow): Promise<void>;
+
+  listEntityContacts(entityId: string): Promise<EntityContactRow[]>;
+  saveEntityContact(row: EntityContactRow): Promise<void>;
+  deleteEntityContact(id: string): Promise<void>;
 
   getMeta(): Promise<MetaRow>;
   saveMeta(row: MetaRow): Promise<void>;

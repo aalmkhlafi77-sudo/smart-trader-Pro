@@ -30,8 +30,8 @@ import { newId, nowIso } from "@/lib/id";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-/** العملة المخزَّنة الافتراضية (نص عربي) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
-const RATE_DATA_DEFAULTS = { currency: "دولار" };
+/** العملة المخزَّنة الافتراضية (رمز ISO منذ S5). */
+const RATE_DATA_DEFAULTS = { currency: "USD" };
 
 const KINDS: { value: LogisticsRateKind; labelKey: string }[] = [
   { value: "freight", labelKey: "settings.internationalShipping" },

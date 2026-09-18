@@ -22,8 +22,8 @@ import { ItemForm, type ItemFormData, type SpecDraft } from "./items/ItemForm";
 import { ItemTable } from "./items/ItemTable";
 import { ItemViewDialog } from "./items/ItemViewDialog";
 
-/** القيم الافتراضية المخزَّنة (نصوص عربية) — الترحيل إلى رموز ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
-const ITEM_DATA_DEFAULTS = { unit: "وحدة", currency: "دولار" };
+/** القيم الافتراضية المخزَّنة (العملة رمز ISO منذ S5). */
+const ITEM_DATA_DEFAULTS = { unit: "وحدة", currency: "USD" };
 
 const emptyForm: ItemFormData = {
   name: "",

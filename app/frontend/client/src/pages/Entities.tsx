@@ -12,8 +12,8 @@ import { EntityForm, type EntityFormData } from "./entities/EntityForm";
 import { EntityTable } from "./entities/EntityTable";
 import { EntityViewDialog } from "./entities/EntityViewDialog";
 
-/** قيمة العملة الافتراضية المخزَّنة (نص عربي) — الترحيل إلى رموز ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
-const ENTITY_DATA_DEFAULTS = { currency: "دولار" };
+/** قيمة العملة الافتراضية المخزَّنة (رمز ISO منذ S5). */
+const ENTITY_DATA_DEFAULTS = { currency: "USD" };
 
 const emptyForm: EntityFormData = {
   name: "",

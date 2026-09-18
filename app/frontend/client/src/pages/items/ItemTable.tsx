@@ -13,9 +13,10 @@ import {
 } from "@/components/ui/select";
 import EmptyHint from "@/components/EmptyHint";
 import type { CategoryRow, EntityRow, ItemRow, ItemSpecRow } from "@/lib/db";
+import { currencyLabel } from "@/lib/currency";
 
-/** قيمة العملة الاحتياطية للعرض (نص عربي مخزَّن) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
-const FALLBACK_CURRENCY = "دولار";
+/** قيمة العملة الاحتياطية للعرض (رمز ISO منذ S5). */
+const FALLBACK_CURRENCY = "USD";
 
 export function ItemTable({
   items,
@@ -138,7 +139,7 @@ export function ItemTable({
       cell: row => (
         <div className="flex flex-col text-xs">
           <span className="font-semibold text-[var(--port-green)]">
-            {row.currency || FALLBACK_CURRENCY}
+            {currencyLabel(row.currency || FALLBACK_CURRENCY, t)}
           </span>
           {row.customsRate != null && (
             <span className="text-[10px] text-muted-foreground" dir="ltr">

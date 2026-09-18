@@ -16,30 +16,21 @@ const I18N_DIR = join(SRC, "lib", "i18n").split(sep).join("/");
 
 /** أسماء متغيرات/خصائص يُسمح بالعربية داخل نطاق تعريفها (بيانات محمية). */
 const ALLOW_DEC: Record<string, string[]> = {
-  // قيم عملات/وحدات مخزَّنة (نصوص عربية) في ملفات S1 — الترحيل إلى ISO مؤجَّل إلى S5
-  "pages/currencyData.ts": ["CURRENCY_OPTIONS"],
+  // بذور وخريطة ترحيل S5 (بيانات مرجعية لا نصوص واجهة)
+  "lib/db/schema.ts": ["AR_CURRENCY_TO_ISO", "DEFAULT_CURRENCIES", "DEFAULT_UNITS"],
+  // قيمة الوحدة الافتراضية المخزَّنة (ليست عملة — خارج نطاق ترحيل ISO)
+  "pages/Items.tsx": ["ITEM_DATA_DEFAULTS"],
+  // أسماء بنود التكلفة وأوضاع النقل المخزَّنة (بيانات منطقية/تشغيلية لا عملات)
   "pages/cargo/shared.ts": [
     "COST_BLUEPRINTS",
     "emptyDraft",
     "CUSTOMS_LINE_NAME",
     "FREIGHT_LINE_NAME",
-    "FALLBACK_FOREIGN_CURRENCY",
     "CIF_INCLUDED_LABEL",
     "CIF_INCLUDED_REASON",
   ],
-  "pages/cargo/useCargoData.ts": ["CURRENCY_FALLBACKS"],
   "pages/cargo/steps/RouteStep.tsx": ["TRANSPORT_MODES"],
-  "pages/settings/Financial.tsx": ["FINANCE_DATA"],
-  "pages/settings/logistics/RateSheet.tsx": ["RATE_DATA_DEFAULTS"],
   "pages/settings/logistics/TemplateSheet.tsx": ["TRANSPORT_MODES"],
-  "pages/Entities.tsx": ["ENTITY_DATA_DEFAULTS"],
-  "pages/Items.tsx": ["ITEM_DATA_DEFAULTS"],
-  "pages/entities/EntityTable.tsx": ["FALLBACK_CURRENCY"],
-  "pages/entities/EntityViewDialog.tsx": ["FALLBACK_CURRENCY"],
-  "pages/items/ItemTable.tsx": ["FALLBACK_CURRENCY"],
-  "pages/items/ItemViewDialog.tsx": ["REPORT_CURRENCY"],
-  "pages/prices/PriceLevelsForm.tsx": ["FALLBACK_CURRENCY"],
-  "pages/prices/PriceTable.tsx": ["FALLBACK_CURRENCY"],
   "pages/Pricing.tsx": ["COST_BLUEPRINTS"],
   "pages/Reports.tsx": ["lookupSpec"],
 };

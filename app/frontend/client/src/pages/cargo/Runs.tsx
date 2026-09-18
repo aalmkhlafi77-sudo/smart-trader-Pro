@@ -15,6 +15,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { db, type CargoCostRunRow, type CargoRunStatus } from "@/lib/db";
 import { formatDateTime, formatMoney } from "@/lib/pricing";
+import { currencyLabel } from "@/lib/currency";
 
 const STATUS_TONE: Record<CargoRunStatus, "neutral" | "info" | "success" | "warning"> = {
   draft: "neutral",
@@ -142,7 +143,7 @@ export default function Runs() {
                   header: t("cargo.totalCost"),
                   cell: row => (
                     <span className="font-bold tabular-nums" dir="ltr">
-                      {formatMoney(row.totalCost, row.currency)}
+                      {formatMoney(row.totalCost, currencyLabel(row.currency, t))}
                     </span>
                   ),
                 },

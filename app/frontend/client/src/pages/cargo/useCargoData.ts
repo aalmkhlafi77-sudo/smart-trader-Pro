@@ -8,8 +8,8 @@ import { db,
   type SettingsRow,
 } from "@/lib/db";
 
-/** عملتا العرض الاحتياطيتان (نصوص عربية مخزَّنة) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
-const CURRENCY_FALLBACKS = { local: "ريال", foreign: "دولار" };
+/** عملتا العرض الاحتياطيتان (رمزا ISO منذ S5). */
+const CURRENCY_FALLBACKS = { local: "SAR", foreign: "USD" };
 
 export function useCargoData() {
   const [items, setItems] = useState<ItemRow[]>([]);

@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { latestDatedItemPrice } from "@/lib/latestItemPrice";
+import { currencyLabel } from "@/lib/currency";
 import type { ItemPriceRow, ItemRow, PriceHistoryRow, PriceLevel } from "@/lib/db";
 import { PriceHistoryTable } from "./PriceHistoryTable";
 
@@ -25,8 +26,8 @@ export interface PriceDraft {
   source?: string;
 }
 
-/** قيمة العملة الاحتياطية للعرض (نص عربي مخزَّن) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
-const FALLBACK_CURRENCY = "دولار";
+/** قيمة العملة الاحتياطية للعرض (رمز ISO منذ S5). */
+const FALLBACK_CURRENCY = "USD";
 
 interface PriceLevelsFormProps {
   items: ItemRow[];
@@ -106,7 +107,7 @@ export function PriceLevelsForm({
               options={items.map(item => ({
                 value: item.id,
                 label: item.name,
-                hint: `${item.code ? `[${item.code}] ` : ""}${item.currency || FALLBACK_CURRENCY}`,
+                hint: `${item.code ? `[${item.code}] ` : ""}${currencyLabel(item.currency || FALLBACK_CURRENCY, t)}`,
               }))}
             />
           }
@@ -117,7 +118,7 @@ export function PriceLevelsForm({
           <div className="mt-3">
             <InheritedValue
               label={t("items.priceCurrency")}
-              value={selectedItem.currency || FALLBACK_CURRENCY}
+              value={currencyLabel(selectedItem.currency || FALLBACK_CURRENCY, t)}
               source={selectedItem.name}
               tone="inherited"
             />
@@ -158,7 +159,7 @@ export function PriceLevelsForm({
                       control={
                         <CurrencyField
                           value={d.price}
-                          suffix={selectedItem.currency}
+                          suffix={currencyLabel(selectedItem.currency, t)}
                           onChange={e => updateDraft(index, { price: e.target.value })}
                           placeholder="0.00"
                         />

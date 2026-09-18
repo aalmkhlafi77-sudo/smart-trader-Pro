@@ -70,8 +70,8 @@ export interface CargoDraft {
 /** أسماء بنود التكلفة البدائية — مطابقة حرفية للمنطق (مقارنة الاسم "الجمارك" في المحرك). */
 export const CUSTOMS_LINE_NAME = "الجمارك";
 export const FREIGHT_LINE_NAME = "الشحن الدولي";
-/** قيم مخزَّنة تُكتب في صفوف التكلفة (نصوص عربية) — الترحيل إلى ISO مؤجَّل إلى S5. */
-export const FALLBACK_FOREIGN_CURRENCY = "دولار";
+/** قيم مخزَّنة تُكتب في صفوف التكلفة (رموز ISO منذ S5). */
+export const FALLBACK_FOREIGN_CURRENCY = "USD";
 export const CIF_INCLUDED_LABEL = "مشمول في شرط التوريد (CIF)";
 export const CIF_INCLUDED_REASON = "المورد يتحمل الشحن ضمن شرط التوريد";
 

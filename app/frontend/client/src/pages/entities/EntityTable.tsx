@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import EmptyHint from "@/components/EmptyHint";
 import type { EntityKind, EntityRow } from "@/lib/db";
+import { currencyLabel } from "@/lib/currency";
 
 const KINDS: { value: EntityKind; labelKey: string }[] = [
   { value: "supplier", labelKey: "entities.kind.supplier" },
@@ -21,16 +22,8 @@ const KINDS: { value: EntityKind; labelKey: string }[] = [
   { value: "other", labelKey: "entities.kind.other" },
 ];
 
-const currencyKey = (currency: string) =>
-  ({
-    دولار: "currency.usd",
-    ريال: "currency.sar",
-    يورو: "currency.eur",
-    يوان: "currency.cny",
-  })[currency];
-
-/** قيمة العملة الاحتياطية للعرض (نص عربي مخزَّن) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
-const FALLBACK_CURRENCY = "دولار";
+/** قيمة العملة الاحتياطية للعرض (رمز ISO منذ S5). */
+const FALLBACK_CURRENCY = "USD";
 
 export function EntityTable({
   rows,
@@ -55,10 +48,8 @@ export function EntityTable({
         "entities.kind.other"
     );
 
-  const currencyLabel = (currency: string) => {
-    const key = currencyKey(currency);
-    return key ? t(key) : currency;
-  };
+  const currencyName = (currency: string) =>
+    currencyLabel(currency, t);
 
   const filtered = rows.filter(r => {
     const q = search.trim().toLowerCase();
@@ -114,7 +105,7 @@ export function EntityTable({
       cell: row => (
         <div className="flex flex-col text-xs">
           <span className="font-semibold text-[var(--port-green)]">
-            {currencyLabel(row.defaultCurrency ?? FALLBACK_CURRENCY)}
+            {currencyName(row.defaultCurrency ?? FALLBACK_CURRENCY)}
           </span>
           <span className="text-[10px] text-muted-foreground" dir="ltr">
             {t("common.exchangeRate")}: {row.defaultExchangeRate ?? 3.75}

@@ -1,7 +1,7 @@
-/** قيم العملات المخزَّنة (نصوص عربية) — الترحيل إلى رموز ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
+/** قيم العملات المخزَّنة برموز ISO (منذ S5) — التسميات المترجمة عبر currency.*. */
 export const CURRENCY_OPTIONS: { value: string; labelKey: string }[] = [
-  { value: "دولار", labelKey: "currency.usd" },
-  { value: "ريال", labelKey: "currency.sar" },
-  { value: "يورو", labelKey: "currency.eur" },
-  { value: "يوان", labelKey: "currency.cny" },
+  { value: "USD", labelKey: "currency.usd" },
+  { value: "SAR", labelKey: "currency.sar" },
+  { value: "EUR", labelKey: "currency.eur" },
+  { value: "CNY", labelKey: "currency.cny" },
 ];

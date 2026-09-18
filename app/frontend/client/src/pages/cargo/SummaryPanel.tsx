@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Field, RateField, SectionCard, SummaryRail } from "@/components/patterns";
 import { Button } from "@/components/ui/button";
 import { formatMoney } from "@/lib/pricing";
+import { currencyLabel } from "@/lib/currency";
 import type { CargoPricingResult } from "@/lib/cargoPricing";
 import type { PriceLevel } from "@/lib/db";
 
@@ -44,7 +45,7 @@ export function SummaryPanel({
   const { t } = useLanguage();
 
   const money = (v: number) => (
-    <span dir="ltr">{formatMoney(v, localCurrency)}</span>
+    <span dir="ltr">{formatMoney(v, currencyLabel(localCurrency, t))}</span>
   );
 
   const fullRows = [
@@ -125,7 +126,7 @@ export function SummaryPanel({
               className="ledger-figure mt-1 text-sm font-semibold text-[var(--ink)]"
               dir="ltr"
             >
-              {formatMoney(result.totalSuggestedRevenue, localCurrency)}
+              {formatMoney(result.totalSuggestedRevenue, currencyLabel(localCurrency, t))}
             </p>
           </div>
         </div>
@@ -191,7 +192,7 @@ function PriceSavePanel({
             onChange={event => onToggleSelect(row.itemId, event.target.checked)}
           />
           <span className="truncate text-xs">
-            {row.name} · {formatMoney(row.suggested, localCurrency)}
+            {row.name} · {formatMoney(row.suggested, currencyLabel(localCurrency, t))}
           </span>
           <select
             className="field-input h-8 text-xs"

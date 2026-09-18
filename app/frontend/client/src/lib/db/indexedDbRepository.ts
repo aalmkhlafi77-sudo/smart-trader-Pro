@@ -5,9 +5,13 @@
 
 import type { BackupPayload, Repository } from "./repository";
 import {
+  AR_CURRENCY_TO_ISO,
   DB_NAME,
+  DEFAULT_CURRENCIES,
+  DEFAULT_UNITS,
   SCHEMA_VERSION,
   TABLES,
+  mapCurrencyToISO,
   type AttachmentRow,
   type BackupLogRow,
   type CargoCostAllocationRow,
@@ -15,6 +19,8 @@ import {
   type CargoCostLineRow,
   type CargoCostRunRow,
   type CategoryRow,
+  type CurrencyRow,
+  type EntityContactRow,
   type EntityRow,
   type ItemPriceRow,
   type ItemRow,
@@ -31,6 +37,7 @@ import {
   type SpecTemplateRow,
   type NoteRow,
   type TaskRow,
+  type UnitRow,
 } from "./schema";
 
 const STORES = Object.values(TABLES);
@@ -125,7 +132,7 @@ function normalizeBackupPayload(payload: BackupPayload): BackupPayload {
     tables: {
       entities: rows<EntityRow>("entities").map(entity => ({
         ...entity,
-        defaultCurrency: entity.defaultCurrency ?? "دولار",
+        defaultCurrency: entity.defaultCurrency ?? "USD",
         defaultExchangeRate: Number(entity.defaultExchangeRate ?? 3.75),
       })),
       categories: rows<CategoryRow>("categories"),
@@ -191,6 +198,9 @@ function normalizeBackupPayload(payload: BackupPayload): BackupPayload {
         customActivity: settings.customActivity ?? "",
       })),
       meta: rows<MetaRow>("meta"),
+      currencies: rows<CurrencyRow>("currencies"),
+      units: rows<UnitRow>("units"),
+      entity_contacts: rows<EntityContactRow>("entity_contacts"),
     },
   };
 }
@@ -272,8 +282,8 @@ const DEFAULT_SPEC_TEMPLATES: Array<
 
 export const DEFAULT_SETTINGS: SettingsRow = {
   id: "app",
-  localCurrency: "ريال",
-  foreignCurrency: "دولار",
+  localCurrency: "SAR",
+  foreignCurrency: "USD",
   defaultExchangeRate: 3.75,
   defaultCustomsRate: 0.12,
   defaultMarginRate: 0.2,
@@ -282,6 +292,111 @@ export const DEFAULT_SETTINGS: SettingsRow = {
   customActivity: "",
   updatedAt: nowIso(),
 };
+
+export interface MigrationStats {
+  converted: Record<string, number>;
+  unknownValues: string[];
+  seeded: Record<string, number>;
+}
+
+const KNOWN_AR_VALUES = new Set(Object.keys(AR_CURRENCY_TO_ISO));
+const ISO_CODE_PATTERN = /^[A-Z]{3}$/;
+
+/**
+ * ترحيل S5 (v10 → v11): تحويل قيم العملات العربية المخزَّنة إلى رموز ISO
+ * في نفس الحقول (تُبقى الأعمدة للقراءة فقط)، وبذر العملات والوحدات.
+ * آمنة التكرار: القيم المحوَّلة مسبقاً لا تطابق الخريطة فتُترك كما هي.
+ */
+export async function migrateToV11(): Promise<MigrationStats> {
+  const stats: MigrationStats = { converted: {}, unknownValues: [], seeded: {} };
+  const seenUnknown = new Set<string>();
+
+  const convertRow = (
+    table: string,
+    row: Record<string, unknown> & { id: string },
+    fields: string[]
+  ): { row: Record<string, unknown> & { id: string }; changed: boolean } => {
+    let changed = false;
+    const next = { ...row };
+    for (const field of fields) {
+      const value = next[field];
+      if (typeof value !== "string") continue;
+      const trimmed = value.trim();
+      const mapped = mapCurrencyToISO(value);
+      if (mapped !== value) {
+        next[field] = mapped;
+        changed = true;
+        stats.converted[table] = (stats.converted[table] ?? 0) + 1;
+      } else if (
+        trimmed !== "" &&
+        !KNOWN_AR_VALUES.has(trimmed) &&
+        !ISO_CODE_PATTERN.test(trimmed) &&
+        !seenUnknown.has(value)
+      ) {
+        seenUnknown.add(value);
+        stats.unknownValues.push(value);
+      }
+    }
+    return { row: next, changed };
+  };
+
+  const migrateStore = async (store: string, fields: string[]) => {
+    const rows = await getAll<Record<string, unknown> & { id: string }>(store);
+    await Promise.all(
+      rows.map(async row => {
+        const { row: next, changed } = convertRow(store, row, fields);
+        if (changed) await put(store, next);
+      })
+    );
+  };
+
+  await migrateStore(TABLES.entities, ["defaultCurrency"]);
+  await migrateStore(TABLES.items, ["currency"]);
+  await migrateStore(TABLES.itemPrices, ["currency"]);
+  await migrateStore(TABLES.priceHistory, ["currency"]);
+  await migrateStore(TABLES.cargoCostRuns, ["currency"]);
+  await migrateStore(TABLES.cargoCostItems, ["currency"]);
+  await migrateStore(TABLES.cargoCostLines, ["currency"]);
+  await migrateStore(TABLES.logisticsRates, ["currency"]);
+  await migrateStore(TABLES.priceLists, ["currency"]);
+  await migrateStore(TABLES.priceListItems, ["currency"]);
+  await migrateStore(TABLES.pricingRuns, ["currency"]);
+  await migrateStore(TABLES.settings, ["localCurrency", "foreignCurrency"]);
+
+  const existingCurrencies = await getAll<CurrencyRow>(TABLES.currencies);
+  if (existingCurrencies.length === 0) {
+    await Promise.all(DEFAULT_CURRENCIES.map(row => put(TABLES.currencies, row)));
+    stats.seeded[TABLES.currencies] = DEFAULT_CURRENCIES.length;
+  }
+  const existingUnits = await getAll<UnitRow>(TABLES.units);
+  if (existingUnits.length === 0) {
+    const names = new Set(DEFAULT_UNITS.map(unit => unit.name));
+    const derived: UnitRow[] = [];
+    const templates = await getAll<SpecTemplateRow>(TABLES.specTemplates);
+    for (const template of templates) {
+      const candidates = [
+        template.defaultUnit,
+        ...String(template.unitOptions ?? "").split(/[|,،]/),
+      ];
+      for (const raw of candidates) {
+        const name = (raw ?? "").trim();
+        if (!name || names.has(name)) continue;
+        names.add(name);
+        derived.push({
+          id: `u_derived_${derived.length}`,
+          name,
+          kind: "",
+          factorToBase: 1,
+          baseUnit: name,
+        });
+      }
+    }
+    const all = [...DEFAULT_UNITS, ...derived];
+    await Promise.all(all.map(row => put(TABLES.units, row)));
+    stats.seeded[TABLES.units] = all.length;
+  }
+  return stats;
+}
 
 export const indexedDbRepository: Repository = {
   async init() {
@@ -314,6 +429,10 @@ export const indexedDbRepository: Repository = {
         schemaVersion: SCHEMA_VERSION,
         updatedAt: nowIso(),
       } satisfies MetaRow);
+    }
+    if ((meta?.schemaVersion ?? 10) < 11) {
+      const stats = await migrateToV11();
+      console.warn("[S5] currency migration v10→v11:", stats);
     }
     if (!meta?.specTemplatesSeeded) {
       const templates = await getAll<SpecTemplateRow>(TABLES.specTemplates);
@@ -666,6 +785,24 @@ export const indexedDbRepository: Repository = {
   },
   saveSettings: row => put(TABLES.settings, row),
 
+  listCurrencies: () => getAll<CurrencyRow>(TABLES.currencies),
+  saveCurrency: row => put(TABLES.currencies, row),
+
+  listUnits: () => getAll<UnitRow>(TABLES.units),
+  saveUnit: row => put(TABLES.units, row),
+
+  async listEntityContacts(entityId: string) {
+    const rows = await getAll<EntityContactRow>(TABLES.entityContacts);
+    return rows
+      .filter(row => row.entityId === entityId)
+      .sort(
+        (a, b) =>
+          b.isPrimary - a.isPrimary || a.name.localeCompare(b.name, "ar")
+      );
+  },
+  saveEntityContact: row => put(TABLES.entityContacts, row),
+  deleteEntityContact: id => remove(TABLES.entityContacts, id),
+
   async getMeta() {
     const row = await getById<MetaRow>(TABLES.meta, "app");
     return (
@@ -704,6 +841,9 @@ export const indexedDbRepository: Repository = {
       price_list_items,
       settings,
       meta,
+      currencies,
+      units,
+      entity_contacts,
     ] = await Promise.all([
       getAll<EntityRow>(TABLES.entities),
       getAll<CategoryRow>(TABLES.categories),
@@ -728,6 +868,9 @@ export const indexedDbRepository: Repository = {
       getAll<PriceListItemRow>(TABLES.priceListItems),
       getAll<SettingsRow>(TABLES.settings),
       getAll<MetaRow>(TABLES.meta),
+      getAll<CurrencyRow>(TABLES.currencies),
+      getAll<UnitRow>(TABLES.units),
+      getAll<EntityContactRow>(TABLES.entityContacts),
     ]);
     return {
       format: "smart-trader-backup",
@@ -757,6 +900,9 @@ export const indexedDbRepository: Repository = {
         price_list_items,
         settings,
         meta,
+        currencies,
+        units,
+        entity_contacts,
       },
     } satisfies BackupPayload;
   },
@@ -777,6 +923,15 @@ export const indexedDbRepository: Repository = {
       throw new Error("صيغة الملف غير صحيحة");
     }
     const normalized = normalizeBackupPayload(payload);
+    console.info(
+      "[S5] restore counts:",
+      Object.fromEntries(
+        Object.entries(normalized.tables).map(([key, rows]) => [
+          key,
+          (rows as unknown[]).length,
+        ])
+      )
+    );
     if (mode === "replace") {
       await Promise.all(
         [
@@ -801,6 +956,9 @@ export const indexedDbRepository: Repository = {
           TABLES.logisticsRouteTemplates,
           TABLES.priceLists,
           TABLES.priceListItems,
+          TABLES.currencies,
+          TABLES.units,
+          TABLES.entityContacts,
         ].map(store => clearStore(store))
       );
     }
@@ -834,7 +992,12 @@ export const indexedDbRepository: Repository = {
     t.price_lists?.forEach(r => jobs.push(put(TABLES.priceLists, r)));
     t.price_list_items?.forEach(r => jobs.push(put(TABLES.priceListItems, r)));
     t.settings?.forEach(r => jobs.push(put(TABLES.settings, r)));
+    t.currencies?.forEach(r => jobs.push(put(TABLES.currencies, r)));
+    t.units?.forEach(r => jobs.push(put(TABLES.units, r)));
+    t.entity_contacts?.forEach(r => jobs.push(put(TABLES.entityContacts, r)));
     await Promise.all(jobs);
+    const restoreStats = await migrateToV11();
+    console.warn("[S5] post-restore migration:", restoreStats);
     if (!t.spec_templates?.length) {
       const existingTemplates = await getAll<SpecTemplateRow>(
         TABLES.specTemplates
@@ -890,6 +1053,9 @@ export const indexedDbRepository: Repository = {
         TABLES.logisticsRouteTemplates,
         TABLES.priceLists,
         TABLES.priceListItems,
+        TABLES.currencies,
+        TABLES.units,
+        TABLES.entityContacts,
       ].map(s => clearStore(s))
     );
   },

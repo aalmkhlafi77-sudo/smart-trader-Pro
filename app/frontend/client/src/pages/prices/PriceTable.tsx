@@ -5,11 +5,12 @@ import { DataTable, StatusPill, type Column } from "@/components/patterns";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatMoney } from "@/lib/pricing";
+import { currencyLabel } from "@/lib/currency";
 import { latestDatedItemPrice } from "@/lib/latestItemPrice";
 import type { ItemPriceRow, ItemRow } from "@/lib/db";
 
-/** قيمة العملة الاحتياطية للعرض (نص عربي مخزَّن) — الترحيل إلى ISO مؤجَّل إلى S5. محمية عبر ALLOW_DEC. */
-const FALLBACK_CURRENCY = "دولار";
+/** قيمة العملة الاحتياطية للعرض (رمز ISO منذ S5). */
+const FALLBACK_CURRENCY = "USD";
 
 export function PriceTable({
   items,
@@ -56,7 +57,7 @@ export function PriceTable({
       header: t("items.priceCurrency"),
       cell: row => (
         <span className="text-xs font-semibold text-[var(--port-green)]">
-          {row.currency || FALLBACK_CURRENCY}
+          {currencyLabel(row.currency || FALLBACK_CURRENCY, t)}
         </span>
       ),
     },
@@ -70,7 +71,7 @@ export function PriceTable({
         return (
           <div className="flex flex-col text-xs">
             <span className="font-extrabold text-[var(--ink)]" dir="ltr">
-              {formatMoney(latest.price, row.currency)}
+              {formatMoney(latest.price, currencyLabel(row.currency, t))}
             </span>
             <span className="text-[9px] text-muted-foreground" dir="ltr">
               {latest.effectiveDate} ({t("prices.price")} {latest.level})
