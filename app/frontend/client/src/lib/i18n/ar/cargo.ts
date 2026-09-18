@@ -144,6 +144,7 @@ const dict: Record<string, string> = {
   "cargo.routeWord": "المسار",
   "cargo.routesComparison": "مقارنة المسارات",
   "cargo.routesComparisonFileName": "مقارنة-مسارات-التاجر-الذكي",
+  "cargo.saleSaveSkipped": "لم تُحفظ أسعار البيع لأصناف بلا سعر صرف صالح",
   "cargo.runsDesc": "كل ملفات التكلفة المحفوظة وحالاتها",
   "cargo.runsEmpty": "لا توجد ملفات حمولة محفوظة بعد.",
   "cargo.runsOpen": "فتح",

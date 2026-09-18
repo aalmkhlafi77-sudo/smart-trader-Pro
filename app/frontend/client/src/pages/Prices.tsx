@@ -132,7 +132,7 @@ export default function Prices() {
       price3Date: drafts[2].date || todayInput(),
       price4: toNum(drafts[3].price),
       price4Date: drafts[3].date || todayInput(),
-      currency: existing?.currency || selectedItem.currency,
+      currency: selectedItem.currency,
       notes: notes.trim(),
       createdAt: existing?.createdAt ?? nowIso(),
       updatedAt: nowIso(),
@@ -217,7 +217,6 @@ export default function Prices() {
               items={items}
               selectedId={selectedId}
               onSelectId={setSelectedId}
-              rowCurrency={prices.find(p => p.itemId === selectedId)?.currency}
               drafts={drafts}
               setDrafts={setDrafts}
               notes={notes}

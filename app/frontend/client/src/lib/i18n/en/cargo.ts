@@ -144,6 +144,7 @@ const dict: Record<string, string> = {
   "cargo.routeWord": "Route",
   "cargo.routesComparison": "Routes comparison",
   "cargo.routesComparisonFileName": "smart-trader-routes-comparison",
+  "cargo.saleSaveSkipped": "Selling prices skipped for items without a valid exchange rate",
   "cargo.runsDesc": "All saved cost files and their statuses",
   "cargo.runsEmpty": "No saved cargo files yet.",
   "cargo.runsOpen": "Open",

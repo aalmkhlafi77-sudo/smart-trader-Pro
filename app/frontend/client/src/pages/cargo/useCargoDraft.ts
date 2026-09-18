@@ -92,10 +92,7 @@ export function useCargoDraft(args: {
     if (draft.items.some(item => item.itemId === source.id))
       return toast.info(t("cargo.itemAlreadyInLoad"));
     const latest = latestDatedItemPrice(priceRows[source.id] ?? null);
-    // عملة السعر من صف الأسعار نفسه (لا عملة الصنف): القيمة المحسوبة SAR
-    // بعملة SAR وصرف 1، وسعر المورد بعملته وصرف سلسلته — دون خلط.
-    const rowCurrency = priceRows[source.id]?.currency || source.currency;
-    const isLocal = rowCurrency === localCurrency;
+    const isLocal = source.currency === localCurrency;
     const next: CargoItemDraft = {
       id: newId("cargoitem"),
       itemId: source.id,
@@ -103,7 +100,7 @@ export function useCargoDraft(args: {
       priceSource: latest ? "latest-dated" : "manual",
       priceEffectiveDate: latest?.effectiveDate ?? "",
       unitPrice: latest ? String(latest.price) : "",
-      currency: rowCurrency || settings?.foreignCurrency || FALLBACK_FOREIGN_CURRENCY,
+      currency: source.currency || settings?.foreignCurrency || FALLBACK_FOREIGN_CURRENCY,
       exchangeRate: String(
         isLocal
           ? 1
@@ -136,15 +133,14 @@ export function useCargoDraft(args: {
     };
     const price = values[level] ?? { price: null, effectiveDate: "" };
     const source = itemById[cargoItem.itemId];
-    const rowCurrency = row?.currency || source?.currency || cargoItem.currency;
     updateItem(cargoItem.id, {
       priceLevel: level,
       priceSource: "selected-level",
       unitPrice: price.price == null ? "" : String(price.price),
       priceEffectiveDate: price.effectiveDate || "",
-      currency: rowCurrency,
+      currency: source?.currency || cargoItem.currency,
       exchangeRate:
-        rowCurrency === localCurrency
+        (source?.currency || cargoItem.currency) === localCurrency
           ? "1"
           : String(
               source?.defaultExchangeRate ||

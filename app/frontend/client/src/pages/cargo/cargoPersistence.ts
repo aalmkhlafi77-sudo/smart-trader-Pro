@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { calculateCargoPricing, type CargoPricingResult } from "@/lib/cargoPricing";
+import { calculateCargoPricing } from "@/lib/cargoPricing";
 import {
   db,
   type CargoCostItemRow,
@@ -168,7 +168,7 @@ export async function persistRun(args: {
 
 export async function persistSalePrices(args: {
   items: CargoCostItemRow[];
-  result: CargoPricingResult;
+  saveRows: { itemId: string; converted: number; currency: string }[];
   selection: Record<string, boolean>;
   levels: Record<string, PriceLevel>;
   priceRows: Record<string, ItemPriceRow>;
@@ -176,20 +176,29 @@ export async function persistSalePrices(args: {
   localCurrency: string;
   t: (key: string) => string;
 }): Promise<boolean> {
-  const { items, result, selection, levels, priceRows, fileName, localCurrency, t } = args;
+  const { items, saveRows, selection, levels, priceRows, fileName, localCurrency, t } = args;
   const selected = items.filter(item => selection[item.itemId]);
   if (selected.length === 0) {
     toast.info(t("cargo.selectItemToSaveSellingPrice"));
     return false;
   }
+  // القيمة المخزَّنة بعملة الصنف دائماً (لا تُخلط عملات داخل الصف أبداً)؛
+  // الأجنبي بلا صرف صالح يُتخطَّى بدل تخزين قمامة.
+  const skipped: string[] = [];
   const timestamp = nowIso();
   await Promise.all(
     selected.map(async cargoItem => {
+      const row = saveRows.find(r => r.itemId === cargoItem.itemId);
+      const rate = cargoItem.exchangeRate;
+      if (row && row.currency !== localCurrency && !(rate > 0)) {
+        skipped.push(cargoItem.itemName || cargoItem.itemId);
+        return;
+      }
       const current = priceRows[cargoItem.itemId];
       const level =
         levels[cargoItem.itemId] ?? firstEmptyLevel(current, cargoItem.priceLevel);
-      const value =
-        result.items.find(row => row.itemId === cargoItem.itemId)?.suggestedPrice ?? 0;
+      const value = row?.converted ?? 0;
+      const currency = row?.currency || current?.currency || localCurrency;
       const fields =
         level === 1
           ? { price1: value, price1Date: timestamp.slice(0, 10) }
@@ -209,7 +218,7 @@ export async function persistSalePrices(args: {
         price3Date: current?.price3Date ?? "",
         price4: current?.price4 ?? null,
         price4Date: current?.price4Date ?? "",
-        currency: localCurrency,
+        currency,
         notes: `${t("cargo.fromCargoFile")} ${fileName}`,
         createdAt: current?.createdAt ?? timestamp,
         updatedAt: timestamp,
@@ -222,12 +231,16 @@ export async function persistSalePrices(args: {
         priceLevel: level,
         price: value,
         effectiveDate: timestamp.slice(0, 10),
-        currency: localCurrency,
+        currency,
         notes: next.notes,
         createdAt: timestamp,
       });
     })
   );
+  if (skipped.length > 0) {
+    toast.warning(`${t("cargo.saleSaveSkipped")}: ${skipped.join(t("common.listSeparator"))}`);
+    return selected.length > skipped.length;
+  }
   toast.success(t("cargo.sellingPricesSaved"));
   return true;
 }

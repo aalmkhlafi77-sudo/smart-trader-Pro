@@ -144,6 +144,7 @@ const dict: Record<string, string> = {
   "cargo.routeWord": "Güzergâh",
   "cargo.routesComparison": "Güzergâh karşılaştırması",
   "cargo.routesComparisonFileName": "akilli-tacar-guzergah-karsilastirma",
+  "cargo.saleSaveSkipped": "Geçerli döviz kuru olmayan ürünler için satış fiyatları atlandı",
   "cargo.runsDesc": "Kaydedilmiş tüm maliyet dosyaları ve durumları",
   "cargo.runsEmpty": "Henüz kaydedilmiş yük dosyası yok.",
   "cargo.runsOpen": "Aç",

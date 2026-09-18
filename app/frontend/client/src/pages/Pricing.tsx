@@ -113,10 +113,26 @@ export default function Pricing() {
     }
   };
 
+  // صفوف الحفظ: المقترح SAR للعرض + المحوَّل لعملة الصنف للتخزين (مصدر واحد).
+  const saveRows = file.cargoItems.map(item => {
+    const currency = file.itemById[item.itemId]?.currency || localCurrency;
+    const rate = Number(item.exchangeRate);
+    const suggested =
+      file.result.items.find(r => r.itemId === item.itemId)?.suggestedPrice ?? 0;
+    return {
+      itemId: item.itemId,
+      name: file.itemById[item.itemId]?.name ?? "",
+      suggested,
+      converted:
+        rate > 0 ? Math.round((suggested / rate) * 100) / 100 : suggested,
+      currency,
+    };
+  });
+
   const doSaveSalePrices = async () => {
     const ok = await persistSalePrices({
       items: file.cargoItems,
-      result: file.result,
+      saveRows,
       selection: priceSaveSelection,
       levels: priceSaveLevels,
       priceRows,
@@ -242,13 +258,7 @@ export default function Pricing() {
             canSavePrices={Boolean(draft.runId) && draft.status === "approved"}
             showPriceSave={showPriceSave}
             onTogglePriceSave={() => setShowPriceSave(v => !v)}
-            saveRows={file.cargoItems.map(item => ({
-              itemId: item.itemId,
-              name: file.itemById[item.itemId]?.name ?? "",
-              suggested:
-                file.result.items.find(r => r.itemId === item.itemId)
-                  ?.suggestedPrice ?? 0,
-            }))}
+            saveRows={saveRows}
             priceSaveSelection={priceSaveSelection}
             priceSaveLevels={priceSaveLevels}
             onToggleSelect={(itemId, v) =>

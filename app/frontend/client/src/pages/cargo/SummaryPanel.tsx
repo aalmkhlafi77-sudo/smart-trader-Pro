@@ -10,7 +10,12 @@ import type { PriceLevel } from "@/lib/db";
 export interface PriceSaveRow {
   itemId: string;
   name: string;
+  /** السعر المقترح المحتسب بالعملة المحلية (للعرض فقط). */
   suggested: number;
+  /** القيمة المخزَّنة فعلاً: المقترح محوَّلاً لعملة الصنف ومقرَّباً لمنزلتين. */
+  converted: number;
+  /** عملة الصنف — لغة التخزين الوحيدة لمستوياته. */
+  currency: string;
 }
 
 export function SummaryPanel({
@@ -191,8 +196,10 @@ function PriceSavePanel({
             checked={Boolean(priceSaveSelection[row.itemId])}
             onChange={event => onToggleSelect(row.itemId, event.target.checked)}
           />
-          <span className="truncate text-xs">
+          <span className="truncate text-xs" dir="ltr">
             {row.name} · {formatMoney(row.suggested, currencyLabel(localCurrency, t))}
+            {" ≈ "}
+            {formatMoney(row.converted, currencyLabel(row.currency, t))}
           </span>
           <select
             className="field-input h-8 text-xs"

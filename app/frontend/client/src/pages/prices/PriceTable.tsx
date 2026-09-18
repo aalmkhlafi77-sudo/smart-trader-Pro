@@ -71,7 +71,7 @@ export function PriceTable({
         return (
           <div className="flex flex-col text-xs">
             <span className="font-extrabold text-[var(--ink)]" dir="ltr">
-              {formatMoney(latest.price, currencyLabel(p?.currency ?? row.currency, t))}
+              {formatMoney(latest.price, currencyLabel(row.currency, t))}
             </span>
             <span className="text-[9px] text-muted-foreground" dir="ltr">
               {latest.effectiveDate} ({t("prices.price")} {latest.level})
