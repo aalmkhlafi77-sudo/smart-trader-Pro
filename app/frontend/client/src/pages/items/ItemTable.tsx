@@ -28,6 +28,7 @@ export function ItemTable({
   onDuplicate,
   onCalculate,
   onDelete,
+  initialSearch = "",
 }: {
   items: ItemRow[];
   entities: EntityRow[];
@@ -39,9 +40,10 @@ export function ItemTable({
   onDuplicate: (row: ItemRow) => void;
   onCalculate: (row: ItemRow) => void;
   onDelete: (row: ItemRow) => void;
+  initialSearch?: string;
 }) {
   const { t } = useLanguage();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(initialSearch);
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterEntity, setFilterEntity] = useState("all");
 

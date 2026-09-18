@@ -269,10 +269,13 @@ export default function Items() {
               categories={categories}
               specsByItem={specsByItem}
               attachmentCounts={attachmentCounts}
+              initialSearch={
+                new URLSearchParams(window.location.search).get("q") ?? ""
+              }
               onView={row => void view(row)}
               onEdit={edit}
               onDuplicate={duplicate}
-              onCalculate={row => navigate(`/pricing?itemId=${row.id}`)}
+              onCalculate={row => navigate(`/cargo?itemId=${row.id}`)}
               onDelete={remove}
             />
           </SectionCard>
@@ -287,7 +290,7 @@ export default function Items() {
         viewRun={viewRun}
         onClose={() => setViewItem(null)}
         onEdit={edit}
-        onCalculate={row => navigate(`/pricing?itemId=${row.id}`)}
+        onCalculate={row => navigate(`/cargo?itemId=${row.id}`)}
       />
     </AppLayout>
   );

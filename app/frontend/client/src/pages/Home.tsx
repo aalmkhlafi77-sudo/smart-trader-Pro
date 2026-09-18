@@ -12,56 +12,26 @@ import {
 } from "@/contexts/WorkspacePreferencesContext";
 import { db, type PricingRunRow, type TaskRow } from "@/lib/db";
 import { formatCount, formatMoney } from "@/lib/pricing";
-import {
-  Building2,
-  Calculator,
-  Database,
-  FileDown,
-  HardDrive,
-  Package,
-  Tags,
-} from "lucide-react";
+import { NAV_FLAT } from "@/components/layout/navGroups";
+import { GlobalSearchButton } from "./home/GlobalSearch";
+import { DataHealthCard } from "./home/DataHealthCard";
+import { HardDrive } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 
-const ENTRIES = [
-  {
-    href: "/entities",
-    labelKey: "entities.title",
-    descKey: "entities.subtitle",
-    icon: Building2,
-  },
-  {
-    href: "/items",
-    labelKey: "items.title",
-    descKey: "home.entry.itemsDesc",
-    icon: Package,
-  },
-  {
-    href: "/prices",
-    labelKey: "prices.title",
-    descKey: "home.entry.pricesDesc",
-    icon: Tags,
-  },
-  {
-    href: "/pricing",
-    labelKey: "pricing.title",
-    descKey: "home.entry.pricingDesc",
-    icon: Calculator,
-  },
-  {
-    href: "/export",
-    labelKey: "export.title",
-    descKey: "home.entry.exportDesc",
-    icon: FileDown,
-  },
-  {
-    href: "/backup",
-    labelKey: "backup.title",
-    descKey: "home.entry.backupDesc",
-    icon: Database,
-  },
-];
+const ENTRY_DESCS: Record<string, string> = {
+  "/entities": "entities.subtitle",
+  "/items": "home.entry.itemsDesc",
+  "/prices": "home.entry.pricesDesc",
+  "/cargo": "home.entry.pricingDesc",
+  "/export": "home.entry.exportDesc",
+  "/backup": "home.entry.backupDesc",
+};
+
+const ENTRIES = NAV_FLAT.filter(item => ENTRY_DESCS[item.href]).map(item => ({
+  ...item,
+  descKey: ENTRY_DESCS[item.href],
+}));
 const ACTIVITY_LABEL_KEYS: Record<string, string> = {
   "import-export": "activity.importExport",
   wholesale: "activity.wholesale",
@@ -155,7 +125,7 @@ export default function Home() {
                 size="lg"
                 className="bg-card/95"
               >
-                <Link href="/pricing">{t("home.calculateContainer")}</Link>
+                <Link href="/cargo">{t("home.calculateContainer")}</Link>
               </Button>
             </div>
             <div className="mt-5 inline-flex items-center gap-2 rounded border border-[var(--port-green)]/20 bg-card/70 px-2.5 py-1.5 text-[11px] text-muted-foreground">
@@ -281,7 +251,13 @@ export default function Home() {
   };
   return (
     <AppLayout title={t("home.title")} subtitle={t("home.ledgerSubtitle")}>
+      <div className="mb-5">
+        <GlobalSearchButton />
+      </div>
       <div className="grid gap-5 lg:grid-cols-2">
+        <div className="lg:col-span-2">
+          <DataHealthCard />
+        </div>
         {visibleWidgets.map(renderWidget)}
       </div>
     </AppLayout>
