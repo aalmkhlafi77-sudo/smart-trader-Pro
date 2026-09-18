@@ -1,4 +1,5 @@
 import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   CurrencyField,
@@ -18,6 +19,7 @@ import type {
 } from "@/lib/db";
 import type { CargoCostDraft, CargoDraft } from "../shared";
 import { CUSTOMS_LINE_NAME, fromOption, optionValue } from "../shared";
+import { ExpenseLineSheet } from "./ExpenseLineSheet";
 
 const STATUS_PILL: Record<
   CargoCostStatus,
@@ -50,6 +52,7 @@ export function ExpensesStep({
   onToggleCost: (cost: CargoCostDraft) => void;
 }) {
   const { t } = useLanguage();
+  const [sheetOpen, setSheetOpen] = useState(false);
   const stageLabel: Record<CargoCostStage, string> = {
     factory: t("cargo.stageFactory"),
     port: t("cargo.stagePort"),
@@ -63,6 +66,12 @@ export function ExpensesStep({
       title={t("cargo.stepExpenses")}
       description={t("cargo.stepExpensesHint")}
       stamp={t("cargo.stepStampExpenses")}
+      actions={
+        <Button size="sm" onClick={() => setSheetOpen(true)}>
+          <Plus className="h-3.5 w-3.5" />
+          {t("cargo.addCustomLine")}
+        </Button>
+      }
     >
       <div className="space-y-3">
         {draft.costs.map(cost => {
@@ -276,6 +285,15 @@ export function ExpensesStep({
           );
         })}
       </div>
+      <ExpenseLineSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        localCurrency={localCurrency}
+        foreignCurrency={foreignCurrency}
+        defaultExchangeRate={defaultExchangeRate}
+        itemNames={itemNames}
+        onAdd={line => onUpdateDraft({ costs: [...draft.costs, line] })}
+      />
     </SectionCard>
   );
 }
