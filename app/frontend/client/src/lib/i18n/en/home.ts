@@ -1,0 +1,28 @@
+const dict: Record<string, string> = {
+  "home.addItem": "Record item",
+  "home.calculateContainer": "Calculate container cost",
+  "home.costRegister": "Calculation register",
+  "home.costRuns": "Cost calculations",
+  "home.entries": "Work entries",
+  "home.entriesHint": "Choose the task you want to carry out now",
+  "home.entry.backupDesc": "Export and restore your data",
+  "home.entry.exportDesc": "Price lists for customers",
+  "home.entry.itemsDesc": "Items and technical specifications",
+  "home.entry.pricesDesc": "Four prices and their effective dates",
+  "home.entry.pricingDesc": "Container cost and selling price",
+  "home.heroEyebrow": "Local cost ledger",
+  "home.heroText": "Record partners, items and specifications, enter four prices for each item with their effective dates, then calculate the complete container cost before setting a selling price.",
+  "home.heroTitle": "Know your real cost before you are asked for a price",
+  "home.latestCosts": "Latest cost calculations",
+  "home.latestCostsHint": "The five most recently saved calculations",
+  "home.ledgerIndex": "Ledger index",
+  "home.ledgerSubtitle": "Record an item, calculate its cost, then negotiate with confidence",
+  "home.localData": "Your data stays on this device only",
+  "home.noCosts": "No calculations yet. Start with the cost calculator.",
+  "home.priceLists": "Price lists",
+  "home.subtitle": "Keep your items and prices in one reliable ledger",
+  "home.title": "Workspace",
+  "home.unitCost": "Unit cost",
+};
+
+export default dict;

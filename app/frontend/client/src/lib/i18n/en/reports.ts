@@ -1,0 +1,20 @@
+const dict: Record<string, string> = {
+  "reports.byLastCalc": "Per last calculation",
+  "reports.costWord": "Cost",
+  "reports.exportExcel": "Export Excel",
+  "reports.exportPdf": "Export PDF",
+  "reports.fileName": "smart-trader-report",
+  "reports.lastSavedCalc": "Last saved calculation",
+  "reports.localSubtitle": "Analyze items, prices and cost locally",
+  "reports.marginShort": "Margin",
+  "reports.pdfSubtitle": "Items, partners, specifications and prices statement",
+  "reports.resultWord": "result",
+  "reports.sourceNote": "Cost and selling price come from the latest saved calculation per item, while supplier price uses the item's recorded price 1. All data stays on your device.",
+  "reports.subtitle": "Compare price, cost and margin from one register",
+  "reports.supplierCurrencyNote": "Supplier price is shown in its original currency as recorded for the item; this value is not converted to the local currency.",
+  "reports.supplierCurrencyWord": "Supplier currency",
+  "reports.supplierOriginal": "Original supplier price",
+  "reports.title": "Smart reports",
+};
+
+export default dict;

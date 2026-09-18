@@ -1,0 +1,25 @@
+const dict: Record<string, string> = {
+  "followup.addNote": "إضافة ملاحظة",
+  "followup.addTask": "إضافة مهمة أو موعد",
+  "followup.cancelEdit": "إلغاء التعديل",
+  "followup.details": "تفاصيل المتابعة",
+  "followup.dueAt": "الموعد",
+  "followup.editTask": "تعديل مهمة أو موعد",
+  "followup.linkedRecord": "السجل المرتبط",
+  "followup.localNote": "ملاحظة محلية",
+  "followup.notesRegister": "سجل الملاحظات",
+  "followup.priority": "الأولوية",
+  "followup.priorityHigh": "عالية",
+  "followup.priorityLow": "منخفضة",
+  "followup.priorityMedium": "متوسطة",
+  "followup.savedDate": "تاريخ الحفظ",
+  "followup.subtitle": "مهام ومواعيد وملاحظات مرتبطة بسجلاتك",
+  "followup.taskDetails": "تفاصيل المهمة أو الموعد",
+  "followup.taskUpdated": "تم تحديث المهمة أو الموعد",
+  "followup.tasksRegister": "سجل المتابعة",
+  "followup.title": "المتابعة والملاحظات",
+  "followup.untitledNote": "ملاحظة بلا عنوان",
+  "followup.updateTask": "حفظ التعديل",
+};
+
+export default dict;

@@ -1,0 +1,1602 @@
+{
+  "تم تحديث قالب المواصفة": {
+    "key": "settings.specTemplateUpdated",
+    "en": "Specification template updated",
+    "tr": "Özellik şablonu güncellendi"
+  },
+  "تمت إضافة قالب المواصفة": {
+    "key": "settings.specTemplateAdded",
+    "en": "Specification template added",
+    "tr": "Özellik şablonu eklendi"
+  },
+  "حذف قالب": {
+    "key": "settings.deleteTemplate",
+    "en": "Delete template",
+    "tr": "Şablonu sil"
+  },
+  "؟ لن تُحذف المواصفات المسجلة سابقاً داخل الأصناف": {
+    "key": "settings.deleteTemplateNote",
+    "en": "? Specifications already recorded inside items will not be deleted.",
+    "tr": "? Ürünlerde kaydedilmiş özellikler silinmez."
+  },
+  "تم نسخ": {
+    "key": "settings.templatesCopiedPrefix",
+    "en": "Copied",
+    "tr": "Kopyalandı"
+  },
+  "قالب إلى تصنيف": {
+    "key": "settings.templatesCopiedSuffix",
+    "en": "templates into category",
+    "tr": "şablon kategoride"
+  },
+  "هوية الجهاز ومساحة العمل": {
+    "key": "settings.groupDevice",
+    "en": "Device identity & workspace",
+    "tr": "Cihaz kimliği ve çalışma alanı"
+  },
+  "العربية": { "key": "settings.langArabic", "en": "Arabic", "tr": "Arapça" },
+  "حماية الدفتر": {
+    "key": "settings.groupLedgerProtection",
+    "en": "Ledger protection",
+    "tr": "Defter koruması"
+  },
+  "هوية العمل والإعدادات المالية": {
+    "key": "settings.groupBusinessFinance",
+    "en": "Business identity & financial settings",
+    "tr": "İşletme kimliği ve mali ayarlar"
+  },
+  "مثال: مؤسسة الإعمار التجارية": {
+    "key": "settings.businessNamePlaceholder",
+    "en": "Example: Al-Emar Commercial Est.",
+    "tr": "Örnek: Emar Ticaret Kuruluş"
+  },
+  "اسم العملة": {
+    "key": "settings.currencyName",
+    "en": "Currency name",
+    "tr": "Para birimi adı"
+  },
+  "نسبة الجمارك": {
+    "key": "settings.customsRate",
+    "en": "Customs rate",
+    "tr": "Gümrük oranı"
+  },
+  "هامش الربح": {
+    "key": "settings.profitMargin",
+    "en": "Profit margin",
+    "tr": "Kâr marjı"
+  },
+  "مكتبة الشحن والتخليص": {
+    "key": "settings.groupLogisticsLibrary",
+    "en": "Shipping & clearance library",
+    "tr": "Nakliye ve gümrükleme kütüphanesi"
+  },
+  "كتالوج الأصناف والمواصفات": {
+    "key": "settings.groupCatalog",
+    "en": "Items & specifications catalog",
+    "tr": "Ürün ve özellik kataloğu"
+  },
+  "مثال: موكيت، سيراميك، باركيه": {
+    "key": "settings.categoryPlaceholder",
+    "en": "Example: carpet, ceramic, parquet",
+    "tr": "Örnek: halı, seramik, parke"
+  },
+  "لا توجد تصنيفات بعد. أضف تصنيفاتك الرئيسية لتظهر عند تسجيل الأصناف": {
+    "key": "settings.noCategories",
+    "en": "No categories yet. Add your main categories to show them when recording items.",
+    "tr": "Henüz kategori yok. Ürün kaydı sırasında görünmesi için ana kategorilerinizi ekleyin."
+  },
+  "حذف التصنيف لا يحذف الأصناف المرتبطة به، لكنه يزيله من القائمة المنسدلة": {
+    "key": "settings.deleteCategoryNote",
+    "en": "Deleting a category does not delete its linked items, but removes it from the dropdown.",
+    "tr": "Kategoriyi silmek bağlı ürünleri silmez, yalnızca açılır listeden kaldırır."
+  },
+  "تعديل قالب مواصفة": {
+    "key": "settings.editSpecTemplate",
+    "en": "Edit specification template",
+    "tr": "Özellik şablonunu düzenle"
+  },
+  "تعديل قالب المواصفة": {
+    "key": "settings.editSpecTemplateTitle",
+    "en": "Edit specification template",
+    "tr": "Özellik şablonunu düzenle"
+  },
+  "مثال: الكثافة": {
+    "key": "settings.specNamePlaceholder",
+    "en": "Example: density",
+    "tr": "Örnek: yoğunluk"
+  },
+  "مثال: جرام": {
+    "key": "settings.specUnitPlaceholder",
+    "en": "Example: gram",
+    "tr": "Örnek: gram"
+  },
+  "مثال: جرام | كجم | طن": {
+    "key": "settings.specUnitsPlaceholder",
+    "en": "Example: gram | kg | ton",
+    "tr": "Örnek: gram | kg | ton"
+  },
+  "افصل الوحدات بعلامة | أو فاصلة. ستظهر كقائمة اختيار عند إدخال الصنف": {
+    "key": "settings.specUnitsHint",
+    "en": "Separate units with | or a comma. They appear as a choice list when entering the item.",
+    "tr": "Birimleri | veya virgülle ayırın. Ürün girerken seçim listesi olarak görünür."
+  },
+  "مثال: أدخل الوزن بالجرام": {
+    "key": "settings.specPlaceholderPlaceholder",
+    "en": "Example: enter weight in grams",
+    "tr": "Örnek: ağırlığı gram olarak girin"
+  },
+  "سجل القوالب المحفوظة": {
+    "key": "settings.savedTemplatesRegister",
+    "en": "Saved templates register",
+    "tr": "Kaydedilen şablon kayıtı"
+  },
+  "قالب": {
+    "key": "settings.templateCountWord",
+    "en": "templates",
+    "tr": "şablon"
+  },
+  "لا توجد قوالب مواصفات بعد": {
+    "key": "settings.noSpecTemplates",
+    "en": "No specification templates yet.",
+    "tr": "Henüz özellik şablonu yok."
+  },
+  "تصنيف": {
+    "key": "settings.categoryLabel",
+    "en": "Category",
+    "tr": "Kategori"
+  },
+  "قالب عام": {
+    "key": "settings.generalTemplate",
+    "en": "General template",
+    "tr": "Genel şablon"
+  },
+  "وحدات": { "key": "settings.unitsLabel", "en": "Units", "tr": "Birimler" },
+  "مقارنة": {
+    "key": "settings.compareLabel",
+    "en": "Comparison",
+    "tr": "Karşılaştırma"
+  },
+  "التصدير": {
+    "key": "settings.exportLabel",
+    "en": "Export",
+    "tr": "Dışa aktarma"
+  },
+  "إخفاء قالب من مكان ما يؤثر في الظهور الجديد في تلك الصفحة، ولا يحذف بيانات المواصفة المخزنة داخل الأصناف": {
+    "key": "settings.hideTemplateNote",
+    "en": "Hiding a template in one place affects new entries on that page only; it does not delete specification data stored inside items.",
+    "tr": "Bir şablonu bir yerde gizlemek yalnızca o sayfadaki yeni girdileri etkiler; ürünlerdeki özellik verilerini silmez."
+  },
+  "سعر البيع بهامش": {
+    "key": "settings.sellingPriceWithMargin",
+    "en": "Selling price with margin",
+    "tr": "Marjla satış fiyatı"
+  },
+  "هذا المثال لا يشمل الشحن والتخليص لأنها تُدخل لكل حاوية على حدة. الإعدادات هنا تُستخدم كقيم بداية فقط، ويمكن تجاوزها داخل أي عملية حساب دون تغيير الإعداد العام": {
+    "key": "settings.exampleNote",
+    "en": "This example excludes shipping and clearance because they are entered per container. Settings here are starting values only and can be overridden in any calculation without changing the global setting.",
+    "tr": "Bu örnek, konteyner bazında girildiği için nakliye ve gümrüklemeyi içermez. Ayarlar burada yalnızca başlangıç değeridir; genel ayarı değiştirmeden her hesapta değiştirilebilir."
+  },
+  "أضف التصنيفات من صفحة الإعدادات": {
+    "key": "items.addCategoriesFromSettings",
+    "en": "Add categories from the Settings page",
+    "tr": "Kategorileri Ayarlar sayfasından ekleyin"
+  },
+  "اختر جهة": {
+    "key": "items.selectPartner",
+    "en": "Select a partner",
+    "tr": "Bir taraf seçin"
+  },
+  "اعتماد العملة": {
+    "key": "items.currencyApproval",
+    "en": "Currency approval",
+    "tr": "Para birimi onayı"
+  },
+  "اختر العملة": {
+    "key": "items.selectCurrency",
+    "en": "Select currency",
+    "tr": "Para birimi seçin"
+  },
+  "مثال: 12": {
+    "key": "items.example12",
+    "en": "Example: 12",
+    "tr": "Örnek: 12"
+  },
+  "ابحث بالاسم أو الكود أو المواصفة أو الجهة...": {
+    "key": "items.searchPlaceholder",
+    "en": "Search by name, code, specification or partner...",
+    "tr": "Ad, kod, özellik veya taraf ile ara..."
+  },
+  "لا تظهر أسماء الأصناف أو المواصفات أو بيانات المنافسين على الشاشة. اضغط «وضع الاجتماع» مجدداً بعد انتهاء النقاش لإظهار السجل": {
+    "key": "items.meetingModeNote",
+    "en": "Item names, specifications and competitor data are hidden on screen. Press Meeting mode again after the discussion to show the register.",
+    "tr": "Ürün adları, özellikler ve rakip verileri ekranda gösterilmez. Tartışma bitince kayıdı göstermek için tekrar Toplantı modu'na basın."
+  },
+  "صرف": { "key": "cargo.rateShort", "en": "Rate", "tr": "Kur" },
+  "جمارك": { "key": "cargo.customsShort", "en": "Customs", "tr": "Gümrük" },
+  "تكرار": { "key": "common.duplicate", "en": "Duplicate", "tr": "Çoğalt" },
+  "اختر صنفاً لإضافته إلى الحمولة": {
+    "key": "cargo.selectItemForLoad",
+    "en": "Select an item to add to the load",
+    "tr": "Yüke eklemek için ürün seçin"
+  },
+  "الصنف موجود بالفعل في الحمولة": {
+    "key": "cargo.itemAlreadyInLoad",
+    "en": "The item is already in the load",
+    "tr": "Ürün yükte zaten mevcut"
+  },
+  "وحدة": { "key": "cargo.unitWord", "en": "unit", "tr": "birim" },
+  "اختر قالب مسار أولاً": {
+    "key": "cargo.selectRouteTemplateFirst",
+    "en": "Select a route template first",
+    "tr": "Önce güzergâh şablonu seçin"
+  },
+  "مصاريف ورسوم التخليص": {
+    "key": "cargo.clearanceExpenses",
+    "en": "Clearance expenses & fees",
+    "tr": "Gümrükleme giderleri ve ücretleri"
+  },
+  "النقل الداخلي": {
+    "key": "cargo.inlandTransport",
+    "en": "Inland transport",
+    "tr": "İç nakliye"
+  },
+  "تم تطبيق القالب على المسار. راجع القيم قبل الحفظ.": {
+    "key": "cargo.templateAppliedReview",
+    "en": "Template applied to the route. Review the values before saving.",
+    "tr": "Şablon güzergâha uygulandı. Kaydetmeden önce değerleri gözden geçirin."
+  },
+  "أضف صنفاً واحداً على الأقل إلى الحمولة": {
+    "key": "cargo.addAtLeastOneItem",
+    "en": "Add at least one item to the load",
+    "tr": "Yüke en az bir ürün ekleyin"
+  },
+  "أكمل سعر وكمية وسعر صرف كل صنف قبل الاعتماد": {
+    "key": "cargo.completeItemBeforeApproval",
+    "en": "Complete price, quantity and exchange rate for each item before approval",
+    "tr": "Onaydan önce her ürün için fiyat, miktar ve kuru tamamlayın"
+  },
+  "حمولة": { "key": "cargo.loadWord", "en": "Load", "tr": "Yük" },
+  "تم اعتماد وحفظ ملف تكلفة الحمولة": {
+    "key": "cargo.cargoFileApproved",
+    "en": "Cargo cost file approved and saved",
+    "tr": "Yük maliyet dosyası onaylandı ve kaydedildi"
+  },
+  "تم حفظ المسودة على جهازك": {
+    "key": "cargo.draftSaved",
+    "en": "Draft saved on your device",
+    "tr": "Taslak cihazınıza kaydedildi"
+  },
+  "اختر صنفاً واحداً على الأقل لحفظ سعر البيع": {
+    "key": "cargo.selectItemToSaveSellingPrice",
+    "en": "Select at least one item to save the selling price",
+    "tr": "Satış fiyatını kaydetmek için en az bir ürün seçin"
+  },
+  "من ملف تكلفة الحمولة": {
+    "key": "cargo.fromCargoFile",
+    "en": "From cargo cost file",
+    "tr": "Yük maliyet dosyasından"
+  },
+  "تم حفظ أسعار البيع المختارة كسجلات مؤرخة": {
+    "key": "cargo.sellingPricesSaved",
+    "en": "Selected selling prices saved as dated records",
+    "tr": "Seçilen satış fiyatları tarihli kayıtlar olarak kaydedildi"
+  },
+  "بدأ ملف تكلفة حمولة جديد": {
+    "key": "cargo.newCargoFileStarted",
+    "en": "New cargo cost file started",
+    "tr": "Yeni yük maliyet dosyası başlatıldı"
+  },
+  "ملف تكلفة الحمولة": {
+    "key": "cargo.cargoCostFile",
+    "en": "Cargo cost file",
+    "tr": "Yük maliyet dosyası"
+  },
+  "إصدار": { "key": "cargo.versionWord", "en": "version", "tr": "sürüm" },
+  "مسودة محلية — ابدأ من الحمولة أو اختر قالب مسار": {
+    "key": "cargo.localDraftHint",
+    "en": "Local draft — start from the load or choose a route template",
+    "tr": "Yerel taslak — yükten başlayın veya güzergâh şablonu seçin"
+  },
+  "اسم الملف: حمولة موكيت تركيا - أغسطس 2026": {
+    "key": "cargo.fileNameExample",
+    "en": "File name: Turkey carpet load - August 2026",
+    "tr": "Dosya adı: Türkiye halı yükü - Ağustos 2026"
+  },
+  "مرجع أو فاتورة": {
+    "key": "cargo.referenceOrInvoice",
+    "en": "Reference or invoice",
+    "tr": "Referans veya fatura"
+  },
+  "استيراد": { "key": "cargo.importWord", "en": "Import", "tr": "İthalat" },
+  "شراء محلي": {
+    "key": "cargo.localPurchase",
+    "en": "Local purchase",
+    "tr": "Yerel alım"
+  },
+  "خطوات ملف التكلفة": {
+    "key": "cargo.costFileSteps",
+    "en": "Cost file steps",
+    "tr": "Maliyet dosyası adımları"
+  },
+  "الأصناف والحمولة": {
+    "key": "cargo.stepItemsLoad",
+    "en": "Items & load",
+    "tr": "Ürünler ve yük"
+  },
+  "إضافة للحمولة": {
+    "key": "cargo.addToLoad",
+    "en": "Add to load",
+    "tr": "Yüke ekle"
+  },
+  "لا توجد أصناف في الحمولة بعد. أضف الصنف ثم أدخل الكمية الفعلية": {
+    "key": "cargo.noItemsInLoad",
+    "en": "No items in the load yet. Add the item, then enter the actual quantity.",
+    "tr": "Yükte henüz ürün yok. Ürünü ekleyin, ardından gerçek miktarı girin."
+  },
+  "آخر سعر مؤرخ": {
+    "key": "cargo.latestDatedPrice",
+    "en": "Latest dated price",
+    "tr": "Son tarihli fiyat"
+  },
+  "مستوى محدد يدوياً": {
+    "key": "cargo.manualLevel",
+    "en": "Manually selected level",
+    "tr": "Manuel seçilen seviye"
+  },
+  "سعر معدل يدوياً": {
+    "key": "cargo.manualAdjustedPrice",
+    "en": "Manually adjusted price",
+    "tr": "Manuel düzenlenmiş fiyat"
+  },
+  "أدخل السعر": {
+    "key": "cargo.enterPrice",
+    "en": "Enter price",
+    "tr": "Fiyatı girin"
+  },
+  "الكمية": { "key": "cargo.quantity", "en": "Quantity", "tr": "Miktar" },
+  "المسار والقالب": {
+    "key": "cargo.stepRouteTemplate",
+    "en": "Route & template",
+    "tr": "Güzergâh ve şablon"
+  },
+  "قالب المسار": {
+    "key": "cargo.routeTemplate",
+    "en": "Route template",
+    "tr": "Güzergâh şablonu"
+  },
+  "البدء دون قالب": {
+    "key": "cargo.startWithoutTemplate",
+    "en": "Start without template",
+    "tr": "Şablonsuz başla"
+  },
+  "معاينة القالب": {
+    "key": "cargo.previewTemplate",
+    "en": "Preview template",
+    "tr": "şablonu önizle"
+  },
+  "معاينة PDF": {
+    "key": "common.pdfPreview",
+    "en": "PDF preview",
+    "tr": "PDF önizleme"
+  },
+  "التصنيفات": {
+    "key": "backup.countCategories",
+    "en": "Categories",
+    "tr": "Kategoriler"
+  },
+  "تاريخ الأسعار": {
+    "key": "backup.countPriceHistory",
+    "en": "Price history",
+    "tr": "Fiyat geçmişi"
+  },
+  "المرفقات": {
+    "key": "backup.countAttachments",
+    "en": "Attachments",
+    "tr": "Ekler"
+  },
+  "الملاحظات": { "key": "backup.countNotes", "en": "Notes", "tr": "Notlar" },
+  "المهام": { "key": "backup.countTasks", "en": "Tasks", "tr": "Görevler" },
+  "سجلات الأسعار": {
+    "key": "backup.countPriceRecords",
+    "en": "Price records",
+    "tr": "Fiyat kayıtları"
+  },
+  "الدمج": { "key": "backup.mergeWord", "en": "merge", "tr": "birleştirme" },
+  "الاستعادة": {
+    "key": "backup.restoreWord",
+    "en": "restore",
+    "tr": "geri yükleme"
+  },
+  "بيانات محلية": {
+    "key": "backup.localDataWord",
+    "en": "Local data",
+    "tr": "Yerel veri"
+  },
+  "عالية": { "key": "followup.priorityHigh", "en": "High", "tr": "Yüksek" },
+  "متوسطة": { "key": "followup.priorityMedium", "en": "Medium", "tr": "Orta" },
+  "منخفضة": { "key": "followup.priorityLow", "en": "Low", "tr": "Düşük" },
+  "ملاحظة بلا عنوان": {
+    "key": "followup.untitledNote",
+    "en": "Untitled note",
+    "tr": "Başlıksız not"
+  },
+  "سعر المورد": {
+    "key": "export.modeSupplier",
+    "en": "Supplier price",
+    "tr": "Tedarikçi fiyatı"
+  },
+  "سعر التكلفة": {
+    "key": "export.modeCost",
+    "en": "Cost price",
+    "tr": "Maliyet fiyatı"
+  },
+  "سعر البيع": {
+    "key": "export.modeSale",
+    "en": "Sale price",
+    "tr": "Satış fiyatı"
+  },
+  "جميع الأسعار": {
+    "key": "export.modeAll",
+    "en": "All prices",
+    "tr": "Tüm fiyatlar"
+  },
+  "سعر مسجل": {
+    "key": "export.modeManual",
+    "en": "Recorded price",
+    "tr": "Kayıtlı fiyat"
+  },
+  "تطبيق القالب": {
+    "key": "cargo.applyTemplate",
+    "en": "Apply template",
+    "tr": "Şablonu uygula"
+  },
+  "موقع المنشأ": {
+    "key": "cargo.originLocation",
+    "en": "Origin location",
+    "tr": "Menşe konumu"
+  },
+  "حدد الموقع عند الحاجة": {
+    "key": "cargo.selectLocationIfNeeded",
+    "en": "Select a location if needed",
+    "tr": "Gerekirse konum seçin"
+  },
+  "منفذ التفريغ": {
+    "key": "cargo.dischargePort",
+    "en": "Discharge port",
+    "tr": "Boşaltma limanı"
+  },
+  "موقع التسليم والاستلام": {
+    "key": "cargo.deliveryLocation",
+    "en": "Delivery & pickup location",
+    "tr": "Teslim ve alım konumu"
+  },
+  "شرط التوريد": {
+    "key": "cargo.supplyCondition",
+    "en": "Supply condition",
+    "tr": "Tedarik koşulu"
+  },
+  "نوع النقل": {
+    "key": "cargo.transportType",
+    "en": "Transport type",
+    "tr": "Taşıma türü"
+  },
+  "تطبيق بعد المراجعة": {
+    "key": "cargo.applyAfterReview",
+    "en": "Apply after review",
+    "tr": "Gözden geçirmeden sonra uygula"
+  },
+  "مشمول في شرط التوريد (لن يحسب مرتين)": {
+    "key": "cargo.includedInSupplyCondition",
+    "en": "Included in supply condition (will not be counted twice)",
+    "tr": "Tedarik koşulunda dahil (iki kez hesaplanmaz)"
+  },
+  "رسوم التخليص": {
+    "key": "cargo.clearanceFees",
+    "en": "Clearance fees",
+    "tr": "Gümrükleme ücretleri"
+  },
+  "المصروفات والتوزيع": {
+    "key": "cargo.stepExpenses",
+    "en": "Expenses & distribution",
+    "tr": "Giderler ve dağılım"
+  },
+  "مشمول": { "key": "cargo.included", "en": "Included", "tr": "Dahil" },
+  "يلزم مبلغ": {
+    "key": "cargo.amountRequired",
+    "en": "Amount required",
+    "tr": "Tutar gerekli"
+  },
+  "مبلغ مدخل": {
+    "key": "cargo.enteredAmount",
+    "en": "Entered amount",
+    "tr": "Girilen tutar"
+  },
+  "مشمول في سعر المورد": {
+    "key": "cargo.includedInSupplierPrice",
+    "en": "Included in supplier price",
+    "tr": "Tedarikçi fiyatına dahil"
+  },
+  "يتحمله طرف آخر": {
+    "key": "cargo.borneByOtherParty",
+    "en": "Borne by another party",
+    "tr": "Başka bir tarafın sorumluluğunda"
+  },
+  "يلزم إدخال مبلغ": {
+    "key": "cargo.enterAmountNeeded",
+    "en": "An amount must be entered",
+    "tr": "Bir tutar girilmelidir"
+  },
+  "مبلغ ثابت": {
+    "key": "cargo.fixedAmount",
+    "en": "Fixed amount",
+    "tr": "Sabit tutar"
+  },
+  "لكل وحدة": {
+    "key": "cargo.perUnit",
+    "en": "Per unit",
+    "tr": "Birim başına"
+  },
+  "يدوي": { "key": "cargo.manual", "en": "Manual", "tr": "Manuel" },
+  "تحسب من نسبة الأصناف": {
+    "key": "cargo.calcFromItemShare",
+    "en": "Calculated from item share",
+    "tr": "Ürün payından hesaplanır"
+  },
+  "المبلغ": { "key": "cargo.amount", "en": "Amount", "tr": "Tutar" },
+  "حسب القيمة": {
+    "key": "cargo.byValue",
+    "en": "By value",
+    "tr": "Değere göre"
+  },
+  "حسب الكمية": {
+    "key": "cargo.byQuantity",
+    "en": "By quantity",
+    "tr": "Miktara göre"
+  },
+  "حسب الوزن": {
+    "key": "cargo.byWeight",
+    "en": "By weight",
+    "tr": "Ağırlığa göre"
+  },
+  "حسب المساحة": { "key": "cargo.byArea", "en": "By area", "tr": "Alana göre" },
+  "كل الأصناف المتوافقة": {
+    "key": "cargo.allCompatibleItems",
+    "en": "All compatible items",
+    "tr": "Tüm uyumlu ürünler"
+  },
+  "وعاء الجمارك = قيمة الفاتورة + مبلغ اختياري. لا تدخل مصاريف النقل أو التخليص تلقائياً": {
+    "key": "cargo.customsBaseNote",
+    "en": "Customs base = invoice value + optional amount. Transport or clearance expenses are never added automatically.",
+    "tr": "Gümrük matrahı = fatura değeri + isteğe bağlı tutar. Nakliye veya gümrükleme giderleri otomatik eklenmez."
+  },
+  "مبالغ إضافية ضمن الوعاء الجمركي (اختياري)": {
+    "key": "cargo.customsBaseExtra",
+    "en": "Additional amounts inside the customs base (optional)",
+    "tr": "Gümrük matrahında ek tutarlar (isteğe bağlı)"
+  },
+  "اذكر السبب: مشمول في شرط التوريد أو يتحمله طرف آخر": {
+    "key": "cargo.stateReason",
+    "en": "State the reason: included in supply condition or borne by another party",
+    "tr": "Nedeni belirtin: tedarik koşulunda dahil veya başka tarafın sorumluluğunda"
+  },
+  "المراجعة قبل الحفظ": {
+    "key": "cargo.stepReview",
+    "en": "Review before saving",
+    "tr": "Kaydetmeden önce inceleme"
+  },
+  "ملخص الاستعداد": {
+    "key": "cargo.readinessSummary",
+    "en": "Readiness summary",
+    "tr": "Hazırlık özeti"
+  },
+  "صنف/أصناف في الحمولة": {
+    "key": "cargo.itemsInLoad",
+    "en": "item(s) in the load",
+    "tr": "ürün yükte"
+  },
+  "صنف يحتاج استكمال سعر أو كمية أو صرف": {
+    "key": "cargo.itemNeedsCompletion",
+    "en": "item needs price, quantity or rate completed",
+    "tr": "ürün için fiyat, miktar veya kur tamamlanmalı"
+  },
+  "بيانات الأصناف جاهزة للحساب": {
+    "key": "cargo.itemsReady",
+    "en": "Item data ready for calculation",
+    "tr": "Ürün verileri hesaplamaya hazır"
+  },
+  "بند مصروف ما زال يحتاج مبلغاً أو حالة": {
+    "key": "cargo.expenseNeedsAmount",
+    "en": "an expense line still needs an amount or status",
+    "tr": "bir gider satırı hâlâ tutar veya durum bekliyor"
+  },
+  "كل المصروفات حُددت أو عطلت": {
+    "key": "cargo.allExpensesSet",
+    "en": "All expenses are set or disabled",
+    "tr": "Tüm giderler belirlendi veya devre dışı"
+  },
+  "CIF: الشحن يظهر مشمولاً في شرط التوريد ولا يحسب مرتين": {
+    "key": "cargo.cifNote",
+    "en": "CIF: freight appears included in the supply condition and is not counted twice.",
+    "tr": "CIF: navlun tedarik koşulunda dahil görünür ve iki kez hesaplanmaz."
+  },
+  "يمكن تطبيق أسعار الخدمات من قالب المسار أو إدخالها يدوياً": {
+    "key": "cargo.servicePricesNote",
+    "en": "Service prices can be applied from the route template or entered manually.",
+    "tr": "Hizmet fiyatları güzergâh şablonundan uygulanabilir veya elle girilebilir."
+  },
+  "ملاحظات الملف": {
+    "key": "cargo.fileNotes",
+    "en": "File notes",
+    "tr": "Dosya notları"
+  },
+  "ملاحظات مرجعية لا تدخل في المعادلة": {
+    "key": "cargo.referenceNotes",
+    "en": "Reference notes that do not enter the equation",
+    "tr": "Denkleme girmeyen referans notları"
+  },
+  "نتائج الحمولة": {
+    "key": "cargo.loadResults",
+    "en": "Load results",
+    "tr": "Yük sonuçları"
+  },
+  "توزيع المصروفات": {
+    "key": "cargo.expenseDistribution",
+    "en": "Expense distribution",
+    "tr": "Gider dağılımı"
+  },
+  "أضف أصنافاً وكميات لإظهار النتائج": {
+    "key": "cargo.addItemsToShowResults",
+    "en": "Add items and quantities to show results",
+    "tr": "Sonuçları göstermek için ürün ve miktar ekleyin"
+  },
+  "السابق": { "key": "cargo.previous", "en": "Previous", "tr": "Önceki" },
+  "التالي": { "key": "cargo.next", "en": "Next", "tr": "Sonraki" },
+  "حفظ مسودة": {
+    "key": "cargo.saveDraft",
+    "en": "Save draft",
+    "tr": "Taslağı kaydet"
+  },
+  "اعتماد وحفظ": {
+    "key": "cargo.approveAndSave",
+    "en": "Approve & save",
+    "tr": "Onayla ve kaydet"
+  },
+  "الجمارك على وعاء": {
+    "key": "cargo.customsOnBase",
+    "en": "Customs on base",
+    "tr": "Matrah üzerinde gümrük"
+  },
+  "الجمارك موزعة بحسب قيمة كل صنف. المصروفات المشتركة توزع بالقيمة افتراضياً، ويمكن تغيير الأساس داخل كل بطاقة": {
+    "key": "cargo.customsDistributionNote",
+    "en": "Customs are distributed by each item's value. Shared expenses default to value-based distribution and the basis can be changed inside each card.",
+    "tr": "Gümrük her ürünün değerine göre dağıtılır. Ortak giderler varsayılan olarak değere göre dağıtılır; her kart içinde temel değiştirilebilir."
+  },
+  "قرار التسعير": {
+    "key": "cargo.pricingDecision",
+    "en": "Pricing decision",
+    "tr": "Fiyatlandırma kararı"
+  },
+  "نسبة الربح": {
+    "key": "cargo.profitRate",
+    "en": "Profit rate",
+    "tr": "Kâr oranı"
+  },
+  "إيراد مقترح": {
+    "key": "cargo.suggestedRevenue",
+    "en": "Suggested revenue",
+    "tr": "Önerilen gelir"
+  },
+  "حفظ أسعار البيع المختارة": {
+    "key": "cargo.saveSelectedSellingPrices",
+    "en": "Save selected selling prices",
+    "tr": "Seçilen satış fiyatlarını kaydet"
+  },
+  "سعر": { "key": "cargo.priceWord", "en": "Price", "tr": "Fiyat" },
+  "حفظ المختار فقط": {
+    "key": "cargo.saveSelectedOnly",
+    "en": "Save selected only",
+    "tr": "Yalnızca seçilenleri kaydet"
+  },
+  "التكلفة": { "key": "reports.costWord", "en": "Cost", "tr": "Maliyet" },
+  "نتيجة": { "key": "reports.resultWord", "en": "result", "tr": "sonuç" },
+  "تُستخرج التكلفة وسعر البيع من آخر عملية حساب محفوظة لكل صنف، أما سعر المورد فيأخذ السعر 1 المسجل للصنف. جميع البيانات تبقى على جهازك": {
+    "key": "reports.sourceNote",
+    "en": "Cost and selling price come from the latest saved calculation per item, while supplier price uses the item's recorded price 1. All data stays on your device.",
+    "tr": "Maliyet ve satış fiyatı her ürün için son kaydedilen hesaplamadan alınır; tedarikçi fiyatı ürünün kayıtlı 1. fiyatını kullanır. Tüm veriler cihazınızda kalır."
+  },
+  "سجل بلا اسم": {
+    "key": "common.unnamedRecord",
+    "en": "Unnamed record",
+    "tr": "Adsız kayıt"
+  },
+  "قديمة": { "key": "backup.legacyWord", "en": "legacy", "tr": "eski" },
+  "صنف و": { "key": "backup.itemsAnd", "en": "items and", "tr": "ürün ve" },
+  "جهة": { "key": "backup.partnersWord", "en": "partners", "tr": "taraf" },
+  "تمت": { "key": "backup.doneWord", "en": "done", "tr": "tamamlandı" },
+  "صيغة النسخة مستقلة عن محرك التخزين، لذا يمكن استيرادها لاحقاً في نسخة SQLite عند تحويل التطبيق إلى تطبيق مغلف للجهاز": {
+    "key": "backup.formatPortableNote",
+    "en": "The backup format is independent of the storage engine, so it can later be imported into a SQLite build when the app is wrapped for the device.",
+    "tr": "Yedekleme biçimi depolama motorundan bağımsızdır; uygulama cihaza paketlenirken ileride SQLite sürümüne aktarılabilir."
+  },
+  "إلغاء المعاينة": {
+    "key": "backup.cancelPreview",
+    "en": "Cancel preview",
+    "tr": "Önizlemeyi iptal et"
+  },
+  "إصدار الملف": {
+    "key": "backup.fileVersion",
+    "en": "File version",
+    "tr": "Dosya sürümü"
+  },
+  "تاريخ التصدير": {
+    "key": "backup.exportDate",
+    "en": "Export date",
+    "tr": "Dışa aktarma tarihi"
+  },
+  "نسخة قديمة: سيجري ترحيلها تلقائياً إلى البنية الحالية": {
+    "key": "backup.legacyWillMigrate",
+    "en": "Old backup: it will be migrated automatically to the current structure.",
+    "tr": "Eski yedek: otomatik olarak güncel yapıya taşınacaktır."
+  },
+  "جهات": {
+    "key": "backup.partnersCountWord",
+    "en": "partners",
+    "tr": "taraf"
+  },
+  "أصناف": { "key": "backup.itemsCountWord", "en": "items", "tr": "ürün" },
+  "تأكيد الدمج الآمن": {
+    "key": "backup.confirmSafeMerge",
+    "en": "Confirm safe merge",
+    "tr": "Güvenli birleştirmeyi onayla"
+  },
+  "تأكيد الاستبدال الكامل": {
+    "key": "backup.confirmFullReplace",
+    "en": "Confirm full replacement",
+    "tr": "Tam değiştirmeyi onayla"
+  },
+  "دمج نسخة": {
+    "key": "backup.mergeBackup",
+    "en": "Merge backup",
+    "tr": "Yedeği birleştir"
+  },
+  "سعر مسجل (يدوي": {
+    "key": "export.recordedPriceManual",
+    "en": "Recorded price (manual",
+    "tr": "Kaydedilmiş fiyat (manuel"
+  },
+  "تصدير": { "key": "export.exportWord", "en": "Export", "tr": "Dışa aktar" },
+  "أدخل نسبة جمارك صالحة أو اترك الحقل فارغاً": {
+    "key": "export.validCustomsOrEmpty",
+    "en": "Enter a valid customs rate or leave the field empty",
+    "tr": "Geçerli bir gümrük oranı girin veya alanı boş bırakın"
+  },
+  "ملاحظة محلية": {
+    "key": "followup.localNote",
+    "en": "Local note",
+    "tr": "Yerel not"
+  },
+  "تاريخ الحفظ": {
+    "key": "followup.savedDate",
+    "en": "Saved date",
+    "tr": "Kaydedilme tarihi"
+  },
+  "الإجمالي": { "key": "cargo.totalWord", "en": "Total", "tr": "Toplam" },
+  "عدد المسارات المقارنة": {
+    "key": "cargo.compareRoutesCount",
+    "en": "Number of compared routes",
+    "tr": "Karşılaştırılan güzergâh sayısı"
+  },
+  "ملف التفكيك": {
+    "key": "cargo.breakdownFile",
+    "en": "Breakdown file",
+    "tr": "Döküm dosyası"
+  },
+  "يلزم تسعير": {
+    "key": "cargo.needsPricing",
+    "en": "Needs pricing",
+    "tr": "Fiyatlama gerekli"
+  },
+  "تقارير قرار الشحن والتكلفة": {
+    "key": "cargo.decisionReportsTitle",
+    "en": "Shipping & cost decision reports",
+    "tr": "Nakliye ve maliyet karar raporları"
+  },
+  "تفكيك": { "key": "cargo.breakdownWord", "en": "Breakdown", "tr": "Döküm" },
+  "شامل": {
+    "key": "cargo.allInclusive",
+    "en": "All inclusive",
+    "tr": "Tüm dahil"
+  },
+  "نوع العملية للمقارنة": {
+    "key": "cargo.compareOperationType",
+    "en": "Operation type for comparison",
+    "tr": "Karşılaştırma için işlem türü"
+  },
+  "كل العمليات": {
+    "key": "cargo.allOperations",
+    "en": "All operations",
+    "tr": "Tüm işlemler"
+  },
+  "نقل محلي": {
+    "key": "cargo.localTransport",
+    "en": "Local transport",
+    "tr": "Yerel taşıma"
+  },
+  "المقارنة تستخدم لقطات ملفات الحمولة المحفوظة فقط": {
+    "key": "cargo.compareUsesSnapshots",
+    "en": "Comparison uses saved cargo file snapshots only",
+    "tr": "Karşılaştırma yalnızca kaydedilmiş yük dosyası anlık görüntülerini kullanır"
+  },
+  "جارٍ تحميل ملفات التكلفة المحلية": {
+    "key": "cargo.loadingLocalCostFiles",
+    "en": "Loading local cost files…",
+    "tr": "Yerel maliyet dosyaları yükleniyor…"
+  },
+  "لا تعامل كقيمة صفرية": {
+    "key": "cargo.notTreatedAsZero",
+    "en": "not treated as a zero value",
+    "tr": "sıfır değer olarak işlem görmez"
+  },
+  "تغطية مكتملة في الملفات المعروضة": {
+    "key": "cargo.coverageComplete",
+    "en": "Coverage complete in the displayed files",
+    "tr": "Görüntülenen dosyalarda kapsama tamam"
+  },
+  "مقارنة المسارات": {
+    "key": "cargo.routesComparison",
+    "en": "Routes comparison",
+    "tr": "Güzergâh karşılaştırması"
+  },
+  "الأقل تكلفة إجمالاً ضمن البيانات المعروضة": {
+    "key": "cargo.lowestTotalCost",
+    "en": "Lowest total cost within the displayed data",
+    "tr": "Görüntülenen verilerde en düşük toplam maliyet"
+  },
+  "الأقل": { "key": "cargo.lowestWord", "en": "Lowest", "tr": "En düşük" },
+  "تفكيك تكلفة الشحنة": {
+    "key": "cargo.shipmentCostBreakdown",
+    "en": "Shipment cost breakdown",
+    "tr": "Gönderi maliyet dökümü"
+  },
+  "اختر ملف تكلفة": {
+    "key": "cargo.selectCostFile",
+    "en": "Select a cost file",
+    "tr": "Bir maliyet dosyası seçin"
+  },
+  "إجمالي التكلفة": {
+    "key": "cargo.totalCost",
+    "en": "Total cost",
+    "tr": "Toplam maliyet"
+  },
+  "مؤشرات القرار": {
+    "key": "cargo.decisionIndicators",
+    "en": "Decision indicators",
+    "tr": "Karar göstergeleri"
+  },
+  "قيمة الفاتورة": {
+    "key": "cargo.invoiceValue",
+    "en": "Invoice value",
+    "tr": "Fatura değeri"
+  },
+  "وعاء الجمارك": {
+    "key": "cargo.customsBase",
+    "en": "Customs base",
+    "tr": "Gümrük matrahı"
+  },
+  "المصادر والتعديلات التالية تخص هذه اللقطة المحفوظة فقط": {
+    "key": "cargo.sourcesApplyToSnapshot",
+    "en": "The following sources and adjustments apply to this saved snapshot only",
+    "tr": "Aşağıdaki kaynaklar ve ayarlamalar yalnızca bu kaydedilmiş anlık görüntü içindir"
+  },
+  "لا تُقرأ أسعار القوالب الحالية في هذه التقارير؛ تُعرض لقطات ملفات التكلفة المحفوظة، وتُعامل قيمة الصفر المشمولة وغياب التسعير كحالتين مختلفتين": {
+    "key": "cargo.reportsSnapshotNote",
+    "en": "Current template prices are not read in these reports; saved cost file snapshots are shown, and an included zero value and missing pricing are treated as two different states.",
+    "tr": "Bu raporlarda güncel şablon fiyatları okunmaz; kaydedilmiş maliyet dosyası anlık görüntüleri gösterilir ve dahil sıfır değer ile fiyatlama eksikliği iki farklı durum olarak işlem görür."
+  },
+  "أدخل اسم الموقع أولاً": {
+    "key": "settings.enterLocationNameFirst",
+    "en": "Enter the location name first",
+    "tr": "Önce konum adını girin"
+  },
+  "تم حفظ الموقع محلياً": {
+    "key": "settings.locationSaved",
+    "en": "Location saved locally",
+    "tr": "Konum yerel olarak kaydedildi"
+  },
+  "أدخل اسم السعر ومبلغه بصورة صحيحة": {
+    "key": "settings.enterServicePriceValid",
+    "en": "Enter the price name and amount correctly",
+    "tr": "Fiyat adını ve tutarını doğru girin"
+  },
+  "تم حفظ سعر الخدمة محلياً": {
+    "key": "settings.servicePriceSaved",
+    "en": "Service price saved locally",
+    "tr": "Hizmet fiyatı yerel olarak kaydedildi"
+  },
+  "أدخل اسم قالب المسار": {
+    "key": "settings.enterRouteTemplateName",
+    "en": "Enter the route template name",
+    "tr": "Güzergâh şablon adını girin"
+  },
+  "تم حفظ قالب المسار. لن يطبق في الحاسبة إلا بعد المعاينة والتأكيد.": {
+    "key": "settings.routeTemplateSaved",
+    "en": "Route template saved. It will not apply in the calculator until previewed and confirmed.",
+    "tr": "Güzergâh şablonu kaydedildi. Önizlenip onaylanmadan hesaplayıcıda uygulanmaz."
+  },
+  "حذف هذا السجل من الإعدادات؟ لن تتغير أي عملية تكلفة محفوظة.": {
+    "key": "settings.deleteLogisticsRecordConfirm",
+    "en": "Delete this record from settings? No saved cost calculation will change.",
+    "tr": "Bu kayıt ayarlardan silinsin mi? Kaydedilmiş maliyet hesapları değişmez."
+  },
+  "قوالب الشحن والتخليص": {
+    "key": "settings.logisticsTemplates",
+    "en": "Shipping & clearance templates",
+    "tr": "Nakliye ve gümrükleme Śblonları"
+  },
+  "المواقع المفتوحة": {
+    "key": "settings.openLocations",
+    "en": "Saved locations",
+    "tr": "Kayıtlı konumlar"
+  },
+  "موقع": { "key": "settings.locationWord", "en": "Location", "tr": "Konum" },
+  "اسم الموقع أو المنفذ": {
+    "key": "settings.locationName",
+    "en": "Location or port name",
+    "tr": "Konum veya liman adı"
+  },
+  "منشأ/تصدير": {
+    "key": "settings.originExport",
+    "en": "Origin/export",
+    "tr": "Menşe/ihracat"
+  },
+  "تفريغ": { "key": "settings.discharge", "en": "Discharge", "tr": "Boşaltma" },
+  "تسليم": { "key": "settings.delivery", "en": "Delivery", "tr": "Teslim" },
+  "موقع آخر": {
+    "key": "settings.otherLocation",
+    "en": "Other location",
+    "tr": "Diğer konum"
+  },
+  "حفظ الموقع": {
+    "key": "settings.saveLocation",
+    "en": "Save location",
+    "tr": "Konumu kaydet"
+  },
+  "الدولة (اختياري)": {
+    "key": "settings.countryOptional",
+    "en": "Country (optional)",
+    "tr": "Ülke (isteğe bağlı)"
+  },
+  "المدينة (اختياري)": {
+    "key": "settings.cityOptional",
+    "en": "City (optional)",
+    "tr": "Şehir (isteğe bağlı)"
+  },
+  "أسعار الخدمات": {
+    "key": "settings.servicePrices",
+    "en": "Service prices",
+    "tr": "Hizmet fiyatları"
+  },
+  "اسم السعر أو الجهة المقدمة للخدمة": {
+    "key": "settings.servicePriceName",
+    "en": "Price name or service provider",
+    "tr": "Fiyat adı veya hizmet sağlayıcı"
+  },
+  "شحن دولي": {
+    "key": "settings.internationalShipping",
+    "en": "International shipping",
+    "tr": "Uluslararası nakliye"
+  },
+  "رسوم تخليص": {
+    "key": "settings.clearanceFee",
+    "en": "Clearance fee",
+    "tr": "Gümrükleme ücreti"
+  },
+  "أتعاب مكتب تخليص": {
+    "key": "settings.clearanceOfficeFee",
+    "en": "Clearance office fees",
+    "tr": "Gümrükleme bürosu ücreti"
+  },
+  "نقل داخلي": {
+    "key": "settings.inlandTransfer",
+    "en": "Inland transfer",
+    "tr": "İç nakliye"
+  },
+  "تحميل وتنزيل": {
+    "key": "settings.loadingUnloading",
+    "en": "Loading & unloading",
+    "tr": "Yükleme ve boşaltma"
+  },
+  "مصروف آخر": {
+    "key": "settings.otherExpense",
+    "en": "Other expense",
+    "tr": "Diğer gider"
+  },
+  "قيمة يدوية": {
+    "key": "settings.manualValue",
+    "en": "Manual value",
+    "tr": "Manuel değer"
+  },
+  "منشأ اختياري": {
+    "key": "settings.optionalOrigin",
+    "en": "Optional origin",
+    "tr": "isteğe bağlı menşe"
+  },
+  "وجهة اختيارية": {
+    "key": "settings.optionalDestination",
+    "en": "Optional destination",
+    "tr": "isteğe bağlı varış"
+  },
+  "حفظ السعر": {
+    "key": "settings.savePrice",
+    "en": "Save price",
+    "tr": "Fiyatı kaydet"
+  },
+  "قوالب المسارات": {
+    "key": "settings.routeTemplates",
+    "en": "Route templates",
+    "tr": "Güzergâh şablonları"
+  },
+  "اسم القالب: تركيا ← جدة ← المستودع": {
+    "key": "settings.routeTemplateNameExample",
+    "en": "Template name: Turkey ← Jeddah ← Warehouse",
+    "tr": "Şablon adı: Türkiye ← Cidde ← Depo"
+  },
+  "شرط آخر": {
+    "key": "settings.otherCondition",
+    "en": "Other condition",
+    "tr": "Diğer koşul"
+  },
+  "موقع التسليم": {
+    "key": "settings.deliverySite",
+    "en": "Delivery site",
+    "tr": "Teslim noktası"
+  },
+  "سعر الشحن المرجعي": {
+    "key": "settings.referenceShippingPrice",
+    "en": "Reference shipping price",
+    "tr": "Referans navlun fiyatı"
+  },
+  "سعر التخليص المرجعي": {
+    "key": "settings.referenceClearancePrice",
+    "en": "Reference clearance price",
+    "tr": "Referans gümrükleme fiyatı"
+  },
+  "سعر النقل المرجعي": {
+    "key": "settings.referenceTransportPrice",
+    "en": "Reference transport price",
+    "tr": "Referans taşıma fiyatı"
+  },
+  "حفظ قالب المسار": {
+    "key": "settings.saveRouteTemplate",
+    "en": "Save route template",
+    "tr": "Güzergâh şablonunu kaydet"
+  },
+  "الملف": { "key": "common.fileWord", "en": "File", "tr": "Dosya" },
+  "أكبر من": {
+    "key": "common.greaterThan",
+    "en": "greater than",
+    "tr": "büyüktür"
+  },
+  "تم حفظ": { "key": "common.savedWord", "en": "Saved", "tr": "Kaydedildi" },
+  "مرفق محلياً": {
+    "key": "common.attachmentSavedLocal",
+    "en": "Attachment saved locally",
+    "tr": "Ek yerel olarak kaydedildi"
+  },
+  "تعذر حفظ المرفق": {
+    "key": "common.attachmentSaveFailed",
+    "en": "Could not save the attachment",
+    "tr": "Ek kaydedilemedi"
+  },
+  "حذف هذا المرفق من الجهاز؟": {
+    "key": "common.deleteAttachmentConfirm",
+    "en": "Delete this attachment from the device?",
+    "tr": "Bu ek cihazdan silinsin mi?"
+  },
+  "إرفاق": { "key": "common.attach", "en": "Attach", "tr": "Ekle" },
+  "أرفق صور الكتالوج أو ملفات العرض. تحفظ محلياً وتدخل في النسخة الاحتياطية": {
+    "key": "common.attachHint",
+    "en": "Attach catalog photos or offer files. They are saved locally and included in backups.",
+    "tr": "Katalog fotoğrafları veya teklif dosyaları ekleyin. Yerel olarak kaydedilir ve yedeklere dahil edilir."
+  },
+  "، ": { "key": "common.listSeparator", "en": ", ", "tr": ", " },
+  "مؤسسة الإعمار": {
+    "key": "export.companyExample",
+    "en": "Al-Emar Enterprise",
+    "tr": "Emar Kurumu"
+  },
+  "اللغة، الحماية، الخلفية والنشاط وتفضيلات مساحة العمل": {
+    "key": "settings.groupDeviceHint",
+    "en": "Language, protection, background, activity & workspace preferences",
+    "tr": "Dil, koruma, arka plan, etkinlik ve çalışma alanı tercihleri"
+  },
+  "مستوى عام": {
+    "key": "common.levelGeneral",
+    "en": "General level",
+    "tr": "Genel düzey"
+  },
+  "رمز الدخول وحالة الحماية المحلية": {
+    "key": "settings.groupAccessHint",
+    "en": "Login code & local protection status",
+    "tr": "Giriş kodu ve yerel koruma durumu"
+  },
+  "فرع": { "key": "common.branch", "en": "Branch", "tr": "Şube" },
+  "صورة الخلفية والهوية البصرية عند القفل": {
+    "key": "settings.groupBackgroundHint",
+    "en": "Background image & visual identity at the lock screen",
+    "tr": "Kilit ekranında arka plan görseli ve görsel kimlik"
+  },
+  "التخطيطات والوحدات ومؤشرات النشاط": {
+    "key": "settings.groupDashboardHint",
+    "en": "Layouts, widgets & activity indicators",
+    "tr": "Düzenler, widgetlar ve etkinlik göstergeleri"
+  },
+  "إظهار الزر وحفظ موضعه على الشاشة": {
+    "key": "settings.groupFloatingHint",
+    "en": "Show the button and save its screen position",
+    "tr": "Düğmeyi göster ve ekran konumunu kaydet"
+  },
+  "اسم المنشأة والعملات والقيم الافتراضية للحساب": {
+    "key": "settings.groupBusinessFinanceHint",
+    "en": "Business name, currencies & default calculation values",
+    "tr": "İşletme adı, para birimleri ve varsayılan hesap değerleri"
+  },
+  "اسم يظهر في ترويسات المستندات المصدّرة": {
+    "key": "settings.businessNameHint",
+    "en": "Name shown in exported document headers",
+    "tr": "Dışa aktarılan belge başlıklarında görünen ad"
+  },
+  "العملة المحلية للتكلفة والأجنبية لأسعار الشراء": {
+    "key": "settings.currenciesHint",
+    "en": "Local currency for cost, foreign currency for purchase prices",
+    "tr": "Maliyet için yerel para birimi, alış fiyatları için yabancı para birimi"
+  },
+  "سعر الصرف والجمارك وهامش الربح": {
+    "key": "settings.defaultsHint",
+    "en": "Exchange rate, customs & profit margin",
+    "tr": "Döviz kuru, gümrük ve kâr marjı"
+  },
+  "المواقع المفتوحة وأسعار الخدمات وقوالب المسارات لحاسبة الحمولة": {
+    "key": "settings.groupLogisticsLibraryHint",
+    "en": "Open locations, service prices & route templates for the cargo calculator",
+    "tr": "Yük hesabı için açık konumlar, hizmet fiyatları ve güzergâh şablonları"
+  },
+  "التصنيفات وقوالب المواصفات الفنية الظاهرة في الشاشات والتقارير": {
+    "key": "settings.groupCatalogHint",
+    "en": "Categories & technical specification templates shown in screens and reports",
+    "tr": "Ekranlarda ve raporlarda görünen kategoriler ve teknik özellik şablonları"
+  },
+  "فهرس التصنيفات المتاح عند تسجيل الصنف": {
+    "key": "settings.categoriesIndexHint",
+    "en": "Categories index available when recording an item",
+    "tr": "Ürün kaydında kullanılabilir kategori dizini"
+  },
+  "إضافة القوالب ونسخها وإدارة ظهورها": {
+    "key": "settings.specTemplatesManageHint",
+    "en": "Add, copy & manage template visibility",
+    "tr": "Şablon ekleme, kopyalama ve görünürlük yönetimi"
+  },
+  "الحقول والوحدات ومواضع الظهور": {
+    "key": "settings.specFieldsHint",
+    "en": "Fields, units & visibility places",
+    "tr": "Alanlar, birimler ve görünürlük yerleri"
+  },
+  "تفاصيل": { "key": "common.details", "en": "Details", "tr": "Detaylar" },
+  "انسخ الإعدادات دون تكرار القوالب الموجودة": {
+    "key": "settings.copyTemplatesHint",
+    "en": "Copy settings without duplicating existing templates",
+    "tr": "Mevcut şablonları çoğaltmadan ayarları kopyalayın"
+  },
+  "ترتيب القوالب وتعديلها أو حذفها": {
+    "key": "settings.templatesRegisterHint",
+    "en": "Reorder, edit or delete templates",
+    "tr": "Şablonları sıralayın, düzenleyin veya silin"
+  },
+  "أصناف متعددة، مصروفات موزعة، وقوالب محلية لا تطبق إلا بموافقتك": {
+    "key": "cargo.cargoFileSubtitle",
+    "en": "Multiple items, distributed expenses, and local templates applied only with your approval",
+    "tr": "Birden fazla ürün, dağıtılmış giderler ve yalnızca onayınızla uygulanan yerel şablonlar"
+  },
+  "أضف صنفاً أو عدة أصناف؛ يُجلب آخر سعر مؤرخ تلقائياً من قائمة الأسعار": {
+    "key": "cargo.stepItemsLoadHint",
+    "en": "Add one or more items; the latest dated price is fetched automatically from the price list",
+    "tr": "Bir veya birkaç ürün ekleyin; en güncel tarihli fiyat listesinden otomatik getirilir"
+  },
+  "1 / الحمولة": {
+    "key": "cargo.stepStampLoad",
+    "en": "1 / Load",
+    "tr": "1 / Yük"
+  },
+  "اختر قالباً للمعاينة فقط، ثم طبقه صراحةً إن كان مناسباً": {
+    "key": "cargo.stepRouteHint",
+    "en": "Choose a template for preview only, then apply it explicitly if suitable",
+    "tr": "Yalnızca önizleme için şablon seçin, uygunsa açıkça uygulayın"
+  },
+  "2 / المسار": {
+    "key": "cargo.stepStampRoute",
+    "en": "2 / Route",
+    "tr": "2 / Güzergâh"
+  },
+  "لا يتحول غياب المبلغ إلى صفر؛ اختر الحالة أو أدخل القيمة ثم حدد أساس التوزيع": {
+    "key": "cargo.stepExpensesHint",
+    "en": "A missing amount never becomes zero; choose a status or enter a value, then pick the distribution basis",
+    "tr": "Eksik tutar sıfır olmaz; durum seçin veya değer girin, ardından dağıtım esasını belirleyin"
+  },
+  "3 / المصروفات": {
+    "key": "cargo.stepStampExpenses",
+    "en": "3 / Expenses",
+    "tr": "3 / Giderler"
+  },
+  "يمكن حفظ مسودة ناقصة؛ الاعتماد يحتاج أسعاراً وكميات وصرفاً صالحاً": {
+    "key": "cargo.stepReviewHint",
+    "en": "An incomplete draft can be saved; approval needs prices, quantities and a valid exchange rate",
+    "tr": "Eksik taslak kaydedilebilir; onay için fiyat, miktar ve geçerli kur gerekir"
+  },
+  "4 / مراجعة": {
+    "key": "cargo.stepStampReview",
+    "en": "4 / Review",
+    "tr": "4 / Kontrol"
+  },
+  "تكلفة كل صنف وسعر البيع المقترح قبل اعتماد الملف": {
+    "key": "cargo.stepResultsHint",
+    "en": "Each item's cost and the suggested selling price before approving the file",
+    "tr": "Dosya onaylanmadan önce her ürünün maliyeti ve önerilen satış fiyatı"
+  },
+  "5 / النتائج": {
+    "key": "cargo.stepStampResults",
+    "en": "5 / Results",
+    "tr": "5 / Sonuçlar"
+  },
+  "النتيجة تتحدث مع كل تعديل، دون تغيير أي سعر مصدر": {
+    "key": "cargo.liveResultHint",
+    "en": "The result updates with every edit without changing any source price",
+    "tr": "Sonuç her düzenlemede güncellenir, hiçbir kaynak fiyat değişmez"
+  },
+  "ملخص مرحلي": {
+    "key": "cargo.interimSummary",
+    "en": "Interim summary",
+    "tr": "Ara özet"
+  },
+  "نسبة الربح زيادة على التكلفة": {
+    "key": "cargo.profitOnCostNote",
+    "en": "Profit ratio is added on top of cost",
+    "tr": "Kâr oranı maliyetin üzerine eklenir"
+  },
+  "آخر عمليات النسخ والاستعادة على هذا الجهاز": {
+    "key": "backup.activityHint",
+    "en": "Latest backup & restore operations on this device",
+    "tr": "Bu cihazdaki son yedekleme ve geri yükleme işlemleri"
+  },
+  "أثر الحفظ": {
+    "key": "backup.saveTrace",
+    "en": "Save trace",
+    "tr": "Kayıt izi"
+  },
+  "سجل الملاحظات": {
+    "key": "followup.notesRegister",
+    "en": "Notes register",
+    "tr": "Not kaydı"
+  },
+  "سجل المتابعة": {
+    "key": "followup.tasksRegister",
+    "en": "Follow-up register",
+    "tr": "Takip kaydı"
+  },
+  "قارن ملفات الحمولة المحفوظة ثم افهم مصدر كل بند قبل اعتماد القرار": {
+    "key": "cargo.decisionCompareHint",
+    "en": "Compare saved cargo files, then understand each line's source before approving the decision",
+    "tr": "Kayıtlı yük dosyalarını karşılaştırın, kararı onaylamadan önce her kalemin kaynağını anlayın"
+  },
+  "قرار المرحلة 1": {
+    "key": "cargo.phase1Decision",
+    "en": "Phase 1 decision",
+    "tr": "Aşama 1 kararı"
+  },
+  "لا توجد ملفات تكلفة حمولة محفوظة بعد. احفظ ملف تكلفة من الحاسبة ليظهر تفكيكه ومقارنته هنا.": {
+    "key": "cargo.noCostFilesYet",
+    "en": "No saved cargo cost files yet. Save a cost file from the calculator to see its breakdown and comparison here.",
+    "tr": "Henüz kayıtlı yük maliyet dosyası yok. Hesaplayıcıdan bir dosya kaydedin; ayrıştırma ve karşılaştırma burada görünür."
+  },
+  "الأفضل هنا يعني الأقل ضمن ملفات محفوظة قابلة للمقارنة، وليس توصية مطلقة": {
+    "key": "cargo.bestIsCheapestNote",
+    "en": "Best here means the lowest among comparable saved files, not an absolute recommendation",
+    "tr": "Burada en iyi, karşılaştırılabilir kayıtlı dosyalar arasındaki en düşük demektir; mutlak bir tavsiye değildir"
+  },
+  "مصفوفة المسار": {
+    "key": "cargo.routeMatrix",
+    "en": "Route matrix",
+    "tr": "Güzergâh matrisi"
+  },
+  "اختر ملفاً محفوظاً لرؤية مراحل التكلفة وبطاقات المصروف الفعلية": {
+    "key": "cargo.breakdownPickHint",
+    "en": "Choose a saved file to see cost stages and actual expense cards",
+    "tr": "Maliyet aşamalarını ve gerçek gider kartlarını görmek için kayıtlı bir dosya seçin"
+  },
+  "مواقع وأسعار وقوالب مسارات محلية؛ تُطبّق بعد معاينة صريحة داخل الحاسبة": {
+    "key": "settings.logisticsTemplatesHint",
+    "en": "Local locations, prices & route templates; applied only after an explicit preview inside the calculator",
+    "tr": "Yerel konumlar, fiyatlar ve güzergâh şablonları; hesaplayıcıda açık önizlemeden sonra uygulanır"
+  },
+  "مكتبة المسارات": {
+    "key": "settings.routeLibrary",
+    "en": "Route library",
+    "tr": "Güzergâh kütüphanesi"
+  },
+  "أضف ميناءً أو مدينة أو مستودعاً أو أي موقع يناسب نشاطك": {
+    "key": "settings.locationsAddHint",
+    "en": "Add a port, city, warehouse or any location that fits your activity",
+    "tr": "Faaliyetinize uygun liman, şehir, depo veya herhangi bir konum ekleyin"
+  },
+  "سجّل سعراً للشحن أو التخليص أو النقل بتاريخ اعتماده": {
+    "key": "settings.ratesAddHint",
+    "en": "Record a shipping, clearance or transport price with its approval date",
+    "tr": "Navlun, gümrükleme veya taşıma fiyatını onay tarihiyle kaydedin"
+  },
+  "احفظ الطريق والمصادر المرجعية؛ الحاسبة تعرض معاينة قبل تطبيق القالب": {
+    "key": "settings.routeTemplatesSaveHint",
+    "en": "Save the route and reference sources; the calculator previews before applying the template",
+    "tr": "Yolu ve referans kaynakları kaydedin; hesaplayıcı şablonu uygulamadan önizleme gösterir"
+  },
+  "قيمة الفاتورة / المصنع": {
+    "key": "cargo.stageInvoiceFactory",
+    "en": "Invoice value / factory",
+    "tr": "Fatura değeri / fabrika"
+  },
+  "واصل الميناء": {
+    "key": "cargo.stageArrivedPort",
+    "en": "Arrived at port",
+    "tr": "Limana ulaştı"
+  },
+  "بعد الجمارك والتخليص": {
+    "key": "cargo.stageAfterCustoms",
+    "en": "After customs & clearance",
+    "tr": "Gümrük ve gümrüklemeden sonra"
+  },
+  "واصل المستودع": {
+    "key": "cargo.stageArrivedWarehouse",
+    "en": "Arrived at warehouse",
+    "tr": "Depoya ulaştı"
+  },
+  "الميناء والشحن": {
+    "key": "cargo.metaPortShipping",
+    "en": "Port & shipping",
+    "tr": "Liman ve nakliye"
+  },
+  "النقل والتسليم": {
+    "key": "cargo.metaDeliveryTransport",
+    "en": "Transport & delivery",
+    "tr": "Taşıma ve teslim"
+  },
+  "مسودة": { "key": "cargo.statusDraft", "en": "Draft", "tr": "Taslak" },
+  "قيد المراجعة": {
+    "key": "cargo.statusReview",
+    "en": "Under review",
+    "tr": "İncelemede"
+  },
+  "معتمد": {
+    "key": "cargo.statusApproved",
+    "en": "Approved",
+    "tr": "Onaylandı"
+  },
+  "مؤرشف": {
+    "key": "cargo.statusArchived",
+    "en": "Archived",
+    "tr": "Arşivlendi"
+  },
+  "مدخل": {
+    "key": "cargo.costStatusEntered",
+    "en": "Entered",
+    "tr": "Girildi"
+  },
+  "طرف ثالث": {
+    "key": "cargo.costStatusThirdParty",
+    "en": "Third party",
+    "tr": "Üçüncü taraf"
+  },
+  "معطل": {
+    "key": "cargo.costStatusDisabled",
+    "en": "Disabled",
+    "tr": "Devre dışı"
+  },
+  "مقارنة-مسارات-التاجر-الذكي": {
+    "key": "cargo.routesComparisonFileName",
+    "en": "smart-trader-routes-comparison",
+    "tr": "akilli-tacar-guzergah-karsilastirma"
+  },
+  "ملف الحمولة": {
+    "key": "cargo.cargoLoadFileWord",
+    "en": "Cargo file",
+    "tr": "Yük dosyası"
+  },
+  "المسار": { "key": "cargo.routeWord", "en": "Route", "tr": "Güzergâh" },
+  "اللوجستيات": {
+    "key": "cargo.logisticsWord",
+    "en": "Logistics",
+    "tr": "Lojistik"
+  },
+  "نقص التسعير": {
+    "key": "cargo.pricingGap",
+    "en": "Pricing gap",
+    "tr": "Fiyatlama eksiği"
+  },
+  "البند": { "key": "cargo.lineItemWord", "en": "Line", "tr": "Kalem" },
+  "المرحلة": { "key": "cargo.stageWord", "en": "Stage", "tr": "Aşama" },
+  "المبلغ المحلي": {
+    "key": "cargo.localAmountWord",
+    "en": "Local amount",
+    "tr": "Yerel tutar"
+  },
+  "يعتمد التقرير على لقطة ملف التكلفة المحفوظة ولا يعيد احتساب أسعار القوالب الحالية.": {
+    "key": "cargo.breakdownFooterNote",
+    "en": "The report relies on the saved cost file snapshot and does not recalculate current template prices.",
+    "tr": "Rapor, kaydedilmiş maliyet dosyası anlık görüntüsüne dayanır ve güncel şablon fiyatlarını yeniden hesaplamaz."
+  },
+  "تقرير قرار الشحن والتكلفة": {
+    "key": "cargo.decisionReportTitle",
+    "en": "Shipping & cost decision report",
+    "tr": "Nakliye ve maliyet karar raporu"
+  },
+  "مقارنة المسارات وتفكيك ملف تكلفة حمولة محفوظ": {
+    "key": "cargo.decisionReportSubtitle",
+    "en": "Routes comparison and breakdown of a saved cargo cost file",
+    "tr": "Kayıtlı bir yük maliyet dosyasının güzergâh karşılaştırması ve dökümü"
+  },
+  "1. مقارنة المسارات": {
+    "key": "cargo.sectionRoutesComparison",
+    "en": "1. Routes comparison",
+    "tr": "1. Güzergâh karşılaştırması"
+  },
+  "يرتب الجدول الملفات المحفوظة حسب إجمالي التكلفة. لا تعني المرتبة الأقل توصية مطلقة عند اختلاف محتوى الشحنة أو كمياتها.": {
+    "key": "cargo.sectionRoutesNote",
+    "en": "The table orders saved files by total cost. A lower rank is not an absolute recommendation when shipment content or quantities differ.",
+    "tr": "Tablo kayıtlı dosyaları toplam maliyete göre sıralar. Gönderi içeriği veya miktarları farklıysa daha düşük sıra mutlak bir tavsiye değildir."
+  },
+  "الفاتورة": { "key": "cargo.invoiceShort", "en": "Invoice", "tr": "Fatura" },
+  "2. توزيع مراحل التكلفة": {
+    "key": "cargo.sectionStageDistribution",
+    "en": "2. Cost stage distribution",
+    "tr": "2. Maliyet aşamalarının dağılımı"
+  },
+  "يظهر الرسم الدائري نسبة كل مرحلة من إجمالي التكلفة؛ لا تظهر البنود الصفرية أو المشمولة في الرسم.": {
+    "key": "cargo.sectionDonutNote",
+    "en": "The donut chart shows each stage's share of the total cost; zero or included lines are not shown.",
+    "tr": "Halka grafiği her aşamanın toplam maliyete oranını gösterir; sıfır veya dahil kalemler gösterilmez."
+  },
+  "توزيع نسب تكلفة الشحنة": {
+    "key": "cargo.donutTitle",
+    "en": "Shipment cost share distribution",
+    "tr": "Gönderi maliyet oranları dağılımı"
+  },
+  "النسبة": { "key": "cargo.shareWord", "en": "Share", "tr": "Oran" },
+  "3. مؤشرات ملف التكلفة المختار": {
+    "key": "cargo.sectionSelectedIndicators",
+    "en": "3. Selected cost file indicators",
+    "tr": "3. Seçilen maliyet dosyası göstergeleri"
+  },
+  "المؤشر": {
+    "key": "cargo.indicatorWord",
+    "en": "Indicator",
+    "tr": "Gösterge"
+  },
+  "4. تفكيك بنود تكلفة الشحنة": {
+    "key": "cargo.sectionBreakdownLines",
+    "en": "4. Shipment cost lines breakdown",
+    "tr": "4. Gönderi maliyet kalemleri dökümü"
+  },
+  "المبالغ مبنية على لقطة الملف المحفوظة ولا يعاد احتسابها بأسعار القوالب الحالية.": {
+    "key": "cargo.breakdownLinesNote",
+    "en": "Amounts are based on the saved file snapshot and are not recalculated with current template prices.",
+    "tr": "Tutarlar kayıtlı dosya anlık görüntüsüne dayanır ve güncel şablon fiyatlarıyla yeniden hesaplanmaz."
+  },
+  "يُعرض بند «يلزم تسعير» كبيان ناقص ولا يُعامل كقيمة صفرية. تبقى كل البيانات محلية على الجهاز.": {
+    "key": "cargo.comprehensiveFooterNote",
+    "en": "The «Needs pricing» line is shown as a missing statement and is never treated as zero. All data remains local on the device.",
+    "tr": "«Fiyatlama gerekli» satırı eksik bir ifade olarak gösterilir ve sıfır değeri olarak işleme alınmaz. Tüm veriler cihazda yerel kalır."
+  },
+  "أقل تكلفة شحنة": {
+    "key": "cargo.kpiLowestShipment",
+    "en": "Lowest shipment cost",
+    "tr": "En düşük gönderi maliyeti"
+  },
+  "أقل تكلفة وحدة": {
+    "key": "cargo.kpiLowestUnit",
+    "en": "Lowest unit cost",
+    "tr": "En düşük birim maliyeti"
+  },
+  "ملفات قابلة للمقارنة": {
+    "key": "cargo.kpiComparableFiles",
+    "en": "Comparable files",
+    "tr": "Karşılaştırılabilir dosyalar"
+  },
+  "ملفات غير مؤرشفة": {
+    "key": "cargo.kpiNotArchived",
+    "en": "Non-archived files",
+    "tr": "Arşivlenmemiş dosyalar"
+  },
+  "بنود تحتاج تسعيراً": {
+    "key": "cargo.kpiNeedsPricing",
+    "en": "Lines needing pricing",
+    "tr": "Fiyatlama bekleyen kalemler"
+  },
+  "بند المصروف": {
+    "key": "cargo.expenseLineWord",
+    "en": "Expense line",
+    "tr": "Gider kalemi"
+  },
+  "احتساب التكلفة": {
+    "key": "items.calculateCost",
+    "en": "Calculate cost",
+    "tr": "Maliyeti hesapla"
+  },
+  "عرض البطاقة الكاملة": {
+    "key": "items.viewFullCard",
+    "en": "View full card",
+    "tr": "Tam kartı görüntüle"
+  },
+  "الصور والمرفقات": {
+    "key": "items.imagesAttachments",
+    "en": "Images & attachments",
+    "tr": "Görseller ve ekler"
+  },
+  "تكرار الصنف": {
+    "key": "items.duplicateItem",
+    "en": "Duplicate item",
+    "tr": "Ürünü çoğalt"
+  },
+  "تعديل الصنف": {
+    "key": "items.editItem",
+    "en": "Edit item",
+    "tr": "Ürünü düzenle"
+  },
+  "حذف الصنف": {
+    "key": "items.deleteItem",
+    "en": "Delete item",
+    "tr": "Ürünü sil"
+  },
+  "تعديل الأسعار": {
+    "key": "prices.editPrices",
+    "en": "Edit prices",
+    "tr": "Fiyatları düzenle"
+  },
+  "تعديل الجهة": {
+    "key": "entities.editPartner",
+    "en": "Edit partner",
+    "tr": "Tarafı düzenle"
+  },
+  "تقرير-التاجر-الذكي": {
+    "key": "reports.fileName",
+    "en": "smart-trader-report",
+    "tr": "akilli-tacar-raporu"
+  },
+  "كشف الأصناف والجهات والمواصفات والأسعار": {
+    "key": "reports.pdfSubtitle",
+    "en": "Items, partners, specifications and prices statement",
+    "tr": "Ürünler, taraflar, özellikler ve fiyatlar listesi"
+  },
+  "سعر المورد ظاهر بعملته الأصلية كما سُجّل للصنف، ولا تُحوّل هذه القيمة إلى العملة المحلية.": {
+    "key": "reports.supplierCurrencyNote",
+    "en": "Supplier price is shown in its original currency as recorded for the item; this value is not converted to the local currency.",
+    "tr": "Tedarikçi fiyatı, ürün için kaydedildiği orijinal para biriminde gösterilir ve yerel paraya dönüştürülmez."
+  },
+  "حسب آخر حساب": {
+    "key": "reports.byLastCalc",
+    "en": "Per last calculation",
+    "tr": "Son hesaplamaya göre"
+  },
+  "آخر حساب محفوظ": {
+    "key": "reports.lastSavedCalc",
+    "en": "Last saved calculation",
+    "tr": "Kaydedilen son hesaplama"
+  },
+  "الهامش": { "key": "reports.marginShort", "en": "Margin", "tr": "Marj" },
+  "سعر المورد الأصلي": {
+    "key": "reports.supplierOriginal",
+    "en": "Original supplier price",
+    "tr": "Orijinal tedarikçi fiyatı"
+  },
+  "عملة المورد": {
+    "key": "reports.supplierCurrencyWord",
+    "en": "Supplier currency",
+    "tr": "Tedarikçi para birimi"
+  }
+}

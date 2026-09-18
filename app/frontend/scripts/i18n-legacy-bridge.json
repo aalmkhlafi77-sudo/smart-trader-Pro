@@ -1,0 +1,1798 @@
+{
+  "سجل": {
+    "en": "Record",
+    "tr": "Kayıt"
+  },
+  "لوحة العمل": {
+    "en": "Workspace",
+    "tr": "Çalışma alanı"
+  },
+  "نموذج قيد": {
+    "en": "Entry form",
+    "tr": "Kayıt formu"
+  },
+  "فهرس الدفتر": {
+    "en": "Ledger index",
+    "tr": "Defter dizini"
+  },
+  "محفوظة على هذا الجهاز": {
+    "en": "Saved on this device",
+    "tr": "Bu cihazda kaydedildi"
+  },
+  "عمل جديد": {
+    "en": "New entry",
+    "tr": "Yeni kayıt"
+  },
+  "إلغاء المسودة": {
+    "en": "Discard draft",
+    "tr": "Taslağı sil"
+  },
+  "حفظ الجهة": {
+    "en": "Save partner",
+    "tr": "Tarafı kaydet"
+  },
+  "تحديث الجهة": {
+    "en": "Update partner",
+    "tr": "Tarafı güncelle"
+  },
+  "حفظ الصنف": {
+    "en": "Save item",
+    "tr": "Ürünü kaydet"
+  },
+  "تحديث الصنف": {
+    "en": "Update item",
+    "tr": "Ürünü güncelle"
+  },
+  "حفظ الأسعار": {
+    "en": "Save prices",
+    "tr": "Fiyatları kaydet"
+  },
+  "حفظ عملية الحساب": {
+    "en": "Save calculation",
+    "tr": "Hesaplamayı kaydet"
+  },
+  "إضافة جهة": {
+    "en": "Add partner",
+    "tr": "Taraf ekle"
+  },
+  "إضافة صنف": {
+    "en": "Add item",
+    "tr": "Ürün ekle"
+  },
+  "إضافة مواصفة": {
+    "en": "Add specification",
+    "tr": "Özellik ekle"
+  },
+  "إضافة مهمة أو موعد": {
+    "en": "Add task or appointment",
+    "tr": "Görev veya randevu ekle"
+  },
+  "إضافة ملاحظة": {
+    "en": "Add note",
+    "tr": "Not ekle"
+  },
+  "تصفية": {
+    "en": "Filter",
+    "tr": "Filtrele"
+  },
+  "بحث": {
+    "en": "Search",
+    "tr": "Ara"
+  },
+  "إغلاق": {
+    "en": "Close",
+    "tr": "Kapat"
+  },
+  "تعديل": {
+    "en": "Edit",
+    "tr": "Düzenle"
+  },
+  "حذف": {
+    "en": "Delete",
+    "tr": "Sil"
+  },
+  "عرض": {
+    "en": "View",
+    "tr": "Görüntüle"
+  },
+  "الصور والمرفقات": {
+    "en": "Photos & attachments",
+    "tr": "Fotoğraflar ve ekler"
+  },
+  "الصور والمرفقات المحلية": {
+    "en": "Local photos & attachments",
+    "tr": "Yerel fotoğraflar ve ekler"
+  },
+  "تحميل ملف": {
+    "en": "Upload file",
+    "tr": "Dosya yükle"
+  },
+  "تنزيل": {
+    "en": "Download",
+    "tr": "İndir"
+  },
+  "معاينة": {
+    "en": "Preview",
+    "tr": "Önizleme"
+  },
+  "الجهة": {
+    "en": "Partner",
+    "tr": "Taraf"
+  },
+  "الجهات": {
+    "en": "Partners",
+    "tr": "Taraflar"
+  },
+  "الصنف": {
+    "en": "Item",
+    "tr": "Ürün"
+  },
+  "الأصناف": {
+    "en": "Items",
+    "tr": "Ürünler"
+  },
+  "الأسعار": {
+    "en": "Prices",
+    "tr": "Fiyatlar"
+  },
+  "العملة": {
+    "en": "Currency",
+    "tr": "Para birimi"
+  },
+  "سعر الصرف": {
+    "en": "Exchange rate",
+    "tr": "Döviz kuru"
+  },
+  "العملة الافتراضية": {
+    "en": "Default currency",
+    "tr": "Varsayılan para birimi"
+  },
+  "سعر الصرف المرجعي": {
+    "en": "Reference exchange rate",
+    "tr": "Referans döviz kuru"
+  },
+  "بيانات تعريف الجهة": {
+    "en": "Partner identity",
+    "tr": "Taraf bilgileri"
+  },
+  "بيانات التواصل": {
+    "en": "Contact details",
+    "tr": "İletişim bilgileri"
+  },
+  "إعدادات الشراء الافتراضية": {
+    "en": "Default purchasing settings",
+    "tr": "Varsayılan satın alma ayarları"
+  },
+  "تعريف الصنف": {
+    "en": "Item definition",
+    "tr": "Ürün tanımı"
+  },
+  "التوريد ووحدة القياس": {
+    "en": "Supply & unit of measure",
+    "tr": "Tedarik ve ölçü birimi"
+  },
+  "المواصفات الفنية": {
+    "en": "Technical specifications",
+    "tr": "Teknik özellikler"
+  },
+  "بيانات الشراء": {
+    "en": "Purchase details",
+    "tr": "Satın alma bilgileri"
+  },
+  "مصاريف الحاوية": {
+    "en": "Container costs",
+    "tr": "Konteyner giderleri"
+  },
+  "نتيجة التسعير": {
+    "en": "Pricing result",
+    "tr": "Fiyatlandırma sonucu"
+  },
+  "خط الحساب": {
+    "en": "Calculation line",
+    "tr": "Hesap satırı"
+  },
+  "التقارير الذكية": {
+    "en": "Smart reports",
+    "tr": "Akıllı raporlar"
+  },
+  "المتابعة والملاحظات": {
+    "en": "Follow-up & notes",
+    "tr": "Takip ve notlar"
+  },
+  "قوائم التصدير": {
+    "en": "Export lists",
+    "tr": "Dışa aktarma listeleri"
+  },
+  "النسخ الاحتياطي": {
+    "en": "Backup",
+    "tr": "Yedekleme"
+  },
+  "الإعدادات": {
+    "en": "Settings",
+    "tr": "Ayarlar"
+  },
+  "تصدير Excel": {
+    "en": "Export Excel",
+    "tr": "Excel'e aktar"
+  },
+  "تصدير PDF": {
+    "en": "Export PDF",
+    "tr": "PDF'e aktar"
+  },
+  "استيراد نسخة": {
+    "en": "Import backup",
+    "tr": "Yedek içe aktar"
+  },
+  "إنشاء نسخة": {
+    "en": "Create backup",
+    "tr": "Yedek oluştur"
+  },
+  "دمج آمن": {
+    "en": "Safe merge",
+    "tr": "Güvenli birleştirme"
+  },
+  "استبدال كامل": {
+    "en": "Full replacement",
+    "tr": "Tam değiştirme"
+  },
+  "المورد": {
+    "en": "Supplier",
+    "tr": "Tedarikçi"
+  },
+  "العميل": {
+    "en": "Customer",
+    "tr": "Müşteri"
+  },
+  "مصنع": {
+    "en": "Factory",
+    "tr": "Fabrika"
+  },
+  "أخرى": {
+    "en": "Other",
+    "tr": "Diğer"
+  },
+  "الدولة": {
+    "en": "Country",
+    "tr": "Ülke"
+  },
+  "المدينة": {
+    "en": "City",
+    "tr": "Şehir"
+  },
+  "الشخص المسؤول": {
+    "en": "Contact person",
+    "tr": "Yetkili kişi"
+  },
+  "الهاتف": {
+    "en": "Phone",
+    "tr": "Telefon"
+  },
+  "البريد": {
+    "en": "Email",
+    "tr": "E-posta"
+  },
+  "ملاحظات": {
+    "en": "Notes",
+    "tr": "Notlar"
+  },
+  "التصنيف": {
+    "en": "Category",
+    "tr": "Kategori"
+  },
+  "وحدة القياس": {
+    "en": "Unit of measure",
+    "tr": "Ölçü birimi"
+  },
+  "عملة السعر": {
+    "en": "Price currency",
+    "tr": "Fiyat para birimi"
+  },
+  "سجل الجهات": {
+    "en": "Partner register",
+    "tr": "Taraf kaydı"
+  },
+  "سجل الأصناف": {
+    "en": "Item register",
+    "tr": "Ürün defteri"
+  },
+  "سجل الأسعار": {
+    "en": "Price register",
+    "tr": "Fiyat defteri"
+  },
+  "تسجيل الأسعار": {
+    "en": "Record prices",
+    "tr": "Fiyat kaydı"
+  },
+  "السعر": {
+    "en": "Price",
+    "tr": "Fiyat"
+  },
+  "تاريخ الاعتماد": {
+    "en": "Effective date",
+    "tr": "Yürürlük tarihi"
+  },
+  "ملاحظات التفاوض": {
+    "en": "Negotiation notes",
+    "tr": "Müzakere notları"
+  },
+  "مستوى السعر": {
+    "en": "Price level",
+    "tr": "Fiyat seviyesi"
+  },
+  "سعر الوحدة": {
+    "en": "Unit price",
+    "tr": "Birim fiyatı"
+  },
+  "الكمية / سعة الحاوية": {
+    "en": "Quantity / container capacity",
+    "tr": "Miktar / konteyner kapasitesi"
+  },
+  "نسبة الجمارك %": {
+    "en": "Customs rate %",
+    "tr": "Gümrük oranı %"
+  },
+  "هامش الربح %": {
+    "en": "Margin %",
+    "tr": "Kâr marjı %"
+  },
+  "الشحن": {
+    "en": "Freight",
+    "tr": "Navlun"
+  },
+  "نوع الشحن": {
+    "en": "Shipping type",
+    "tr": "Nakliye türü"
+  },
+  "مسار الشحن من ميناء إلى ميناء": {
+    "en": "Port-to-port route",
+    "tr": "Limandan limana rota"
+  },
+  "التقارير": {
+    "en": "Reports",
+    "tr": "Raporlar"
+  },
+  "المتابعة": {
+    "en": "Follow-up",
+    "tr": "Takip"
+  },
+  "المهام": {
+    "en": "Tasks",
+    "tr": "Görevler"
+  },
+  "المواعيد": {
+    "en": "Appointments",
+    "tr": "Randevular"
+  },
+  "الملاحظات": {
+    "en": "Notes",
+    "tr": "Notlar"
+  },
+  "النسخ والاستعادة": {
+    "en": "Backup & restore",
+    "tr": "Yedekleme ve geri yükleme"
+  },
+  "استعادة نسخة": {
+    "en": "Restore backup",
+    "tr": "Yedeği geri yükle"
+  },
+  "معاينة النسخة": {
+    "en": "Preview backup",
+    "tr": "Yedeği önizle"
+  },
+  "العملات والحسابات": {
+    "en": "Currencies & calculations",
+    "tr": "Para birimleri ve hesaplamalar"
+  },
+  "التصنيفات الرئيسية": {
+    "en": "Main categories",
+    "tr": "Ana kategoriler"
+  },
+  "قوالب المواصفات الفنية": {
+    "en": "Technical specification templates",
+    "tr": "Teknik özellik şablonları"
+  },
+  "حفظ الإعدادات": {
+    "en": "Save settings",
+    "tr": "Ayarları kaydet"
+  },
+  "بيانات المنشأة": {
+    "en": "Business details",
+    "tr": "İşletme bilgileri"
+  },
+  "اسم المنشأة": {
+    "en": "Business name",
+    "tr": "İşletme adı"
+  },
+  "العملات": {
+    "en": "Currencies",
+    "tr": "Para birimleri"
+  },
+  "العملة المحلية": {
+    "en": "Local currency",
+    "tr": "Yerel para birimi"
+  },
+  "العملة الأجنبية": {
+    "en": "Foreign currency",
+    "tr": "Yabancı para birimi"
+  },
+  "القيم الافتراضية للحساب": {
+    "en": "Default calculation values",
+    "tr": "Varsayılan hesaplama değerleri"
+  },
+  "القيم الأولية": {
+    "en": "Initial values",
+    "tr": "Başlangıç değerleri"
+  },
+  "إضافة": {
+    "en": "Add",
+    "tr": "Ekle"
+  },
+  "إلغاء": {
+    "en": "Cancel",
+    "tr": "İptal"
+  },
+  "رفع": {
+    "en": "Move up",
+    "tr": "Yukarı taşı"
+  },
+  "خفض": {
+    "en": "Move down",
+    "tr": "Aşağı taşı"
+  },
+  "اسم العميل": {
+    "en": "Customer name",
+    "tr": "Müşteri adı"
+  },
+  "نوع السعر المعروض": {
+    "en": "Displayed price type",
+    "tr": "Gösterilen fiyat türü"
+  },
+  "سعر المورد": {
+    "en": "Supplier price",
+    "tr": "Tedarikçi fiyatı"
+  },
+  "سعر التكلفة": {
+    "en": "Cost price",
+    "tr": "Maliyet fiyatı"
+  },
+  "سعر البيع": {
+    "en": "Selling price",
+    "tr": "Satış fiyatı"
+  },
+  "جميع الأسعار": {
+    "en": "All prices",
+    "tr": "Tüm fiyatlar"
+  },
+  "سعر مسجل (يدوي)": {
+    "en": "Recorded price (manual)",
+    "tr": "Kaydedilmiş fiyat (manuel)"
+  },
+  "مستوى السعر المسجل": {
+    "en": "Recorded price level",
+    "tr": "Kaydedilmiş fiyat seviyesi"
+  },
+  "اختيار الأصناف": {
+    "en": "Select items",
+    "tr": "Ürünleri seç"
+  },
+  "معاينة القائمة": {
+    "en": "List preview",
+    "tr": "Liste önizlemesi"
+  },
+  "حالة التخزين": {
+    "en": "Storage status",
+    "tr": "Depolama durumu"
+  },
+  "تصدير واستعادة": {
+    "en": "Export & restore",
+    "tr": "Dışa aktarma ve geri yükleme"
+  },
+  "إنشاء نسخة احتياطية": {
+    "en": "Create backup",
+    "tr": "Yedek oluştur"
+  },
+  "استعادة من ملف": {
+    "en": "Restore from file",
+    "tr": "Dosyadan geri yükle"
+  },
+  "حذف جميع البيانات المحلية": {
+    "en": "Delete all local data",
+    "tr": "Tüm yerel verileri sil"
+  },
+  "سجل عمليات الأرشيف": {
+    "en": "Archive activity log",
+    "tr": "Arşiv işlem kaydı"
+  },
+  "العنوان": {
+    "en": "Title",
+    "tr": "Başlık"
+  },
+  "المحتوى": {
+    "en": "Content",
+    "tr": "İçerik"
+  },
+  "حفظ الملاحظة": {
+    "en": "Save note",
+    "tr": "Notu kaydet"
+  },
+  "عنوان المهمة": {
+    "en": "Task title",
+    "tr": "Görev başlığı"
+  },
+  "الموعد": {
+    "en": "Due date",
+    "tr": "Tarih"
+  },
+  "الأولوية": {
+    "en": "Priority",
+    "tr": "Öncelik"
+  },
+  "تفاصيل المتابعة": {
+    "en": "Follow-up details",
+    "tr": "Takip ayrıntıları"
+  },
+  "إضافة للمتابعة": {
+    "en": "Add to follow-up",
+    "tr": "Takibe ekle"
+  },
+  "هوية الدفتر": {
+    "en": "Ledger identity",
+    "tr": "Defter kimliği"
+  },
+  "يظهر الاسم في ترويسة قوائم الأسعار المصدّرة": {
+    "en": "The name appears in exported price-list headers",
+    "tr": "Ad, dışa aktarılan fiyat listesi başlığında görünür"
+  },
+  "اتركه فارغاً إن لم ترغب بإظهار اسم في التقارير": {
+    "en": "Leave empty if you do not want a name shown in reports",
+    "tr": "Raporlarda ad göstermek istemiyorsanız boş bırakın"
+  },
+  "العملة المحلية للتكلفة، والأجنبية لأسعار الشراء": {
+    "en": "The local currency is for costs; the foreign currency is for purchase prices",
+    "tr": "Yerel para birimi maliyetler, yabancı para birimi satın alma fiyatları içindir"
+  },
+  "أساس التحويل": {
+    "en": "Conversion basis",
+    "tr": "Dönüşüm temeli"
+  },
+  "تُحمّل تلقائياً عند فتح حاسبة التكلفة": {
+    "en": "Loaded automatically when opening the cost calculator",
+    "tr": "Maliyet hesaplayıcı açıldığında otomatik yüklenir"
+  },
+  "ثوابت الحساب": {
+    "en": "Calculation constants",
+    "tr": "Hesaplama sabitleri"
+  },
+  "سعر الصرف (دولار إلى ريال)": {
+    "en": "Exchange rate (USD to SAR)",
+    "tr": "Döviz kuru (USD - SAR)"
+  },
+  "أدخل الرقم — يمكن تعديله داخل كل عملية حساب": {
+    "en": "Enter the number — it can be changed in each calculation",
+    "tr": "Sayıyı girin — her hesaplamada değiştirilebilir"
+  },
+  "أدخل النسبة الأكثر تكراراً": {
+    "en": "Enter the most frequently used rate",
+    "tr": "En sık kullanılan oranı girin"
+  },
+  "أدخل هامشك المستهدف": {
+    "en": "Enter your target margin",
+    "tr": "Hedef marjınızı girin"
+  },
+  "فهرس التصنيف": {
+    "en": "Category index",
+    "tr": "Kategori dizini"
+  },
+  "تظهر كقائمة منسدلة في حقل تصنيف الصنف": {
+    "en": "Shown as a dropdown in the item category field",
+    "tr": "Ürün kategorisi alanında açılır liste olarak görünür"
+  },
+  "إضافة مواصفة فنية": {
+    "en": "Add technical specification",
+    "tr": "Teknik özellik ekle"
+  },
+  "إضافة المواصفة": {
+    "en": "Add specification",
+    "tr": "Özellik ekle"
+  },
+  "فهرس المواصفات": {
+    "en": "Specification index",
+    "tr": "Özellik dizini"
+  },
+  "تحكم بالمواصفات الافتراضية وترتيبها ومواضع ظهورها في التطبيق": {
+    "en": "Control default specifications, their order and where they appear",
+    "tr": "Varsayılan özellikleri, sıralarını ve görünüm yerlerini yönetin"
+  },
+  "التصنيف المرتبط": {
+    "en": "Linked category",
+    "tr": "Bağlı kategori"
+  },
+  "اسم المواصفة": {
+    "en": "Specification name",
+    "tr": "Özellik adı"
+  },
+  "الوحدة الافتراضية": {
+    "en": "Default unit",
+    "tr": "Varsayılan birim"
+  },
+  "الوحدات المتاحة": {
+    "en": "Available units",
+    "tr": "Kullanılabilir birimler"
+  },
+  "نص مساعد عند الإدخال": {
+    "en": "Input hint",
+    "tr": "Giriş ipucu"
+  },
+  "مميزة للمقارنة": {
+    "en": "Key for comparison",
+    "tr": "Karşılaştırma için önemli"
+  },
+  "بطاقة الصنف": {
+    "en": "Item card",
+    "tr": "Ürün kartı"
+  },
+  "جدول الأسعار": {
+    "en": "Price table",
+    "tr": "Fiyat tablosu"
+  },
+  "Excel والتصدير": {
+    "en": "Excel & export",
+    "tr": "Excel ve dışa aktarma"
+  },
+  "حفظ التعديل": {
+    "en": "Save changes",
+    "tr": "Değişiklikleri kaydet"
+  },
+  "نسخ القوالب بين التصنيفات": {
+    "en": "Copy templates between categories",
+    "tr": "Şablonları kategoriler arasında kopyala"
+  },
+  "انسخ الوحدات والترتيب ومواضع الظهور دفعة واحدة، دون نسخ القوالب المتكررة.": {
+    "en": "Copy units, order and display positions in one step, without duplicating existing templates.",
+    "tr": "Birimleri, sıralamayı ve görünüm konumlarını yinelenen şablonlar olmadan tek adımda kopyalayın."
+  },
+  "المصدر": {
+    "en": "Source",
+    "tr": "Kaynak"
+  },
+  "التصنيف الهدف": {
+    "en": "Target category",
+    "tr": "Hedef kategori"
+  },
+  "القوالب العامة": {
+    "en": "General templates",
+    "tr": "Genel şablonlar"
+  },
+  "قالب عام لجميع التصنيفات": {
+    "en": "General template for all categories",
+    "tr": "Tüm kategoriler için genel şablon"
+  },
+  "اختر التصنيف": {
+    "en": "Select category",
+    "tr": "Kategori seçin"
+  },
+  "نسخ القوالب": {
+    "en": "Copy templates",
+    "tr": "Şablonları kopyala"
+  },
+  "أثر الإعدادات": {
+    "en": "Settings effect",
+    "tr": "Ayarların etkisi"
+  },
+  "مثال توضيحي على وحدة واحدة بسعر 10 من العملة الأجنبية": {
+    "en": "Illustration for one unit priced at 10 in the foreign currency",
+    "tr": "Yabancı para biriminde 10 fiyatlı bir birim için örnek"
+  },
+  "قيمة الوحدة": {
+    "en": "Unit value",
+    "tr": "Birim değeri"
+  },
+  "تكلفة الوحدة": {
+    "en": "Unit cost",
+    "tr": "Birim maliyeti"
+  },
+  "المواصفات": {
+    "en": "Specifications",
+    "tr": "Özellikler"
+  },
+  "الكود": {
+    "en": "Code",
+    "tr": "Kod"
+  },
+  "بدون جهة": {
+    "en": "No partner",
+    "tr": "Taraf yok"
+  },
+  "بدون صنف": {
+    "en": "No item",
+    "tr": "Ürün yok"
+  },
+  "عالية": {
+    "en": "High",
+    "tr": "Yüksek"
+  },
+  "متوسطة": {
+    "en": "Medium",
+    "tr": "Orta"
+  },
+  "منخفضة": {
+    "en": "Low",
+    "tr": "Düşük"
+  },
+  "سجل العمليات": {
+    "en": "Activity log",
+    "tr": "İşlem kaydı"
+  },
+  "تاريخ الأسعار": {
+    "en": "Price history",
+    "tr": "Fiyat geçmişi"
+  },
+  "قيمة البضاعة": {
+    "en": "Goods value",
+    "tr": "Mal bedeli"
+  },
+  "الشحن الدولي": {
+    "en": "International freight",
+    "tr": "Uluslararası navlun"
+  },
+  "الجمارك": {
+    "en": "Customs",
+    "tr": "Gümrük"
+  },
+  "التخليص والإجراءات": {
+    "en": "Clearance & procedures",
+    "tr": "Gümrükleme ve işlemler"
+  },
+  "النقل والتحميل": {
+    "en": "Transport & handling",
+    "tr": "Nakliye ve yükleme"
+  },
+  "مصاريف أخرى": {
+    "en": "Other expenses",
+    "tr": "Diğer giderler"
+  },
+  "إجمالي تكلفة الحاوية": {
+    "en": "Total container cost",
+    "tr": "Toplam konteyner maliyeti"
+  },
+  "التكلفة النهائية للوحدة": {
+    "en": "Final unit cost",
+    "tr": "Nihai birim maliyeti"
+  },
+  "سعر البيع المقترح": {
+    "en": "Suggested selling price",
+    "tr": "Önerilen satış fiyatı"
+  },
+  "سجل بلا قيود": {
+    "en": "Blank register",
+    "tr": "Boş kayıt defteri"
+  },
+  "تعديل جهة": {
+    "en": "Edit partner",
+    "tr": "Tarafı düzenle"
+  },
+  "الحقول الكهرمانية يدخلها المستخدم": {
+    "en": "Amber fields are entered by the user",
+    "tr": "Kehribar alanlar kullanıcı tarafından girilir"
+  },
+  "الاسم والنوع والموقع": {
+    "en": "Name, type and location",
+    "tr": "Ad, tür ve konum"
+  },
+  "أضف ما يفيد العودة إلى الجهة": {
+    "en": "Add details that help you return to this partner",
+    "tr": "Bu tarafa yeniden ulaşmayı kolaylaştıracak bilgiler ekleyin"
+  },
+  "تُنسخ تلقائياً للصنف عند اختيار هذه الجهة": {
+    "en": "Copied automatically to an item when this partner is selected",
+    "tr": "Bu taraf seçildiğinde ürüne otomatik olarak kopyalanır"
+  },
+  "دفتر الجهات": {
+    "en": "Partner ledger",
+    "tr": "Taraf defteri"
+  },
+  "ابحث بالاسم أو الدولة أو المدينة أو الهاتف...": {
+    "en": "Search by name, country, city or phone...",
+    "tr": "Ad, ülke, şehir veya telefon ile ara..."
+  },
+  "نوع الجهة": {
+    "en": "Partner type",
+    "tr": "Taraf türü"
+  },
+  "كل الأنواع": {
+    "en": "All types",
+    "tr": "Tüm türler"
+  },
+  "لا توجد جهات مطابقة. أضف جهة من النموذج المجاور.": {
+    "en": "No matching partners. Add one from the adjacent form.",
+    "tr": "Eşleşen taraf bulunamadı. Yan formdan bir taraf ekleyin."
+  },
+  "لا توجد بيانات إضافية": {
+    "en": "No additional details",
+    "tr": "Ek ayrıntı yok"
+  },
+  "سعر صرف": {
+    "en": "Exchange rate",
+    "tr": "Döviz kuru"
+  },
+  "مرفقات": {
+    "en": "Attachments",
+    "tr": "Ekler"
+  },
+  "عرض البطاقة الكاملة": {
+    "en": "View full card",
+    "tr": "Tam kartı görüntüle"
+  },
+  "حذف الجهة": {
+    "en": "Delete partner",
+    "tr": "Tarafı sil"
+  },
+  "المسؤول:": {
+    "en": "Contact:",
+    "tr": "Yetkili:"
+  },
+  "إعدادات الشراء:": {
+    "en": "Purchase settings:",
+    "tr": "Satın alma ayarları:"
+  },
+  "ملاحظات:": {
+    "en": "Notes:",
+    "tr": "Notlar:"
+  },
+  "بطاقة الجهة": {
+    "en": "Partner card",
+    "tr": "Taraf kartı"
+  },
+  "الأصناف المرتبطة": {
+    "en": "Linked items",
+    "tr": "Bağlı ürünler"
+  },
+  "آخر تحديث": {
+    "en": "Last updated",
+    "tr": "Son güncelleme"
+  },
+  "هذه المواصفة موجودة بالفعل داخل الصنف": {
+    "en": "This specification already exists in the item",
+    "tr": "Bu özellik üründe zaten mevcut"
+  },
+  "اسم الصنف مطلوب": {
+    "en": "Item name is required",
+    "tr": "Ürün adı gerekli"
+  },
+  "تم تحديث الصنف": {
+    "en": "Item updated",
+    "tr": "Ürün güncellendi"
+  },
+  "تم حفظ الصنف على جهازك": {
+    "en": "Item saved on your device",
+    "tr": "Ürün cihazınıza kaydedildi"
+  },
+  "نسخة جديدة جاهزة. عدّل المواصفة المتغيرة ثم احفظ.": {
+    "en": "New copy ready. Edit the changed specification, then save.",
+    "tr": "Yeni kopya hazır. Değişen özelliği düzenleyin ve kaydedin."
+  },
+  "تأكيد حذف الصنف ومواصفاته وأسعاره؟": {
+    "en": "Delete this item, its specifications and prices?",
+    "tr": "Bu ürün, özellikleri ve fiyatları silinsin mi?"
+  },
+  "غير مرتبط بجهة": {
+    "en": "Not linked to a partner",
+    "tr": "Bir tarafa bağlı değil"
+  },
+  "تعديل صنف": {
+    "en": "Edit item",
+    "tr": "Ürünü düzenle"
+  },
+  "أضف المواصفات التي تحتاجها لهذا الصنف فقط": {
+    "en": "Add only the specifications you need for this item",
+    "tr": "Yalnızca bu ürün için gereken özellikleri ekleyin"
+  },
+  "نموذج تسجيل": {
+    "en": "Registration form",
+    "tr": "Kayıt formu"
+  },
+  "اسم الصنف وكوده وتصنيفه": {
+    "en": "Item name, code and category",
+    "tr": "Ürün adı, kodu ve kategorisi"
+  },
+  "الوحدة": {
+    "en": "Unit",
+    "tr": "Birim"
+  },
+  "مواصفة": {
+    "en": "Specification",
+    "tr": "Özellik"
+  },
+  "القيمة": {
+    "en": "Value",
+    "tr": "Değer"
+  },
+  "إضافة عملة أخرى": {
+    "en": "Add another currency",
+    "tr": "Başka para birimi ekle"
+  },
+  "يُورَّث من الجهة ويُستخدم تلقائياً في حاسبة التكلفة.": {
+    "en": "Inherited from the partner and used automatically in the cost calculator.",
+    "tr": "Taraftan devralınır ve maliyet hesaplayıcısında otomatik kullanılır."
+  },
+  "اضغط النجمة بجوار المواصفة لتمييزها كمواصفة قرار تظهر في جدول الأسعار والمقارنة.": {
+    "en": "Select the star beside a specification to make it a decision field in price comparisons.",
+    "tr": "Bir özelliği fiyat karşılaştırmalarında karar alanı yapmak için yanındaki yıldızı seçin."
+  },
+  "لم تُضف مواصفات. اختر من القوالب أعلاه أو أضف مواصفة جديدة.": {
+    "en": "No specifications added. Choose a template above or add a new specification.",
+    "tr": "Özellik eklenmedi. Yukarıdan şablon seçin veya yeni özellik ekleyin."
+  },
+  "مواصفة مميزة للمقارنة": {
+    "en": "Comparison specification",
+    "tr": "Karşılaştırma özelliği"
+  },
+  "تمييز كمواصفة مقارنة": {
+    "en": "Mark as comparison specification",
+    "tr": "Karşılaştırma özelliği olarak işaretle"
+  },
+  "وضع الاجتماع": {
+    "en": "Meeting mode",
+    "tr": "Toplantı modu"
+  },
+  "وضع الاجتماع مفعّل — التفاصيل مطوية": {
+    "en": "Meeting mode active — details are hidden",
+    "tr": "Toplantı modu etkin — ayrıntılar gizli"
+  },
+  "طي التفاصيل أثناء الاجتماعات": {
+    "en": "Hide details during meetings",
+    "tr": "Toplantılarda ayrıntıları gizle"
+  },
+  "سجل الأصناف مطوي أثناء الاجتماع": {
+    "en": "Item register is hidden during the meeting",
+    "tr": "Ürün kaydı toplantı sırasında gizli"
+  },
+  "لا توجد أصناف مطابقة. أضف صنفاً من النموذج المجاور.": {
+    "en": "No matching items. Add one from the adjacent form.",
+    "tr": "Eşleşen ürün yok. Yan formdan bir ürün ekleyin."
+  },
+  "احتساب التكلفة": {
+    "en": "Calculate cost",
+    "tr": "Maliyeti hesapla"
+  },
+  "تكرار الصنف": {
+    "en": "Duplicate item",
+    "tr": "Ürünü çoğalt"
+  },
+  "لا توجد مواصفات مسجلة": {
+    "en": "No specifications recorded",
+    "tr": "Kayıtlı özellik yok"
+  },
+  "مستويات السعر": {
+    "en": "Price levels",
+    "tr": "Fiyat seviyeleri"
+  },
+  "بدون تاريخ": {
+    "en": "No date",
+    "tr": "Tarih yok"
+  },
+  "آخر تكلفة محسوبة": {
+    "en": "Last calculated cost",
+    "tr": "Son hesaplanan maliyet"
+  },
+  "لم تُحسب تكلفة لهذا الصنف بعد. استخدم حاسبة التكلفة.": {
+    "en": "No cost has been calculated for this item yet. Use the cost calculator.",
+    "tr": "Bu ürün için henüz maliyet hesaplanmadı. Maliyet hesaplayıcısını kullanın."
+  },
+  "التاريخ يعني بداية اعتماد هذا السعر": {
+    "en": "The date is when this price becomes effective",
+    "tr": "Tarih, bu fiyatın yürürlüğe girdiği gündür"
+  },
+  "قيد سعر": {
+    "en": "Price entry",
+    "tr": "Fiyat girişi"
+  },
+  "ابحث بالاسم أو الكود أو التصنيف...": {
+    "en": "Search by name, code or category...",
+    "tr": "Ad, kod veya kategori ile ara..."
+  },
+  "اختر الصنف": {
+    "en": "Select an item",
+    "tr": "Ürün seçin"
+  },
+  "لا توجد أصناف مسجلة": {
+    "en": "No items recorded",
+    "tr": "Kayıtlı ürün yok"
+  },
+  "لا توجد أصناف مطابقة للبحث": {
+    "en": "No items match your search",
+    "tr": "Aramanızla eşleşen ürün yok"
+  },
+  "تم مسح مسودة الأسعار وبدء عمل جديد": {
+    "en": "Price draft cleared and new work started",
+    "tr": "Fiyat taslağı temizlendi ve yeni iş başlatıldı"
+  },
+  "اختر الصنف أولاً": {
+    "en": "Select an item first",
+    "tr": "Önce bir ürün seçin"
+  },
+  "تم حفظ الأسعار على جهازك": {
+    "en": "Prices saved on your device",
+    "tr": "Fiyatlar cihazınıza kaydedildi"
+  },
+  "لا توجد أصناف للتصدير": {
+    "en": "No items to export",
+    "tr": "Dışa aktarılacak ürün yok"
+  },
+  "تم تصدير ملف Excel": {
+    "en": "Excel file exported",
+    "tr": "Excel dosyası dışa aktarıldı"
+  },
+  "جدول الأسعار والمواصفات": {
+    "en": "Prices and specifications table",
+    "tr": "Fiyat ve özellik tablosu"
+  },
+  "مستويات السعر الأربعة وتواريخ اعتمادها": {
+    "en": "Four price levels and their effective dates",
+    "tr": "Dört fiyat seviyesi ve yürürlük tarihleri"
+  },
+  "هذا الجدول للاستخدام الداخلي في المقارنة والتفاوض. المواصفات المميزة هي أساس المقارنة بين الأصناف.": {
+    "en": "This table is for internal comparison and negotiation. Highlighted specifications are the comparison basis.",
+    "tr": "Bu tablo iç karşılaştırma ve müzakere içindir. Öne çıkan özellikler karşılaştırma temelidir."
+  },
+  "تعذّر فتح نافذة الطباعة. اسمح بالنوافذ المنبثقة ثم أعد المحاولة.": {
+    "en": "Could not open the print window. Allow pop-ups and try again.",
+    "tr": "Yazdırma penceresi açılamadı. Açılır pencerelere izin verip yeniden deneyin."
+  },
+  "تم تجهيز الملف — اختر حفظ كـ PDF": {
+    "en": "File prepared — choose Save as PDF",
+    "tr": "Dosya hazırlandı — PDF olarak kaydet'i seçin"
+  },
+  "طي التفاصيل": {
+    "en": "Hide details",
+    "tr": "Ayrıntıları gizle"
+  },
+  "عرض التفاصيل": {
+    "en": "Show details",
+    "tr": "Ayrıntıları göster"
+  },
+  "مثال: السعر 3 مشروط بكمية حاوية كاملة": {
+    "en": "Example: Price 3 requires a full-container quantity",
+    "tr": "Örnek: Fiyat 3 tam konteyner miktarı gerektirir"
+  },
+  "جدول الأسعار المسجلة": {
+    "en": "Recorded prices table",
+    "tr": "Kayıtlı fiyat tablosu"
+  },
+  "مقارنة سريعة بين مستويات السعر": {
+    "en": "Quick comparison of price levels",
+    "tr": "Fiyat seviyeleri arasında hızlı karşılaştırma"
+  },
+  "كشف الأسعار": {
+    "en": "Price statement",
+    "tr": "Fiyat dökümü"
+  },
+  "لا توجد أصناف. أضف الأصناف أولاً من شاشة الأصناف.": {
+    "en": "No items. Add items first from the Items page.",
+    "tr": "Ürün yok. Önce Ürünler sayfasından ürün ekleyin."
+  },
+  "تم مسح مسودة الحاسبة وبدء عمل جديد": {
+    "en": "Calculator draft cleared and new work started",
+    "tr": "Hesaplayıcı taslağı temizlendi ve yeni iş başlatıldı"
+  },
+  "أدخل كمية الحاوية": {
+    "en": "Enter container quantity",
+    "tr": "Konteyner miktarını girin"
+  },
+  "تم حفظ عملية الحساب على جهازك": {
+    "en": "Calculation saved on your device",
+    "tr": "Hesaplama cihazınıza kaydedildi"
+  },
+  "بحري": {
+    "en": "Sea",
+    "tr": "Deniz"
+  },
+  "بري": {
+    "en": "Land",
+    "tr": "Kara"
+  },
+  "جوي": {
+    "en": "Air",
+    "tr": "Hava"
+  },
+  "آخر": {
+    "en": "Other",
+    "tr": "Diğer"
+  },
+  "السعر يُسحب من مستوى السعر المسجل": {
+    "en": "Price is drawn from the selected recorded price level",
+    "tr": "Fiyat, seçilen kayıtlı fiyat seviyesinden alınır"
+  },
+  "مستند ١ / إدخال": {
+    "en": "Document 1 / Entry",
+    "tr": "Belge 1 / Giriş"
+  },
+  "سعر الشراء وسعة الحاوية": {
+    "en": "Purchase price & container capacity",
+    "tr": "Satın alma fiyatı ve konteyner kapasitesi"
+  },
+  "ابدأ بالصنف ثم راجع سعره وسعر الصرف": {
+    "en": "Start with the item, then review its price and exchange rate",
+    "tr": "Ürünle başlayın, ardından fiyatını ve döviz kurunu gözden geçirin"
+  },
+  "دون جهة": {
+    "en": "No partner",
+    "tr": "Taraf yok"
+  },
+  "الجهة:": {
+    "en": "Partner:",
+    "tr": "Taraf:"
+  },
+  "(مصنع)": {
+    "en": "(Factory)",
+    "tr": "(Fabrika)"
+  },
+  "(مورد)": {
+    "en": "(Supplier)",
+    "tr": "(Tedarikçi)"
+  },
+  "غير مسجل": {
+    "en": "Not recorded",
+    "tr": "Kayıtlı değil"
+  },
+  "اعتماد:": {
+    "en": "Effective:",
+    "tr": "Yürürlük:"
+  },
+  "قيمة افتراضية — عدّلها حسب السعر الفعلي": {
+    "en": "Default value — adjust it to the actual price",
+    "tr": "Varsayılan değer — gerçek fiyata göre ayarlayın"
+  },
+  "أدخل كمية الحاوية الفعلية": {
+    "en": "Enter the actual container quantity",
+    "tr": "Gerçek konteyner miktarını girin"
+  },
+  "القيم بعملة": {
+    "en": "Values in",
+    "tr": "Değerler şu para biriminde:"
+  },
+  "مستند ٢ / تكاليف": {
+    "en": "Document 2 / Costs",
+    "tr": "Belge 2 / Maliyetler"
+  },
+  "الشحن والمصاريف الإضافية": {
+    "en": "Shipping & additional expenses",
+    "tr": "Nakliye ve ek giderler"
+  },
+  "كل القيم محلية إلا عند اختيار عملة الشحن": {
+    "en": "All values are local unless a freight currency is selected",
+    "tr": "Nakliye para birimi seçilmedikçe tüm değerler yereldir"
+  },
+  "مثال: شنغهاي ← جدة": {
+    "en": "Example: Shanghai ← Jeddah",
+    "tr": "Örnek: Şanghay ← Cidde"
+  },
+  "أدخل الرقم أو اترك الحقل صفراً": {
+    "en": "Enter a number or leave the field at zero",
+    "tr": "Bir sayı girin veya alanı sıfır bırakın"
+  },
+  "قيمة افتراضية — عدّلها حسب البند الجمركي": {
+    "en": "Default value — adjust it to the customs line",
+    "tr": "Varsayılan değer — gümrük kalemine göre ayarlayın"
+  },
+  "قيمة افتراضية — عدّلها حسب هامشك المستهدف": {
+    "en": "Default value — adjust it to your target margin",
+    "tr": "Varsayılan değer — hedef marjınıza göre ayarlayın"
+  },
+  "تسلسل التكلفة من قيمة البضاعة حتى الوحدة": {
+    "en": "Cost sequence from goods value to unit",
+    "tr": "Mal değerinden birime maliyet sırası"
+  },
+  "مستند ٣ / تدقيق": {
+    "en": "Document 3 / Review",
+    "tr": "Belge 3 / Denetim"
+  },
+  "تُحسب الجمارك على قيمة البضاعة، ثم تُضاف جميع مصاريف الحاوية قبل القسمة على الكمية.": {
+    "en": "Customs are calculated on goods value, then all container expenses are added before division by quantity.",
+    "tr": "Gümrük mal değeri üzerinden hesaplanır; ardından miktara bölmeden önce tüm konteyner giderleri eklenir."
+  },
+  "سعر البيع المقترح للوحدة": {
+    "en": "Suggested selling price per unit",
+    "tr": "Birim başına önerilen satış fiyatı"
+  },
+  "مستند ٤ / قرار": {
+    "en": "Document 4 / Decision",
+    "tr": "Belge 4 / Karar"
+  },
+  "ربح الوحدة": {
+    "en": "Unit profit",
+    "tr": "Birim kârı"
+  },
+  "مرشحات التقرير": {
+    "en": "Report filters",
+    "tr": "Rapor filtreleri"
+  },
+  "اختر المعلومات التي تريد مقارنتها ثم رتّب النتائج": {
+    "en": "Choose what you want to compare, then sort the results",
+    "tr": "Karşılaştırmak istediğiniz bilgileri seçin ve sonuçları sıralayın"
+  },
+  "محرك التقارير": {
+    "en": "Report engine",
+    "tr": "Rapor motoru"
+  },
+  "مسح": {
+    "en": "Clear",
+    "tr": "Temizle"
+  },
+  "كل الجهات": {
+    "en": "All partners",
+    "tr": "Tüm taraflar"
+  },
+  "الموردون": {
+    "en": "Suppliers",
+    "tr": "Tedarikçiler"
+  },
+  "المصانع": {
+    "en": "Factories",
+    "tr": "Fabrikalar"
+  },
+  "العملاء": {
+    "en": "Customers",
+    "tr": "Müşteriler"
+  },
+  "كل التصنيفات": {
+    "en": "All categories",
+    "tr": "Tüm kategoriler"
+  },
+  "الوزن": {
+    "en": "Weight",
+    "tr": "Ağırlık"
+  },
+  "الخامة": {
+    "en": "Material",
+    "tr": "Malzeme"
+  },
+  "نطاقات الأسعار والنتائج": {
+    "en": "Price ranges & results",
+    "tr": "Fiyat aralıkları ve sonuçlar"
+  },
+  "سعر الشراء / المورد": {
+    "en": "Purchase / supplier price",
+    "tr": "Satın alma / tedarikçi fiyatı"
+  },
+  "حسب عملة الصنف": {
+    "en": "By item currency",
+    "tr": "Ürün para birimine göre"
+  },
+  "من": {
+    "en": "From",
+    "tr": "Başlangıç"
+  },
+  "إلى": {
+    "en": "To",
+    "tr": "Bitiş"
+  },
+  "ترتيب حسب": {
+    "en": "Sort by",
+    "tr": "Sıralama ölçütü"
+  },
+  "تاريخ الإضافة": {
+    "en": "Date added",
+    "tr": "Eklenme tarihi"
+  },
+  "الاتجاه": {
+    "en": "Direction",
+    "tr": "Yön"
+  },
+  "تنازلياً": {
+    "en": "Descending",
+    "tr": "Azalan"
+  },
+  "تصاعدياً": {
+    "en": "Ascending",
+    "tr": "Artan"
+  },
+  "الأصناف المطابقة": {
+    "en": "Matching items",
+    "tr": "Eşleşen ürünler"
+  },
+  "متوسط سعر المورد": {
+    "en": "Average supplier price",
+    "tr": "Ortalama tedarikçi fiyatı"
+  },
+  "متوسط تكلفة الوحدة": {
+    "en": "Average unit cost",
+    "tr": "Ortalama birim maliyet"
+  },
+  "متوسط هامش الربح": {
+    "en": "Average margin",
+    "tr": "Ortalama kâr marjı"
+  },
+  "نتائج التقرير": {
+    "en": "Report results",
+    "tr": "Rapor sonuçları"
+  },
+  "سجل قابل للمقارنة حسب المرشحات المختارة": {
+    "en": "Comparable register based on the selected filters",
+    "tr": "Seçilen filtrelere göre karşılaştırılabilir kayıt"
+  },
+  "كشف تحليلي": {
+    "en": "Analytical statement",
+    "tr": "Analitik döküm"
+  },
+  "لا توجد نتائج مطابقة. عدّل المرشحات أو أضف أصنافاً وحسابات تكلفة.": {
+    "en": "No matching results. Adjust filters or add items and cost calculations.",
+    "tr": "Eşleşen sonuç yok. Filtreleri düzenleyin veya ürün ve maliyet hesaplamaları ekleyin."
+  },
+  "بدون تصنيف": {
+    "en": "No category",
+    "tr": "Kategorisiz"
+  },
+  "المورد الأصلي": {
+    "en": "Original supplier",
+    "tr": "Orijinal tedarikçi"
+  },
+  "البيع": {
+    "en": "Sale",
+    "tr": "Satış"
+  },
+  "الهامش": {
+    "en": "Margin",
+    "tr": "Marj"
+  },
+  "ثبّت الملاحظات المهمة أو اربطها بجهة أو صنف": {
+    "en": "Pin important notes or link them to a partner or item",
+    "tr": "Önemli notları sabitleyin veya bir taraf ya da ürüne bağlayın"
+  },
+  "دفتر الميدان": {
+    "en": "Field ledger",
+    "tr": "Saha defteri"
+  },
+  "اكتب عنواناً أو محتوى للملاحظة": {
+    "en": "Enter a title or note content",
+    "tr": "Not için bir başlık veya içerik girin"
+  },
+  "تثبيت في أعلى السجل": {
+    "en": "Pin to top of register",
+    "tr": "Kaydın başına sabitle"
+  },
+  "اكتب ملاحظات الزيارة أو المقارنة أو بنود التفاوض...": {
+    "en": "Write visit notes, comparisons or negotiation points...",
+    "tr": "Ziyaret notlarını, karşılaştırmaları veya müzakere maddelerini yazın..."
+  },
+  "تابع زيارة أو اتصالاً أو قراراً مطلوباً": {
+    "en": "Follow up on a visit, call or required decision",
+    "tr": "Bir ziyaret, arama veya gerekli kararı takip edin"
+  },
+  "دفتر المواعيد": {
+    "en": "Appointment ledger",
+    "tr": "Randevu defteri"
+  },
+  "الملاحظات المسجلة": {
+    "en": "Recorded notes",
+    "tr": "Kayıtlı notlar"
+  },
+  "لا توجد ملاحظات. أضف أول ملاحظة من النموذج أعلاه.": {
+    "en": "No notes yet. Add your first note from the form above.",
+    "tr": "Henüz not yok. İlk notunuzu yukarıdaki formdan ekleyin."
+  },
+  "المهام والمواعيد": {
+    "en": "Tasks & appointments",
+    "tr": "Görevler ve randevular"
+  },
+  "لا توجد مهام أو مواعيد. أضف متابعة مرتبطة بجهة أو صنف.": {
+    "en": "No tasks or appointments. Add follow-up linked to a partner or item.",
+    "tr": "Görev veya randevu yok. Bir taraf veya ürüne bağlı takip ekleyin."
+  },
+  "بيانات القائمة": {
+    "en": "List data",
+    "tr": "Liste verileri"
+  },
+  "اختر العميل ونوع السعر المعروض": {
+    "en": "Choose the customer and displayed price type",
+    "tr": "Müşteriyi ve görüntülenen fiyat türünü seçin"
+  },
+  "ترويسة القائمة": {
+    "en": "List header",
+    "tr": "Liste başlığı"
+  },
+  "التصدير يتضمن سعر التكلفة؛ استخدمه داخلياً فقط ولا تشاركه مع العملاء.": {
+    "en": "Export includes the cost price; use it internally only and do not share it with customers.",
+    "tr": "Dışa aktarma maliyet fiyatını içerir; yalnızca dahili kullanın ve müşterilerle paylaşmayın."
+  },
+  "لن تظهر التكاليف أو نسبة الجمارك أو هوامش الربح في الملف المُصدَّر.": {
+    "en": "Costs, customs rate and margins will not appear in the exported file.",
+    "tr": "Maliyetler, gümrük oranı ve kâr marjları dışa aktarılan dosyada görünmez."
+  },
+  "تم اختيار": {
+    "en": "Selected",
+    "tr": "Seçildi"
+  },
+  "بنود القائمة": {
+    "en": "List items",
+    "tr": "Liste kalemleri"
+  },
+  "لا توجد أصناف. أضف الأصناف أولاً.": {
+    "en": "No items. Add items first.",
+    "tr": "Ürün yok. Önce ürün ekleyin."
+  },
+  "لا توجد أصناف مطابقة للبحث.": {
+    "en": "No items match the search.",
+    "tr": "Aramayla eşleşen ürün yok."
+  },
+  "من الحاسبة": {
+    "en": "From calculator",
+    "tr": "Hesaplayıcıdan"
+  },
+  "3 أسعار": {
+    "en": "3 prices",
+    "tr": "3 fiyat"
+  },
+  "موجهة إلى:": {
+    "en": "Prepared for:",
+    "tr": "Hazırlandığı kişi:"
+  },
+  "أدخل اسم العميل": {
+    "en": "Enter customer name",
+    "tr": "Müşteri adı girin"
+  },
+  "نسخة العميل": {
+    "en": "Customer copy",
+    "tr": "Müşteri kopyası"
+  },
+  "لم تُختر أصناف بعد.": {
+    "en": "No items selected yet.",
+    "tr": "Henüz ürün seçilmedi."
+  },
+  "محرك التخزين الحالي:": {
+    "en": "Current storage engine:",
+    "tr": "Geçerli depolama motoru:"
+  },
+  "جرد الدفتر": {
+    "en": "Ledger inventory",
+    "tr": "Defter envanteri"
+  },
+  "البيانات محفوظة داخل هذا الجهاز فقط. حذف بيانات المتصفح أو إعادة تهيئة الجهاز يؤدي إلى فقدانها إن لم توجد نسخة احتياطية.": {
+    "en": "Data is stored only on this device. Clearing browser data or resetting the device causes loss unless a backup exists.",
+    "tr": "Veriler yalnızca bu cihazda saklanır. Tarayıcı verilerini silmek veya cihazı sıfırlamak, yedek yoksa kayba yol açar."
+  },
+  "آخر نسخة:": {
+    "en": "Last backup:",
+    "tr": "Son yedek:"
+  },
+  "لم تُنشئ أي نسخة احتياطية بعد.": {
+    "en": "No backup has been created yet.",
+    "tr": "Henüz yedekleme oluşturulmadı."
+  },
+  "ملف واحد يحتوي جميع بياناتك الداخلية": {
+    "en": "One file containing all your internal data",
+    "tr": "Tüm dahili verilerinizi içeren tek dosya"
+  },
+  "أرشيف محلي": {
+    "en": "Local archive",
+    "tr": "Yerel arşiv"
+  },
+  "هذه النسخة ملف داخلي يحتوي التكاليف والملاحظات الخاصة. لا تشاركه مع العملاء؛ استخدم قوائم الأسعار للتصدير التجاري.": {
+    "en": "This backup contains internal costs and private notes. Do not share it with customers; use price lists for commercial export.",
+    "tr": "Bu yedekleme dahili maliyetleri ve özel notları içerir. Müşterilerle paylaşmayın; ticari dışa aktarma için fiyat listelerini kullanın."
+  },
+  "معاينة قبل الاستيراد": {
+    "en": "Preview before import",
+    "tr": "İçe aktarmadan önce önizleme"
+  },
+  "دمج آمن — موصى به": {
+    "en": "Safe merge — recommended",
+    "tr": "Güvenli birleştirme — önerilir"
+  },
+  "يحافظ على البيانات الحالية ويحدّث السجل إذا كان له المعرف نفسه.": {
+    "en": "Keeps current data and updates a record when its ID matches.",
+    "tr": "Mevcut verileri korur ve kimliği eşleşen kaydı günceller."
+  },
+  "يحذف البيانات المحلية الحالية ثم يستورد النسخة المختارة.": {
+    "en": "Deletes current local data, then imports the selected backup.",
+    "tr": "Mevcut yerel verileri siler ve seçilen yedeği içe aktarır."
+  },
+  "لا توجد عمليات أرشيف مسجلة بعد.": {
+    "en": "No archive activity recorded yet.",
+    "tr": "Henüz arşiv işlemi kaydedilmedi."
+  },
+  "اسم الجهة": {
+    "en": "Partner name",
+    "tr": "Taraf adı"
+  },
+  "النوع": {
+    "en": "Type",
+    "tr": "Tür"
+  },
+  "مورد": {
+    "en": "Supplier",
+    "tr": "Tedarikçi"
+  },
+  "عميل": {
+    "en": "Customer",
+    "tr": "Müşteri"
+  },
+  "دولار": {
+    "en": "Dollar",
+    "tr": "Dolar"
+  },
+  "ريال": {
+    "en": "Riyal",
+    "tr": "Riyal"
+  },
+  "يورو": {
+    "en": "Euro",
+    "tr": "Euro"
+  },
+  "يوان": {
+    "en": "Yuan",
+    "tr": "Yuan"
+  },
+  "مثال: شركة النخبة": {
+    "en": "Example: Al Nokhba Company",
+    "tr": "Örnek: El Nokhba Şirketi"
+  },
+  "مثال: 3.75": {
+    "en": "Example: 3.75",
+    "tr": "Örnek: 3.75"
+  },
+  "النتائج:": {
+    "en": "Results:",
+    "tr": "Sonuçlar:"
+  },
+  "مِن": {
+    "en": "of",
+    "tr": "/"
+  },
+  "اسم الصنف": {
+    "en": "Item name",
+    "tr": "Ürün adı"
+  },
+  "كود الصنف": {
+    "en": "Item code",
+    "tr": "Ürün kodu"
+  },
+  "مثال: موكيت ويفينج": {
+    "en": "Example: woven carpet",
+    "tr": "Örnek: dokuma halı"
+  },
+  "كل المواصفات": {
+    "en": "All specifications",
+    "tr": "Tüm özellikler"
+  },
+  "إجراءات": {
+    "en": "Actions",
+    "tr": "İşlemler"
+  },
+  "تاريخ": {
+    "en": "Date",
+    "tr": "Tarih"
+  },
+  "آخر تعديل": {
+    "en": "Last updated",
+    "tr": "Son güncelleme"
+  },
+  "سجلات": {
+    "en": "records",
+    "tr": "kayıt"
+  },
+  "تعديل الأسعار": {
+    "en": "Edit prices",
+    "tr": "Fiyatları düzenle"
+  },
+  "قائمة الأسعار": {
+    "en": "Price list",
+    "tr": "Fiyat listesi"
+  },
+  "سعر مسجل": {
+    "en": "Recorded price",
+    "tr": "Kayıtlı fiyat"
+  },
+  "اختر الجهة والعملة المستخدمة": {
+    "en": "Choose the partner and the currency in use",
+    "tr": "Tarafı ve kullanılan para birimini seçin"
+  },
+  "الجهة / المورد": {
+    "en": "Partner / supplier",
+    "tr": "Taraf / tedarikçi"
+  },
+  "دفتر الأصناف": {
+    "en": "Item ledger",
+    "tr": "Ürün defteri"
+  },
+  "متر مربع": {
+    "en": "Square metre",
+    "tr": "Metrekare"
+  },
+  "جرام": {
+    "en": "Gram",
+    "tr": "Gram"
+  },
+  "مثال: بولي بروبلين": {
+    "en": "Example: polypropylene",
+    "tr": "Örnek: polipropilen"
+  },
+  "مثال: 2000": {
+    "en": "Example: 2000",
+    "tr": "Örnek: 2000"
+  },
+  "مثال: سوبر شرنك": {
+    "en": "Example: super shrink",
+    "tr": "Örnek: süper shrink"
+  },
+  "مثال: 9.00": {
+    "en": "Example: 9.00",
+    "tr": "Örnek: 9.00"
+  },
+  "مثال: رمادي": {
+    "en": "Example: grey",
+    "tr": "Örnek: gri"
+  },
+  "العرض": {
+    "en": "Width",
+    "tr": "Genişlik"
+  },
+  "الطول": {
+    "en": "Length",
+    "tr": "Uzunluk"
+  },
+  "السماكة": {
+    "en": "Thickness",
+    "tr": "Kalınlık"
+  },
+  "المقاس": {
+    "en": "Size",
+    "tr": "Ölçü"
+  },
+  "اللون": {
+    "en": "Colour",
+    "tr": "Renk"
+  },
+  "الصرف": {
+    "en": "Exchange rate",
+    "tr": "Döviz kuru"
+  },
+  "قيد المتابعة": {
+    "en": "In follow-up",
+    "tr": "Takipte"
+  },
+  "مثال: ملاحظة زيارة المصنع": {
+    "en": "Example: factory visit note",
+    "tr": "Örnek: fabrika ziyaret notu"
+  },
+  "مثال: مراجعة عرض موكيت": {
+    "en": "Example: review a carpet offer",
+    "tr": "Örnek: halı teklifini inceleme"
+  },
+  "مثال: التأكد من وزن 3000 جرام قبل اعتماد السعر": {
+    "en": "Example: confirm 3000 g weight before approving the price",
+    "tr": "Örnek: fiyatı onaylamadan önce 3000 g ağırlığı doğrulayın"
+  },
+  "تم حفظ الملاحظة": {
+    "en": "Note saved",
+    "tr": "Not kaydedildi"
+  },
+  "اكتب عنوان المهمة أولاً": {
+    "en": "Enter the task title first",
+    "tr": "Önce görev başlığını girin"
+  },
+  "تمت إضافة المهمة أو الموعد": {
+    "en": "Task or appointment added",
+    "tr": "Görev veya randevu eklendi"
+  },
+  "ملاحظة بلا عنوان": {
+    "en": "Untitled note",
+    "tr": "Başlıksız not"
+  },
+  "ملاحظة عامة": {
+    "en": "General note",
+    "tr": "Genel not"
+  },
+  "تثبيت": {
+    "en": "Pin",
+    "tr": "Sabitle"
+  },
+  "تم تجهيز الملف": {
+    "en": "File prepared",
+    "tr": "Dosya hazırlandı"
+  },
+  "اختر صنفاً واحداً على الأقل": {
+    "en": "Select at least one item",
+    "tr": "En az bir ürün seçin"
+  },
+  "العميل:": {
+    "en": "Customer:",
+    "tr": "Müşteri:"
+  },
+  "نوع السعر:": {
+    "en": "Price type:",
+    "tr": "Fiyat türü:"
+  },
+  "التاريخ:": {
+    "en": "Date:",
+    "tr": "Tarih:"
+  },
+  "غير محدد": {
+    "en": "Unspecified",
+    "tr": "Belirtilmemiş"
+  },
+  "لا توجد نتائج مطابقة": {
+    "en": "No matching results",
+    "tr": "Eşleşen sonuç yok"
+  },
+  "نسبة مئوية": {
+    "en": "Percentage",
+    "tr": "Yüzde"
+  },
+  "تقرير التاجر الذكي": {
+    "en": "Smart Trader report",
+    "tr": "Akıllı Tacir raporu"
+  },
+  "تاريخ التقرير:": {
+    "en": "Report date:",
+    "tr": "Rapor tarihi:"
+  },
+  "عدد النتائج:": {
+    "en": "Number of results:",
+    "tr": "Sonuç sayısı:"
+  },
+  "نسخة قديمة": {
+    "en": "Legacy backup",
+    "tr": "Eski yedekleme"
+  },
+  "جارٍ الاستيراد…": {
+    "en": "Importing…",
+    "tr": "İçe aktarılıyor…"
+  },
+  "سعر الصرف يجب أن يكون أكبر من صفر": {
+    "en": "Exchange rate must be greater than zero",
+    "tr": "Döviz kuru sıfırdan büyük olmalıdır"
+  },
+  "تم حفظ الإعدادات على جهازك": {
+    "en": "Settings saved on your device",
+    "tr": "Ayarlar cihazınıza kaydedildi"
+  },
+  "تمت استعادة القيم الأولية. اضغط حفظ لاعتمادها.": {
+    "en": "Initial values restored. Save to apply them.",
+    "tr": "Başlangıç değerleri geri yüklendi. Uygulamak için kaydedin."
+  },
+  "أدخل اسم التصنيف": {
+    "en": "Enter category name",
+    "tr": "Kategori adı girin"
+  },
+  "هذا التصنيف مسجل مسبقاً": {
+    "en": "This category already exists",
+    "tr": "Bu kategori zaten kayıtlı"
+  },
+  "تمت إضافة التصنيف": {
+    "en": "Category added",
+    "tr": "Kategori eklendi"
+  },
+  "تم حذف التصنيف": {
+    "en": "Category deleted",
+    "tr": "Kategori silindi"
+  },
+  "أدخل اسم المواصفة الفنية": {
+    "en": "Enter technical specification name",
+    "tr": "Teknik özellik adı girin"
+  },
+  "هذه المواصفة مسجلة مسبقاً": {
+    "en": "This specification already exists",
+    "tr": "Bu özellik zaten kayıtlı"
+  },
+  "تم حذف القالب من الإعدادات": {
+    "en": "Template deleted from settings",
+    "tr": "Şablon ayarlardan silindi"
+  },
+  "اختر التصنيف الذي ستنسخ إليه القوالب": {
+    "en": "Select the category to copy templates to",
+    "tr": "Şablonların kopyalanacağı kategoriyi seçin"
+  },
+  "اختر تصنيفاً مختلفاً للنسخ إليه": {
+    "en": "Select a different target category",
+    "tr": "Farklı bir hedef kategori seçin"
+  },
+  "لا توجد قوالب في المصدر المحدد": {
+    "en": "No templates in the selected source",
+    "tr": "Seçilen kaynakta şablon yok"
+  },
+  "جميع قوالب المصدر موجودة بالفعل في التصنيف الهدف": {
+    "en": "All source templates already exist in the target category",
+    "tr": "Tüm kaynak şablonları hedef kategoride zaten var"
+  }
+}

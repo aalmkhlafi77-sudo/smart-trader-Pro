@@ -1,0 +1,26 @@
+const dict: Record<string, string> = {
+  "prices.customsRateHint": "Ürünün varsayılan oranı olarak kaydedilir ve hesaplayıcıya otomatik aktarılır.",
+  "prices.date": "Tarih",
+  "prices.draftCleared": "Fiyat taslağı temizlendi ve yeni iş başlatıldı",
+  "prices.editPrices": "Fiyatları düzenle",
+  "prices.excelExported": "Excel dosyası dışa aktarıldı",
+  "prices.fileName": "Fiyat-tablosu",
+  "prices.issueDate": "Düzenleme tarihi",
+  "prices.itemCount": "Ürün sayısı",
+  "prices.noItemsExport": "Dışa aktarılacak ürün yok",
+  "prices.pdfNote": "Bu tablo iç karşılaştırma ve müzakere içindir. Öne çıkan özellikler karşılaştırma temelidir.",
+  "prices.pdfReady": "Dosya hazırlandı — PDF olarak kaydet'i seçin",
+  "prices.pdfSubtitle": "Dört fiyat seviyesi ve yürürlük tarihleri",
+  "prices.pdfTitle": "Fiyat ve özellik tablosu",
+  "prices.price": "Fiyat",
+  "prices.printFailed": "Yazdırma penceresi açılamadı. Açılır pencerelere izin verip yeniden deneyin.",
+  "prices.record": "Fiyat kaydı",
+  "prices.saved": "Fiyatlar cihazınıza kaydedildi",
+  "prices.selectFirst": "Önce bir ürün seçin",
+  "prices.sheetName": "Fiyatlar",
+  "prices.specifications": "Özellikler",
+  "prices.subtitle": "Dört fiyat ve yürürlük tarihleri",
+  "prices.title": "Fiyatlar",
+};
+
+export default dict;

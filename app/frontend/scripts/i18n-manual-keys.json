@@ -1,0 +1,74 @@
+{
+  "cargo.stepTitleLoad": { "ar": "الحمولة", "en": "Cargo", "tr": "Yük" },
+  "cargo.stepTitleRoute": { "ar": "المسار", "en": "Route", "tr": "Güzergâh" },
+  "cargo.stepTitleExpenses": {
+    "ar": "المصروفات",
+    "en": "Expenses",
+    "tr": "Giderler"
+  },
+  "cargo.stepTitleReview": {
+    "ar": "المراجعة",
+    "en": "Review",
+    "tr": "İnceleme"
+  },
+  "cargo.stepTitleResults": {
+    "ar": "النتائج",
+    "en": "Results",
+    "tr": "Sonuçlar"
+  },
+  "cargo.stageFactory": { "ar": "المصنع", "en": "Factory", "tr": "Fabrika" },
+  "cargo.stagePort": { "ar": "الميناء", "en": "Port", "tr": "Liman" },
+  "cargo.stageCustoms": {
+    "ar": "الجمارك والتخليص",
+    "en": "Customs & clearance",
+    "tr": "Gümrük ve gümrükleme"
+  },
+  "cargo.stageWarehouse": { "ar": "المستودع", "en": "Warehouse", "tr": "Depo" },
+  "cargo.stageOther": {
+    "ar": "مرحلة أخرى",
+    "en": "Other stage",
+    "tr": "Diğer aşama"
+  },
+  "cargo.newCostFileTitle": {
+    "ar": "ملف تكلفة جديد",
+    "en": "New cost file",
+    "tr": "Yeni maliyet dosyası"
+  },
+  "cargo.noCodeWord": { "ar": "دون كود", "en": "No code", "tr": "Kodsuz" },
+  "cargo.unspecifiedUnitWord": {
+    "ar": "وحدة غير محددة",
+    "en": "Unspecified unit",
+    "tr": "Belirtilmemiş birim"
+  },
+  "cargo.manualEditEntry": {
+    "ar": "تعديل/إدخال محلي",
+    "en": "Local edit/entry",
+    "tr": "Yerel düzenleme/giriş"
+  },
+  "cargo.manualEditEntryFull": {
+    "ar": "تعديل أو إدخال محلي",
+    "en": "Local edit or entry",
+    "tr": "Yerel düzenleme veya giriş"
+  },
+  "cargo.noSupplyCondition": {
+    "ar": "بدون شرط شراء",
+    "en": "No supply condition",
+    "tr": "Tedarik koşulu yok"
+  },
+  "cargo.noTransportType": {
+    "ar": "بدون نوع نقل",
+    "en": "No transport type",
+    "tr": "Taşıma türü yok"
+  },
+  "cargo.unspecifiedOffice": {
+    "ar": "مكتب غير محدد",
+    "en": "Unspecified office",
+    "tr": "Belirtilmemiş ofis"
+  },
+  "cargo.unnamedFileWord": {
+    "ar": "ملف بدون اسم",
+    "en": "Untitled file",
+    "tr": "Adsız dosya"
+  },
+  "common.duplicateWord": { "ar": "نسخة", "en": "Copy", "tr": "Kopya" }
+}

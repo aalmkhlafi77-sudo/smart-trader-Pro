@@ -1,0 +1,26 @@
+const dict: Record<string, string> = {
+  "prices.customsRateHint": "Saved as this item's default rate and inherited automatically by the calculator.",
+  "prices.date": "Date",
+  "prices.draftCleared": "Price draft cleared and new work started",
+  "prices.editPrices": "Edit prices",
+  "prices.excelExported": "Excel file exported",
+  "prices.fileName": "Price-table",
+  "prices.issueDate": "Issue date",
+  "prices.itemCount": "Item count",
+  "prices.noItemsExport": "No items to export",
+  "prices.pdfNote": "This table is for internal comparison and negotiation. Highlighted specifications are the comparison basis.",
+  "prices.pdfReady": "File prepared — choose Save as PDF",
+  "prices.pdfSubtitle": "Four price levels and their effective dates",
+  "prices.pdfTitle": "Prices and specifications table",
+  "prices.price": "Price",
+  "prices.printFailed": "Could not open the print window. Allow pop-ups and try again.",
+  "prices.record": "Price register",
+  "prices.saved": "Prices saved on your device",
+  "prices.selectFirst": "Select an item first",
+  "prices.sheetName": "Prices",
+  "prices.specifications": "Specifications",
+  "prices.subtitle": "Four prices and their effective dates",
+  "prices.title": "Prices",
+};
+
+export default dict;

@@ -1,0 +1,28 @@
+const dict: Record<string, string> = {
+  "home.addItem": "Ürün kaydet",
+  "home.calculateContainer": "Konteyner maliyetini hesapla",
+  "home.costRegister": "Hesaplama kaydı",
+  "home.costRuns": "Maliyet hesaplamaları",
+  "home.entries": "Çalışma girişleri",
+  "home.entriesHint": "Şimdi gerçekleştirmek istediğiniz görevi seçin",
+  "home.entry.backupDesc": "Verilerinizi dışa aktarın ve geri yükleyin",
+  "home.entry.exportDesc": "Müşteriler için fiyat listeleri",
+  "home.entry.itemsDesc": "Ürünler ve teknik özellikleri",
+  "home.entry.pricesDesc": "Dört fiyat ve geçerlilik tarihleri",
+  "home.entry.pricingDesc": "Konteyner maliyeti ve satış fiyatı",
+  "home.heroEyebrow": "Yerel maliyet defteri",
+  "home.heroText": "Tarafları, ürünleri ve özellikleri kaydedin; her ürün için geçerlilik tarihleriyle dört fiyat girin, ardından satış fiyatını belirlemeden önce tam konteyner maliyetini hesaplayın.",
+  "home.heroTitle": "Fiyat sorulmadan önce gerçek maliyetinizi bilin",
+  "home.latestCosts": "Son maliyet hesaplamaları",
+  "home.latestCostsHint": "En son kaydedilen beş hesaplama",
+  "home.ledgerIndex": "Defter dizini",
+  "home.ledgerSubtitle": "Ürünü kaydedin, maliyetini hesaplayın ve güvenle pazarlık yapın",
+  "home.localData": "Verileriniz yalnızca bu cihazda tutulur",
+  "home.noCosts": "Henüz hesaplama yok. Maliyet hesaplayıcıyla başlayın.",
+  "home.priceLists": "Fiyat listeleri",
+  "home.subtitle": "Ürün ve fiyatlarınızı güvenilir bir defterde tutun",
+  "home.title": "Çalışma alanı",
+  "home.unitCost": "Birim maliyeti",
+};
+
+export default dict;

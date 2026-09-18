@@ -1,0 +1,20 @@
+const dict: Record<string, string> = {
+  "reports.byLastCalc": "Son hesaplamaya göre",
+  "reports.costWord": "Maliyet",
+  "reports.exportExcel": "Excel'e aktar",
+  "reports.exportPdf": "PDF'e aktar",
+  "reports.fileName": "akilli-tacar-raporu",
+  "reports.lastSavedCalc": "Kaydedilen son hesaplama",
+  "reports.localSubtitle": "Ürünleri, fiyatları ve maliyeti yerel olarak analiz edin",
+  "reports.marginShort": "Marj",
+  "reports.pdfSubtitle": "Ürünler, taraflar, özellikler ve fiyatlar listesi",
+  "reports.resultWord": "sonuç",
+  "reports.sourceNote": "Maliyet ve satış fiyatı her ürün için son kaydedilen hesaplamadan alınır; tedarikçi fiyatı ürünün kayıtlı 1. fiyatını kullanır. Tüm veriler cihazınızda kalır.",
+  "reports.subtitle": "Fiyat, maliyet ve kârı tek defterden karşılaştırın",
+  "reports.supplierCurrencyNote": "Tedarikçi fiyatı, ürün için kaydedildiği orijinal para biriminde gösterilir ve yerel paraya dönüştürülmez.",
+  "reports.supplierCurrencyWord": "Tedarikçi para birimi",
+  "reports.supplierOriginal": "Orijinal tedarikçi fiyatı",
+  "reports.title": "Akıllı raporlar",
+};
+
+export default dict;

@@ -1,0 +1,14 @@
+{
+  "description": "- Rebuilt Smart Trader (التاجر الذكي) on the shadcn/ui template stack: React + TypeScript + Vite + Tailwind v4 + Radix. - Frontend code lives under client/src with pages/, components/, contexts/, hooks/, lib/. Data layer is IndexedDB behind an abstract Repository.",
+  "required_fields": [],
+  "required_files": [
+    "README.md",
+    "client/src/App.tsx",
+    "client/src/main.tsx",
+    "client/index.html"
+  ],
+  "lang": "typescript",
+  "framework": "react",
+  "name": "shadcn/ui",
+  "scene": "default_web_project"
+}

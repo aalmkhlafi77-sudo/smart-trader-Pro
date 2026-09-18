@@ -1,0 +1,25 @@
+const dict: Record<string, string> = {
+  "followup.addNote": "Add note",
+  "followup.addTask": "Add task or appointment",
+  "followup.cancelEdit": "Cancel editing",
+  "followup.details": "Follow-up details",
+  "followup.dueAt": "Due at",
+  "followup.editTask": "Edit task or appointment",
+  "followup.linkedRecord": "Linked record",
+  "followup.localNote": "Local note",
+  "followup.notesRegister": "Notes register",
+  "followup.priority": "Priority",
+  "followup.priorityHigh": "High",
+  "followup.priorityLow": "Low",
+  "followup.priorityMedium": "Medium",
+  "followup.savedDate": "Saved date",
+  "followup.subtitle": "Tasks, appointments and notes linked to your records",
+  "followup.taskDetails": "Task or appointment details",
+  "followup.taskUpdated": "Task or appointment updated",
+  "followup.tasksRegister": "Follow-up register",
+  "followup.title": "Follow-up & notes",
+  "followup.untitledNote": "Untitled note",
+  "followup.updateTask": "Save changes",
+};
+
+export default dict;

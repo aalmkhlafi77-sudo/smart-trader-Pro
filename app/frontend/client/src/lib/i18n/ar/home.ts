@@ -1,0 +1,28 @@
+const dict: Record<string, string> = {
+  "home.addItem": "تسجيل صنف",
+  "home.calculateContainer": "حساب تكلفة حاوية",
+  "home.costRegister": "سجل الحسابات",
+  "home.costRuns": "حسابات التكلفة",
+  "home.entries": "مداخل العمل",
+  "home.entriesHint": "اختر المهمة التي تريد تنفيذها الآن",
+  "home.entry.backupDesc": "تصدير واستعادة بياناتك",
+  "home.entry.exportDesc": "قوائم أسعار للعملاء",
+  "home.entry.itemsDesc": "الأصناف ومواصفاتها الفنية",
+  "home.entry.pricesDesc": "أربعة أسعار وتواريخ اعتمادها",
+  "home.entry.pricingDesc": "تكلفة الحاوية وسعر البيع",
+  "home.heroEyebrow": "دفتر تكلفة محلي",
+  "home.heroText": "سجّل الجهات والأصناف والمواصفات، وأدخل أربعة أسعار لكل صنف مع تاريخ اعتماد كل سعر، ثم احسب تكلفة الحاوية كاملة قبل تحديد سعر البيع.",
+  "home.heroTitle": "اعرف تكلفتك الحقيقية قبل أن تُسأل عن السعر",
+  "home.latestCosts": "آخر حسابات التكلفة",
+  "home.latestCostsHint": "أحدث خمس عمليات محفوظة على الجهاز",
+  "home.ledgerIndex": "فهرس الدفتر",
+  "home.ledgerSubtitle": "سجّل الصنف، احسب تكلفته، ثم فاوض بثقة",
+  "home.localData": "بياناتك محفوظة على جهازك فقط",
+  "home.noCosts": "لا توجد حسابات بعد. ابدأ من حاسبة التكلفة.",
+  "home.priceLists": "قوائم الأسعار",
+  "home.subtitle": "سجل أصنافك وأسعارك بثقة",
+  "home.title": "لوحة العمل",
+  "home.unitCost": "تكلفة الوحدة",
+};
+
+export default dict;

@@ -1,0 +1,33 @@
+﻿# Dependencies
+node_modules/
+**/node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+**/dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Logs
+*.log
+**/*.log
+logs/
+.manus-logs/
+
+# Env and local configs
+.env
+.env.*
+!.env.example
+.project-config.json
+.manus/
+
+# OS and Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+tmp/
+temp/
+.cache/

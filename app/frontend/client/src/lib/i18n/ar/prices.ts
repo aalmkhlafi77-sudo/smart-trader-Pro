@@ -1,0 +1,26 @@
+const dict: Record<string, string> = {
+  "prices.customsRateHint": "تُحفظ كنسبة افتراضية لهذا الصنف وتورّث تلقائياً للحاسبة.",
+  "prices.date": "تاريخ",
+  "prices.draftCleared": "تم مسح مسودة الأسعار وبدء عمل جديد",
+  "prices.editPrices": "تعديل الأسعار",
+  "prices.excelExported": "تم تصدير ملف Excel",
+  "prices.fileName": "جدول-الأسعار",
+  "prices.issueDate": "تاريخ الإصدار",
+  "prices.itemCount": "عدد الأصناف",
+  "prices.noItemsExport": "لا توجد أصناف للتصدير",
+  "prices.pdfNote": "هذا الجدول للاستخدام الداخلي في المقارنة والتفاوض. المواصفات المميزة هي أساس المقارنة بين الأصناف.",
+  "prices.pdfReady": "تم تجهيز الملف — اختر حفظ كـ PDF",
+  "prices.pdfSubtitle": "مستويات السعر الأربعة وتواريخ اعتمادها",
+  "prices.pdfTitle": "جدول الأسعار والمواصفات",
+  "prices.price": "السعر",
+  "prices.printFailed": "تعذّر فتح نافذة الطباعة. اسمح بالنوافذ المنبثقة ثم أعد المحاولة.",
+  "prices.record": "سجل الأسعار",
+  "prices.saved": "تم حفظ الأسعار على جهازك",
+  "prices.selectFirst": "اختر الصنف أولاً",
+  "prices.sheetName": "الأسعار",
+  "prices.specifications": "المواصفات",
+  "prices.subtitle": "أربعة أسعار وتواريخ اعتمادها",
+  "prices.title": "الأسعار",
+};
+
+export default dict;

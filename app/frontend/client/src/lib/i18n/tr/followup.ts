@@ -1,0 +1,25 @@
+const dict: Record<string, string> = {
+  "followup.addNote": "Not ekle",
+  "followup.addTask": "Görev veya randevu ekle",
+  "followup.cancelEdit": "Düzenlemeyi iptal et",
+  "followup.details": "Takip ayrıntıları",
+  "followup.dueAt": "Tarih ve saat",
+  "followup.editTask": "Görevi veya randevuyu düzenle",
+  "followup.linkedRecord": "Bağlı kayıt",
+  "followup.localNote": "Yerel not",
+  "followup.notesRegister": "Not kaydı",
+  "followup.priority": "Öncelik",
+  "followup.priorityHigh": "Yüksek",
+  "followup.priorityLow": "Düşük",
+  "followup.priorityMedium": "Orta",
+  "followup.savedDate": "Kaydedilme tarihi",
+  "followup.subtitle": "Kayıtlarınıza bağlı görevler, randevular ve notlar",
+  "followup.taskDetails": "Görev veya randevu ayrıntıları",
+  "followup.taskUpdated": "Görev veya randevu güncellendi",
+  "followup.tasksRegister": "Takip kaydı",
+  "followup.title": "Takip ve notlar",
+  "followup.untitledNote": "Başlıksız not",
+  "followup.updateTask": "Değişiklikleri kaydet",
+};
+
+export default dict;
