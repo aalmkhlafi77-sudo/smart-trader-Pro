@@ -18,6 +18,9 @@ const I18N_DIR = join(SRC, "lib", "i18n").split(sep).join("/");
 const ALLOW_DEC: Record<string, string[]> = {
   // قيم عملات/وحدات مخزَّنة (نصوص عربية) في ملفات S1 — الترحيل إلى ISO مؤجَّل إلى S5
   "pages/currencyData.ts": ["CURRENCY_OPTIONS"],
+  "pages/settings/Financial.tsx": ["FINANCE_DATA"],
+  "pages/settings/logistics/RateSheet.tsx": ["RATE_DATA_DEFAULTS"],
+  "pages/settings/logistics/TemplateSheet.tsx": ["TRANSPORT_MODES"],
   "pages/Entities.tsx": ["ENTITY_DATA_DEFAULTS"],
   "pages/Items.tsx": ["ITEM_DATA_DEFAULTS"],
   "pages/entities/EntityTable.tsx": ["FALLBACK_CURRENCY"],
@@ -28,7 +31,6 @@ const ALLOW_DEC: Record<string, string[]> = {
   "pages/prices/PriceTable.tsx": ["FALLBACK_CURRENCY"],
   "pages/Pricing.tsx": ["COST_BLUEPRINTS"],
   "pages/Reports.tsx": ["lookupSpec"],
-  "pages/Settings.tsx": ["BASE_LOCAL", "BASE_FOREIGN"],
 };
 
 /** نصوص عربية حرفية يُسمح بها في ملف بعينه (قيم بيانات/عملات/أنواع نقل). */
@@ -40,13 +42,6 @@ const ALLOW_EXACT: Record<string, string[]> = {
   "components/EnglishDatePicker.tsx": ["٠١٢٣٤٥٦٧٨٩", "۰۱۲۳۴۵۶۷۸۹"],
   "pages/Pricing.tsx": ["بحري", "بري", "جوي", "دولار", "ريال", "وحدة"],
   "pages/Reports.tsx": ["دولار"],
-  "components/LogisticsTemplatesSettingsCard.tsx": [
-    "بحري",
-    "بري",
-    "جوي",
-    "محلي",
-    "دولار",
-  ],
 };
 
 function walk(dir: string, out: string[] = []): string[] {
