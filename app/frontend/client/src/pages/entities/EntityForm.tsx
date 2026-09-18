@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Plus, X, ChevronDown, ChevronUp } from "lucide-react";
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Field,
@@ -17,10 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import AttachmentsPanel from "@/components/AttachmentsPanel";
 import type { EntityKind } from "@/lib/db";
+import { entitySchema } from "@/lib/validation/schemas";
 import { CURRENCY_OPTIONS } from "../currencyData";
+import { EntityExtraSection } from "./EntityExtraSection";
 
 export interface EntityFormData {
   name: string;
@@ -43,22 +45,40 @@ const KINDS: { value: EntityKind; labelKey: string }[] = [
 ];
 
 export function EntityForm({
-  form,
-  setForm,
+  defaultValues,
   editingId,
-  onSave,
+  onDraftChange,
+  onSubmit,
   onReset,
   onAttachmentsChanged,
 }: {
-  form: EntityFormData;
-  setForm: (f: EntityFormData) => void;
+  defaultValues: EntityFormData;
   editingId: string | null;
-  onSave: () => void;
+  onDraftChange: (f: EntityFormData) => void;
+  onSubmit: (f: EntityFormData) => void;
   onReset: () => void;
   onAttachmentsChanged?: () => void;
 }) {
   const { t } = useLanguage();
-  const [showExtra, setShowExtra] = useState(false);
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<EntityFormData>({
+    resolver: zodResolver(entitySchema(t)),
+    defaultValues,
+  });
+
+  useEffect(() => {
+    const subscription = watch(values => onDraftChange(values as EntityFormData));
+    return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const liveCurrency = watch("defaultCurrency") || CURRENCY_OPTIONS[0].value;
+  const liveRate = watch("defaultExchangeRate") || "3.75";
 
   return (
     <div className="space-y-4">
@@ -71,34 +91,40 @@ export function EntityForm({
           <Field
             label={t("entities.name")}
             required
+            htmlFor="ent-name"
+            error={errors.name?.message}
             control={
               <Input
+                id="ent-name"
                 className="field-input"
-                value={form.name}
-                onChange={e => setForm({ ...form, name: e.target.value })}
                 placeholder={t("common.examplealnokhbacompany")}
+                {...register("name")}
               />
             }
           />
           <Field
             label={t("entities.type")}
             required
+            error={errors.kind?.message}
             control={
-              <Select
-                value={form.kind}
-                onValueChange={v => setForm({ ...form, kind: v as EntityKind })}
-              >
-                <SelectTrigger className="field-input w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {KINDS.map(k => (
-                    <SelectItem key={k.value} value={k.value}>
-                      {t(k.labelKey)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                name="kind"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="field-input w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {KINDS.map(k => (
+                        <SelectItem key={k.value} value={k.value}>
+                          {t(k.labelKey)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             }
           />
         </FormGrid>
@@ -107,22 +133,16 @@ export function EntityForm({
         <FormGrid cols={2} className="mt-3">
           <Field
             label={t("entities.country")}
+            htmlFor="ent-country"
             control={
-              <Input
-                className="field-input"
-                value={form.country}
-                onChange={e => setForm({ ...form, country: e.target.value })}
-              />
+              <Input id="ent-country" className="field-input" {...register("country")} />
             }
           />
           <Field
             label={t("entities.city")}
+            htmlFor="ent-city"
             control={
-              <Input
-                className="field-input"
-                value={form.city}
-                onChange={e => setForm({ ...form, city: e.target.value })}
-              />
+              <Input id="ent-city" className="field-input" {...register("city")} />
             }
           />
         </FormGrid>
@@ -138,35 +158,42 @@ export function EntityForm({
             label={t("entities.defaultCurrency")}
             required
             hint={t("common.copiedautomaticallytoani")}
+            error={errors.defaultCurrency?.message}
             control={
-              <Select
-                value={form.defaultCurrency || CURRENCY_OPTIONS[0].value}
-                onValueChange={v => setForm({ ...form, defaultCurrency: v })}
-              >
-                <SelectTrigger className="field-input w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {CURRENCY_OPTIONS.map(o => (
-                    <SelectItem key={o.value} value={o.value}>
-                      {t(o.labelKey)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                name="defaultCurrency"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value || CURRENCY_OPTIONS[0].value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger className="field-input w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CURRENCY_OPTIONS.map(o => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {t(o.labelKey)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             }
           />
           <Field
             label={t("entities.defaultRate")}
             required
+            htmlFor="ent-rate"
             hint={t("common.copiedautomaticallytoani")}
+            error={errors.defaultExchangeRate?.message}
             control={
               <NumberField
-                value={form.defaultExchangeRate ?? "3.75"}
-                onChange={e =>
-                  setForm({ ...form, defaultExchangeRate: e.target.value })
-                }
+                id="ent-rate"
                 placeholder={t("common.example375")}
+                {...register("defaultExchangeRate")}
               />
             }
           />
@@ -176,8 +203,7 @@ export function EntityForm({
           label={t("entities.willInherit")}
           value={
             <span>
-              {form.defaultCurrency || CURRENCY_OPTIONS[0].value} ·{" "}
-              <span dir="ltr">{form.defaultExchangeRate || "3.75"}</span>
+              {liveCurrency} · <span dir="ltr">{liveRate}</span>
             </span>
           }
           tone="inherited"
@@ -191,36 +217,38 @@ export function EntityForm({
       >
         <Field
           label={t("entities.contact")}
+          htmlFor="ent-contact"
           control={
             <Input
+              id="ent-contact"
               className="field-input"
-              value={form.contactPerson}
-              onChange={e =>
-                setForm({ ...form, contactPerson: e.target.value })
-              }
+              {...register("contactPerson")}
             />
           }
         />
         <FormGrid cols={2} className="mt-3">
           <Field
             label={t("entities.phone")}
+            htmlFor="ent-phone"
             control={
               <Input
+                id="ent-phone"
                 className="field-input"
                 dir="ltr"
-                value={form.phone}
-                onChange={e => setForm({ ...form, phone: e.target.value })}
+                {...register("phone")}
               />
             }
           />
           <Field
             label={t("entities.email")}
+            htmlFor="ent-email"
+            error={errors.email?.message}
             control={
               <Input
+                id="ent-email"
                 className="field-input"
                 dir="ltr"
-                value={form.email}
-                onChange={e => setForm({ ...form, email: e.target.value })}
+                {...register("email")}
               />
             }
           />
@@ -228,51 +256,18 @@ export function EntityForm({
       </FormSection>
 
       {/* 5. (قسم قابل للطي) ملاحظات · مرفقات */}
-      <div className="rounded-md border border-border/80 bg-secondary/20 p-3">
-        <button
-          type="button"
-          onClick={() => setShowExtra(v => !v)}
-          className="flex w-full items-center justify-between text-xs font-semibold text-[var(--ink)]"
-        >
-          <span>{t("common.extraDetails")}</span>
-          {showExtra ? (
-            <ChevronUp className="h-4 w-4" />
-          ) : (
-            <ChevronDown className="h-4 w-4" />
-          )}
-        </button>
-
-        {showExtra && (
-          <div className="mt-3 space-y-3 pt-2 border-t border-border/60">
-            <Field
-              label={t("common.notes")}
-              control={
-                <Textarea
-                  className="field-input min-h-20"
-                  value={form.notes}
-                  onChange={e => setForm({ ...form, notes: e.target.value })}
-                />
-              }
-            />
-            {editingId && (
-              <div className="pt-2">
-                <span className="text-[11px] font-semibold text-[var(--ink)]">
-                  {t("common.attachments")}
-                </span>
-                <AttachmentsPanel
-                  entityId={editingId}
-                  compact
-                  onChanged={onAttachmentsChanged}
-                />
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      <EntityExtraSection
+        register={register}
+        editingId={editingId}
+        onAttachmentsChanged={onAttachmentsChanged}
+      />
 
       {/* شريط الإجراءات */}
       <div className="flex gap-2 pt-2">
-        <Button onClick={onSave} className="form-action-bar flex-1">
+        <Button
+          onClick={() => void handleSubmit(onSubmit)()}
+          className="form-action-bar flex-1"
+        >
           <Plus className="h-4 w-4" />
           {editingId ? t("entities.update") : t("entities.save")}
         </Button>

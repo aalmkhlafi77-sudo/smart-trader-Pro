@@ -101,24 +101,20 @@ export default function Items() {
     setSpecs([]);
   };
 
-  const save = async () => {
-    if (!form.name.trim()) {
-      toast.error(t("items.nameRequired"));
-      return;
-    }
+  const save = async (valid: ItemFormData) => {
     const existing = editingId ? items.find(i => i.id === editingId) : null;
     const itemId = existing?.id ?? newId("itm");
     const row: ItemRow = {
       id: itemId,
-      name: form.name.trim(),
-      code: form.code.trim(),
-      category: form.category.trim(),
-      entityId: form.entityId === "none" ? null : form.entityId,
-      unit: form.unit.trim() || ITEM_DATA_DEFAULTS.unit,
-      currency: form.currency?.trim?.() || ITEM_DATA_DEFAULTS.currency,
-      defaultExchangeRate: Number(form.defaultExchangeRate) || 0,
-      customsRate: form.customsRate.trim() === "" ? null : Math.max(0, Number(form.customsRate) || 0) / 100,
-      notes: form.notes.trim(),
+      name: valid.name.trim(),
+      code: valid.code.trim(),
+      category: valid.category.trim(),
+      entityId: valid.entityId === "none" ? null : valid.entityId,
+      unit: valid.unit.trim() || ITEM_DATA_DEFAULTS.unit,
+      currency: valid.currency?.trim?.() || ITEM_DATA_DEFAULTS.currency,
+      defaultExchangeRate: Number(valid.defaultExchangeRate) || 0,
+      customsRate: valid.customsRate.trim() === "" ? null : Math.max(0, Number(valid.customsRate) || 0) / 100,
+      notes: valid.notes.trim(),
       createdAt: existing?.createdAt ?? nowIso(),
       updatedAt: nowIso(),
     };
@@ -225,15 +221,16 @@ export default function Items() {
             }
           >
             <ItemForm
-              form={form}
-              setForm={setForm}
+              key={editingId ?? "new"}
+              defaultValues={form}
               specs={specs}
               setSpecs={setSpecs}
               editingId={editingId}
               entities={entities}
               categories={categories}
               specTemplates={specTemplates}
-              onSave={save}
+              onDraftChange={setForm}
+              onSubmit={data => void save(data)}
               onReset={reset}
               onAddSpec={tpl => {
                 if (tpl && specs.some(s => s.label === tpl.label)) {

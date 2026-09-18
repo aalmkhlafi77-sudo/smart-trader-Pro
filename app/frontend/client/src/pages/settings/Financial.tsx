@@ -22,6 +22,8 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { db } from "@/lib/db";
 import { currencyLabel } from "@/lib/currency";
+import { financialDefaultsSchema } from "@/lib/validation/schemas";
+import { CurrencySelect } from "./financial/CurrencySelect";
 import { nowIso } from "@/lib/id";
 import { parseNumber } from "@/lib/pricing";
 import { SamplePreview } from "./financial/SamplePreview";
@@ -47,6 +49,7 @@ export default function SettingsFinancial() {
   const [rate, setRate] = useState("3.75");
   const [customs, setCustoms] = useState("12");
   const [margin, setMargin] = useState("20");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     let cancelled = false;
@@ -96,11 +99,18 @@ export default function SettingsFinancial() {
   };
 
   const saveDefaults = async () => {
-    const rateVal = parseNumber(rate);
-    if (rateVal <= 0) {
-      toast.error(t("common.exchangeratemustbegreate"));
+    const parsed = financialDefaultsSchema(t).safeParse({ rate, customs, margin });
+    if (!parsed.success) {
+      const next: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const key = String(issue.path[0] ?? "");
+        if (key && !next[key]) next[key] = issue.message;
+      }
+      setErrors(next);
       return;
     }
+    setErrors({});
+    const rateVal = parseNumber(rate);
     const s = await db.getSettings();
     await db.saveSettings({
       ...s,
@@ -121,62 +131,6 @@ export default function SettingsFinancial() {
     setMargin("20");
     toast.info(t("common.initialvaluesrestoredsav"));
   };
-
-  const currencyField = (
-    kind: "local" | "foreign",
-    label: string,
-    value: string,
-    setValue: (v: string) => void,
-    options: string[],
-    adding: boolean,
-    setAdding: (v: boolean) => void,
-    draft: string,
-    setDraft: (v: string) => void
-  ) => (
-    <Field
-      label={label}
-      control={
-        adding ? (
-          <div className="flex gap-1.5">
-            <Input
-              className="field-input flex-1"
-              autoFocus
-              placeholder={t("settings.currencyName")}
-              value={draft}
-              onChange={e => setDraft(e.target.value)}
-            />
-            <Button
-              size="icon"
-              variant="outline"
-              className="bg-card shrink-0"
-              onClick={() => addOption(kind)}
-            >
-              <Save className="h-4 w-4" />
-            </Button>
-          </div>
-        ) : (
-          <Select
-            value={value}
-            onValueChange={v => (v === "__new__" ? setAdding(true) : setValue(v))}
-          >
-            <SelectTrigger className="field-input w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {options.map(c => (
-                <SelectItem key={c} value={c}>
-                  {currencyLabel(c, t)}
-                </SelectItem>
-              ))}
-              <SelectItem value="__new__">
-                + {t("common.addanothercurrency")}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        )
-      }
-    />
-  );
 
   return (
     <AppLayout title={t("settings.financialTitle")} subtitle={t("settings.financialHint")}>
@@ -203,28 +157,30 @@ export default function SettingsFinancial() {
               }
             >
               <FormGrid cols={2}>
-                {currencyField(
-                  "local",
-                  t("common.localcurrency"),
-                  localCurrency,
-                  setLocalCurrency,
-                  localOptions,
-                  addingLocal,
-                  setAddingLocal,
-                  newLocal,
-                  setNewLocal
-                )}
-                {currencyField(
-                  "foreign",
-                  t("common.foreigncurrency"),
-                  foreignCurrency,
-                  setForeignCurrency,
-                  foreignOptions,
-                  addingForeign,
-                  setAddingForeign,
-                  newForeign,
-                  setNewForeign
-                )}
+                <CurrencySelect
+                  kind="local"
+                  label={t("common.localcurrency")}
+                  value={localCurrency}
+                  setValue={setLocalCurrency}
+                  options={localOptions}
+                  adding={addingLocal}
+                  setAdding={setAddingLocal}
+                  draft={newLocal}
+                  setDraft={setNewLocal}
+                  onAddOption={addOption}
+                />
+                <CurrencySelect
+                  kind="foreign"
+                  label={t("common.foreigncurrency")}
+                  value={foreignCurrency}
+                  setValue={setForeignCurrency}
+                  options={foreignOptions}
+                  adding={addingForeign}
+                  setAdding={setAddingForeign}
+                  draft={newForeign}
+                  setDraft={setNewForeign}
+                  onAddOption={addOption}
+                />
               </FormGrid>
             </SectionCard>
 
@@ -249,6 +205,7 @@ export default function SettingsFinancial() {
                 <Field
                   label={`${t("common.exchangeRate")} (${currencyLabel(foreignCurrency, t)} ${t("common.to")} ${currencyLabel(localCurrency, t)})`}
                   hint={t("settings.useRate")}
+                  error={errors.rate}
                   control={
                     <NumberField
                       value={rate}
@@ -260,6 +217,7 @@ export default function SettingsFinancial() {
                   <Field
                     label={`${t("settings.customsRate")} %`}
                     hint={t("prices.customsRateHint")}
+                    error={errors.customs}
                     control={
                       <RateField
                         value={customs}
@@ -270,6 +228,7 @@ export default function SettingsFinancial() {
                   <Field
                     label={`${t("settings.profitMargin")} %`}
                     hint={t("settings.useMargin")}
+                    error={errors.margin}
                     control={
                       <RateField
                         value={margin}

@@ -23,6 +23,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { db, type LogisticsLocationKind, type LogisticsLocationRow } from "@/lib/db";
 import { newId, nowIso } from "@/lib/id";
+import { locationSchema } from "@/lib/validation/schemas";
 
 const KINDS: { value: LogisticsLocationKind; labelKey: string }[] = [
   { value: "origin", labelKey: "settings.originExport" },
@@ -45,6 +46,7 @@ export function LocationsTab({
   const [kind, setKind] = useState<LogisticsLocationKind>("other");
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
+  const [nameError, setNameError] = useState<string | undefined>(undefined);
 
   const openNew = () => {
     setEditing(null);
@@ -52,6 +54,7 @@ export function LocationsTab({
     setKind("other");
     setCountry("");
     setCity("");
+    setNameError(undefined);
     setOpen(true);
   };
 
@@ -61,14 +64,17 @@ export function LocationsTab({
     setKind(row.kind);
     setCountry(row.country);
     setCity(row.city);
+    setNameError(undefined);
     setOpen(true);
   };
 
   const save = async () => {
-    if (!name.trim()) {
-      toast.error(t("settings.enterLocationNameFirst"));
+    const parsed = locationSchema(t).safeParse({ name, country, city });
+    if (!parsed.success) {
+      setNameError(parsed.error.issues[0]?.message);
       return;
     }
+    setNameError(undefined);
     const timestamp = nowIso();
     await db.saveLogisticsLocation({
       id: editing?.id ?? newId("loc"),
@@ -176,6 +182,7 @@ export function LocationsTab({
             <Field
               label={t("settings.locationName")}
               required
+              error={nameError}
               control={
                 <Input
                   className="field-input"

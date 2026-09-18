@@ -43,6 +43,7 @@ export function SpecTemplateForm({
   draft,
   setDraft,
   editingId,
+  labelError,
   onSave,
   onReset,
 }: {
@@ -50,6 +51,7 @@ export function SpecTemplateForm({
   draft: SpecTemplateDraft;
   setDraft: (d: SpecTemplateDraft) => void;
   editingId: string | null;
+  labelError?: string;
   onSave: () => void;
   onReset: () => void;
 }) {
@@ -102,6 +104,7 @@ export function SpecTemplateForm({
           />
           <Field
             label={t("common.specificationname")}
+            error={labelError}
             control={
               <Input
                 className="field-input"

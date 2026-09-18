@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Save, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
@@ -17,13 +20,20 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { latestDatedItemPrice } from "@/lib/latestItemPrice";
 import { currencyLabel } from "@/lib/currency";
+import { priceLevelSchema, optionalNonNegativeText } from "@/lib/validation/schemas";
 import type { ItemPriceRow, ItemRow, PriceHistoryRow, PriceLevel } from "@/lib/db";
 import { PriceHistoryTable } from "./PriceHistoryTable";
 
 export interface PriceDraft {
   price: string;
   date: string;
-  source?: string;
+  source: string;
+}
+
+export interface PriceFormValues {
+  levels: PriceDraft[];
+  notes: string;
+  customsRate: string;
 }
 
 /** قيمة العملة الاحتياطية للعرض (رمز ISO منذ S5). */
@@ -33,14 +43,10 @@ interface PriceLevelsFormProps {
   items: ItemRow[];
   selectedId: string;
   onSelectId: (id: string) => void;
-  drafts: PriceDraft[];
-  setDrafts: (d: PriceDraft[]) => void;
-  notes: string;
-  setNotes: (n: string) => void;
-  customsRate: string;
-  setCustomsRate: (c: string) => void;
+  defaultValues: PriceFormValues;
   history: PriceHistoryRow[];
-  onSave: () => void;
+  onDraftChange: (v: PriceFormValues) => void;
+  onSubmit: (v: PriceFormValues) => void;
   onNewWork: () => void;
 }
 
@@ -48,47 +54,61 @@ export function PriceLevelsForm({
   items,
   selectedId,
   onSelectId,
-  drafts,
-  setDrafts,
-  notes,
-  setNotes,
-  customsRate,
-  setCustomsRate,
+  defaultValues,
   history,
-  onSave,
+  onDraftChange,
+  onSubmit,
   onNewWork,
 }: PriceLevelsFormProps) {
   const { t } = useLanguage();
   const [showExtra, setShowExtra] = useState(false);
   const selectedItem = items.find(i => i.id === selectedId) ?? null;
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<PriceFormValues>({
+    resolver: zodResolver(
+      z.object({
+        levels: z.array(priceLevelSchema(t)).length(4),
+        notes: z.string(),
+        customsRate: optionalNonNegativeText(t),
+      })
+    ),
+    defaultValues,
+  });
+
+  useEffect(() => {
+    const subscription = watch(values => onDraftChange(values as PriceFormValues));
+    return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const levels = watch("levels");
 
   // حساب آخر سعر مؤرخ بين المستويات الأربعة
   const simulatedRow: ItemPriceRow | null = selectedItem
     ? {
         id: "",
         itemId: selectedItem.id,
-        price1: Number(drafts[0]?.price) || null,
-        price1Date: drafts[0]?.date || "",
-        price2: Number(drafts[1]?.price) || null,
-        price2Date: drafts[1]?.date || "",
-        price3: Number(drafts[2]?.price) || null,
-        price3Date: drafts[2]?.date || "",
-        price4: Number(drafts[3]?.price) || null,
-        price4Date: drafts[3]?.date || "",
+        price1: Number(levels[0]?.price) || null,
+        price1Date: levels[0]?.date || "",
+        price2: Number(levels[1]?.price) || null,
+        price2Date: levels[1]?.date || "",
+        price3: Number(levels[2]?.price) || null,
+        price3Date: levels[2]?.date || "",
+        price4: Number(levels[3]?.price) || null,
+        price4Date: levels[3]?.date || "",
         currency: selectedItem.currency,
-        notes,
+        notes: watch("notes"),
         createdAt: "",
         updatedAt: "",
       }
     : null;
 
   const latest = latestDatedItemPrice(simulatedRow);
-
-  const updateDraft = (index: number, patch: Partial<PriceDraft>) => {
-    const updated = [...drafts];
-    updated[index] = { ...updated[index], ...patch };
-    setDrafts(updated);
-  };
 
   return (
     <div className="space-y-4">
@@ -133,7 +153,7 @@ export function PriceLevelsForm({
             {[0, 1, 2, 3].map(index => {
               const level = (index + 1) as PriceLevel;
               const isActive = latest?.level === level;
-              const d = drafts[index] || { price: "", date: "", source: "" };
+              const levelError = errors.levels?.[index];
 
               return (
                 <div
@@ -156,32 +176,43 @@ export function PriceLevelsForm({
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <Field
                       label={t("prices.price")}
+                      htmlFor={`price-amount-${level}`}
+                      error={levelError?.price?.message}
                       control={
                         <CurrencyField
-                          value={d.price}
+                          id={`price-amount-${level}`}
                           suffix={currencyLabel(selectedItem.currency, t)}
-                          onChange={e => updateDraft(index, { price: e.target.value })}
                           placeholder="0.00"
+                          {...register(`levels.${index}.price` as const)}
                         />
                       }
                     />
                     <Field
                       label={t("prices.date")}
+                      error={levelError?.date?.message}
                       control={
-                        <DateField
-                          value={d.date}
-                          onChange={v => updateDraft(index, { date: v })}
+                        <Controller
+                          name={`levels.${index}.date` as const}
+                          control={control}
+                          render={({ field }) => (
+                            <DateField
+                              value={field.value}
+                              onChange={field.onChange}
+                              ariaLabel={`${t("prices.date")} ${level}`}
+                            />
+                          )}
                         />
                       }
                     />
                     <Field
                       label={t("prices.sourceNote")}
+                      htmlFor={`price-source-${level}`}
                       control={
                         <Input
+                          id={`price-source-${level}`}
                           className="field-input text-xs"
-                          value={d.source || ""}
-                          onChange={e => updateDraft(index, { source: e.target.value })}
                           placeholder={t("prices.sourceExample")}
+                          {...register(`levels.${index}.source` as const)}
                         />
                       }
                     />
@@ -210,21 +241,24 @@ export function PriceLevelsForm({
               <Field
                 label={t("items.customsRate")}
                 hint={t("prices.customsRateHint")}
+                htmlFor="price-customs"
+                error={errors.customsRate?.message}
                 control={
                   <RateField
-                    value={customsRate}
-                    onChange={e => setCustomsRate(e.target.value)}
+                    id="price-customs"
                     placeholder={t("items.example12")}
+                    {...register("customsRate")}
                   />
                 }
               />
               <Field
                 label={t("common.notes")}
+                htmlFor="price-notes"
                 control={
                   <Textarea
+                    id="price-notes"
                     className="field-input min-h-20"
-                    value={notes}
-                    onChange={e => setNotes(e.target.value)}
+                    {...register("notes")}
                   />
                 }
               />
@@ -236,7 +270,10 @@ export function PriceLevelsForm({
       {/* 5. شريط الإجراءات */}
       {selectedItem && (
         <div className="flex gap-2 pt-2">
-          <Button onClick={onSave} className="form-action-bar flex-1">
+          <Button
+            onClick={() => void handleSubmit(onSubmit)()}
+            className="form-action-bar flex-1"
+          >
             <Save className="h-4 w-4" />
             {t("prices.saved")}
           </Button>

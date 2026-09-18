@@ -69,24 +69,20 @@ export default function Entities() {
     clearEditingDraft();
   };
 
-  const save = async () => {
-    if (!form.name.trim()) {
-      toast.error(t("entities.nameRequired"));
-      return;
-    }
+  const save = async (valid: EntityFormData) => {
     const existing = editingId ? rows.find(r => r.id === editingId) : null;
     const row: EntityRow = {
       id: existing?.id ?? newId("ent"),
-      name: form.name.trim(),
-      kind: form.kind,
-      country: form.country.trim(),
-      city: form.city.trim(),
-      phone: form.phone.trim(),
-      email: form.email.trim(),
-      contactPerson: form.contactPerson.trim(),
-      notes: form.notes.trim(),
-      defaultCurrency: form.defaultCurrency?.trim?.() || ENTITY_DATA_DEFAULTS.currency,
-      defaultExchangeRate: Number(form.defaultExchangeRate) || 0,
+      name: valid.name.trim(),
+      kind: valid.kind,
+      country: valid.country.trim(),
+      city: valid.city.trim(),
+      phone: valid.phone.trim(),
+      email: valid.email.trim(),
+      contactPerson: valid.contactPerson.trim(),
+      notes: valid.notes.trim(),
+      defaultCurrency: valid.defaultCurrency?.trim?.() || ENTITY_DATA_DEFAULTS.currency,
+      defaultExchangeRate: Number(valid.defaultExchangeRate) || 0,
       createdAt: existing?.createdAt ?? nowIso(),
       updatedAt: nowIso(),
     };
@@ -165,10 +161,11 @@ export default function Entities() {
             }
           >
             <EntityForm
-              form={form}
-              setForm={setForm}
+              key={editingId ?? "new"}
+              defaultValues={form}
               editingId={editingId}
-              onSave={save}
+              onDraftChange={setForm}
+              onSubmit={data => void save(data)}
               onReset={reset}
               onAttachmentsChanged={() => void load()}
             />

@@ -62,7 +62,8 @@ export function computePricing(input: PricingInput): PricingResult {
 }
 
 /** كل الأرقام تُعرض بالصيغة الإنجليزية (0-9) في جميع أنحاء التطبيق */
-export function formatMoney(value: number, currency = "ريال"): string {
+// الافتراضي SAR (رمز ISO منذ S5) — لا مستدعٍ بلا عملة صريحة في الكود الحالي.
+export function formatMoney(value: number, currency = "SAR"): string {
   const n = safe(value);
   return `${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
 }

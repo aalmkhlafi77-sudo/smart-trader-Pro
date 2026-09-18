@@ -135,11 +135,11 @@ export function ItemResults({
                         {row.item.name}
                       </p>
                       <Badge variant="outline">
-                        {row.item.category || "بدون تصنيف"}
+                        {row.item.category || t("items.generalCategory")}
                       </Badge>
                     </div>
                     <p className="mt-1 text-[11px] text-muted-foreground">
-                      {row.entity?.name ?? "غير مرتبط بجهة"} · {row.weight} ·{" "}
+                      {row.entity?.name ?? t("items.noPartner")} · {row.weight} ·{" "}
                       {row.material} · {t("entities.type")}: {row.type}
                     </p>
                     <div className="mt-2 grid grid-cols-3 gap-1.5 text-center">

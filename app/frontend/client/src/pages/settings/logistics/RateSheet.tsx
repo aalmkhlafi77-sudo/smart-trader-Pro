@@ -19,6 +19,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { rateSchema } from "@/lib/validation/schemas";
 import {
   db,
   type CargoCostMethod,
@@ -64,6 +65,7 @@ export function RateSheet({
   const [originId, setOriginId] = useState("");
   const [destinationId, setDestinationId] = useState("");
   const [effectiveDate, setEffectiveDate] = useState(today());
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!open) return;
@@ -75,14 +77,22 @@ export function RateSheet({
     setOriginId(editing?.originLocationId ?? "");
     setDestinationId(editing?.destinationLocationId ?? "");
     setEffectiveDate(editing?.effectiveDate || today());
+    setErrors({});
   }, [open, editing]);
 
   const save = async () => {
-    const value = Number(amount);
-    if (!name.trim() || !Number.isFinite(value) || value < 0) {
-      toast.error(t("settings.enterServicePriceValid"));
+    const parsed = rateSchema(t).safeParse({ name, amount, currency, effectiveDate });
+    if (!parsed.success) {
+      const next: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const key = String(issue.path[0] ?? "");
+        if (key && !next[key]) next[key] = issue.message;
+      }
+      setErrors(next);
       return;
     }
+    setErrors({});
+    const value = Number(amount);
     const timestamp = nowIso();
     await db.saveLogisticsRate({
       id: editing?.id ?? newId("rate"),
@@ -142,9 +152,10 @@ export function RateSheet({
           <SheetDescription>{t("settings.ratesAddHint")}</SheetDescription>
         </SheetHeader>
         <div className="space-y-3 px-4">
-          <Field
-            label={t("settings.servicePriceName")}
-            required
+            <Field
+              label={t("settings.servicePriceName")}
+              required
+              error={errors.name}
             control={
               <Input
                 className="field-input"
@@ -174,6 +185,7 @@ export function RateSheet({
           <div className="grid grid-cols-2 gap-3">
             <Field
               label={t("cargo.amount")}
+              error={errors.amount}
               control={
                 <NumberField
                   value={amount}
@@ -193,8 +205,9 @@ export function RateSheet({
               }
             />
           </div>
-          <Field
-            label={t("prices.date")}
+            <Field
+              label={t("prices.date")}
+              error={errors.effectiveDate}
             control={
               <DateField value={effectiveDate} onChange={setEffectiveDate} />
             }

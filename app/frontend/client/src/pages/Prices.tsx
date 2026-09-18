@@ -14,7 +14,7 @@ import {
 } from "@/lib/db";
 import { newId, nowIso, todayInput } from "@/lib/id";
 import { useSessionDraft } from "@/hooks/useSessionDraft";
-import { PriceLevelsForm, type PriceDraft } from "./prices/PriceLevelsForm";
+import { PriceLevelsForm, type PriceDraft, type PriceFormValues } from "./prices/PriceLevelsForm";
 import { PriceTable } from "./prices/PriceTable";
 import { handleExportExcelAction, handleExportPdfAction } from "./prices/priceExports";
 
@@ -110,34 +110,31 @@ export default function Prices() {
 
   const selectedItem = items.find(i => i.id === selectedId) ?? null;
 
-  const save = async () => {
+  const save = async (valid: PriceFormValues) => {
     if (!selectedItem) {
       toast.error(t("prices.selectFirst"));
-      return;
-    }
-    const customsRateValue = customsRate.trim() === "" ? null : toNum(customsRate);
-    if (customsRate.trim() !== "" && (customsRateValue == null || customsRateValue < 0)) {
-      toast.error(t("export.validCustomsOrEmpty"));
       return;
     }
     const existing = await db.getPriceByItem(selectedItem.id);
     const row: ItemPriceRow = {
       id: existing?.id ?? newId("prc"),
       itemId: selectedItem.id,
-      price1: toNum(drafts[0].price),
-      price1Date: drafts[0].date || todayInput(),
-      price2: toNum(drafts[1].price),
-      price2Date: drafts[1].date || todayInput(),
-      price3: toNum(drafts[2].price),
-      price3Date: drafts[2].date || todayInput(),
-      price4: toNum(drafts[3].price),
-      price4Date: drafts[3].date || todayInput(),
+      price1: toNum(valid.levels[0].price),
+      price1Date: valid.levels[0].date || todayInput(),
+      price2: toNum(valid.levels[1].price),
+      price2Date: valid.levels[1].date || todayInput(),
+      price3: toNum(valid.levels[2].price),
+      price3Date: valid.levels[2].date || todayInput(),
+      price4: toNum(valid.levels[3].price),
+      price4Date: valid.levels[3].date || todayInput(),
       currency: selectedItem.currency,
-      notes: notes.trim(),
+      notes: valid.notes.trim(),
       createdAt: existing?.createdAt ?? nowIso(),
       updatedAt: nowIso(),
     };
     await db.savePrice(row);
+    const customsRateValue =
+      valid.customsRate.trim() === "" ? null : toNum(valid.customsRate);
     await db.saveItem({
       ...selectedItem,
       customsRate: customsRateValue == null ? null : customsRateValue / 100,
@@ -161,7 +158,7 @@ export default function Prices() {
           price: value,
           effectiveDate: afterDates[idx] || nowIso().slice(0, 10),
           currency: row.currency,
-          notes: drafts[idx]?.source || "",
+          notes: valid.levels[idx]?.source || "",
           createdAt: nowIso(),
         });
       })
@@ -214,17 +211,22 @@ export default function Prices() {
             }
           >
             <PriceLevelsForm
+              key={selectedId}
               items={items}
               selectedId={selectedId}
               onSelectId={setSelectedId}
-              drafts={drafts}
-              setDrafts={setDrafts}
-              notes={notes}
-              setNotes={setNotes}
-              customsRate={customsRate}
-              setCustomsRate={setCustomsRate}
+              defaultValues={{
+                levels: drafts,
+                notes,
+                customsRate,
+              }}
               history={currentHistory}
-              onSave={save}
+              onDraftChange={v => {
+                setDrafts(v.levels);
+                setNotes(v.notes);
+                setCustomsRate(v.customsRate);
+              }}
+              onSubmit={data => void save(data)}
               onNewWork={newWork}
             />
           </SectionCard>

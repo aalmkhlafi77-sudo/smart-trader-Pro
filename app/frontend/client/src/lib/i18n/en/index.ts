@@ -14,6 +14,7 @@ import dict_prices from "./prices";
 import dict_reports from "./reports";
 import dict_settings from "./settings";
 import dict_ui from "./ui";
+import dict_validation from "./validation";
 
 const merged: Record<string, string> = {
   ...dict_access,
@@ -32,6 +33,7 @@ const merged: Record<string, string> = {
   ...dict_reports,
   ...dict_settings,
   ...dict_ui,
+  ...dict_validation,
 };
 
 export default merged;

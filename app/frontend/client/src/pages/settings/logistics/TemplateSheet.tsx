@@ -19,6 +19,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { routeTemplateSchema } from "@/lib/validation/schemas";
 import {
   db,
   type LogisticsLocationRow,
@@ -62,6 +63,7 @@ export function TemplateSheet({
   const [freightRateId, setFreightRateId] = useState("");
   const [clearanceRateId, setClearanceRateId] = useState("");
   const [transportRateId, setTransportRateId] = useState("");
+  const [nameError, setNameError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (!open) return;
@@ -74,6 +76,7 @@ export function TemplateSheet({
     setFreightRateId(editing?.freightRateId ?? "");
     setClearanceRateId(editing?.clearanceFeeRateId ?? "");
     setTransportRateId(editing?.transportRateId ?? "");
+    setNameError(undefined);
   }, [open, editing]);
 
   const freightRates = useMemo(
@@ -93,10 +96,12 @@ export function TemplateSheet({
   );
 
   const save = async () => {
-    if (!name.trim()) {
-      toast.error(t("settings.enterRouteTemplateName"));
+    const parsed = routeTemplateSchema(t).safeParse({ name });
+    if (!parsed.success) {
+      setNameError(parsed.error.issues[0]?.message);
       return;
     }
+    setNameError(undefined);
     const timestamp = nowIso();
     await db.saveLogisticsRouteTemplate({
       id: editing?.id ?? newId("route"),
@@ -158,9 +163,10 @@ export function TemplateSheet({
           <SheetDescription>{t("settings.routeTemplatesSaveHint")}</SheetDescription>
         </SheetHeader>
         <div className="space-y-3 px-4">
-          <Field
-            label={t("settings.routeTemplates")}
-            required
+            <Field
+              label={t("settings.routeTemplates")}
+              required
+              error={nameError}
             control={
               <Input
                 className="field-input"

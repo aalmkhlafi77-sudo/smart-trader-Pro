@@ -9,6 +9,7 @@ import {
   type SpecTemplateRow,
 } from "@/lib/db";
 import { newId, nowIso } from "@/lib/id";
+import { specTemplateSchema } from "@/lib/validation/schemas";
 import { CategoriesSection } from "./catalog/CategoriesSection";
 import {
   emptyTemplateDraft,
@@ -24,6 +25,7 @@ export default function SettingsCatalog() {
   const [templates, setTemplates] = useState<SpecTemplateRow[]>([]);
   const [draft, setDraft] = useState<SpecTemplateDraft>(emptyTemplateDraft);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [labelError, setLabelError] = useState<string | undefined>(undefined);
   const [copySource, setCopySource] = useState("__all__");
   const [copyTarget, setCopyTarget] = useState("");
 
@@ -86,14 +88,17 @@ export default function SettingsCatalog() {
   const resetDraft = () => {
     setDraft(emptyTemplateDraft);
     setEditingId(null);
+    setLabelError(undefined);
   };
 
   const saveTemplate = async () => {
-    const label = draft.label.trim();
-    if (!label) {
-      toast.error(t("common.entertechnicalspecificat"));
+    const parsed = specTemplateSchema(t).safeParse(draft);
+    if (!parsed.success) {
+      setLabelError(parsed.error.issues[0]?.message);
       return;
     }
+    setLabelError(undefined);
+    const label = draft.label.trim();
     const duplicate = templates.some(
       x => x.label === label && x.category === draft.category && x.id !== editingId
     );
@@ -269,6 +274,7 @@ export default function SettingsCatalog() {
               draft={draft}
               setDraft={setDraft}
               editingId={editingId}
+              labelError={labelError}
               onSave={() => void saveTemplate()}
               onReset={resetDraft}
             />

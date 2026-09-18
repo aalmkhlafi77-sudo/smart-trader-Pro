@@ -1,3 +1,4 @@
+import { Controller, type Control, type FieldErrors, type UseFormRegister } from "react-hook-form";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Field,
@@ -16,54 +17,65 @@ import {
 import { CURRENCY_OPTIONS } from "../currencyData";
 import type { ItemFormData } from "./ItemForm";
 
-/** 5. عملة السعر (موروثة قابلة للتجاوز) · سعر الصرف · نسبة الجمارك % */
 export function ItemCurrencySection({
-  form,
-  setForm,
+  control,
+  register,
+  errors,
 }: {
-  form: ItemFormData;
-  setForm: (f: ItemFormData) => void;
+  control: Control<ItemFormData>;
+  register: UseFormRegister<ItemFormData>;
+  errors: FieldErrors<ItemFormData>;
 }) {
   const { t } = useLanguage();
 
   return (
-    <FormSection title={t("items.currencyApproval")}>
+    <FormSection
+      title={t("items.currencyApproval")}
+      note={t("common.copiedautomaticallytoani")}
+    >
       <FormGrid cols={3}>
         <Field
           label={t("items.priceCurrency")}
+          error={errors.currency?.message}
           control={
-            <Select
-              value={form.currency || CURRENCY_OPTIONS[0].value}
-              onValueChange={v => setForm({ ...form, currency: v })}
-            >
-              <SelectTrigger className="field-input w-full"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {CURRENCY_OPTIONS.map(o => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {t(o.labelKey)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="currency"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value || CURRENCY_OPTIONS[0].value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger className="field-input w-full"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {CURRENCY_OPTIONS.map(o => (
+                      <SelectItem key={o.value} value={o.value}>
+                        {t(o.labelKey)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           }
         />
         <Field
           label={t("items.referenceRate")}
+          error={errors.defaultExchangeRate?.message}
           control={
             <NumberField
-              value={form.defaultExchangeRate}
-              onChange={e => setForm({ ...form, defaultExchangeRate: e.target.value })}
+              {...register("defaultExchangeRate")}
             />
           }
         />
         <Field
           label={t("items.customsRate")}
           hint={t("items.customsRateHint")}
+          error={errors.customsRate?.message}
           control={
             <RateField
-              value={form.customsRate}
-              onChange={e => setForm({ ...form, customsRate: e.target.value })}
               placeholder={t("items.example12")}
+              {...register("customsRate")}
             />
           }
         />

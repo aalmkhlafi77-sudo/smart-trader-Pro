@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Plus, X, ChevronDown, ChevronUp } from "lucide-react";
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Field,
@@ -17,11 +19,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import AttachmentsPanel from "@/components/AttachmentsPanel";
 import type { CategoryRow, EntityRow, SpecTemplateRow } from "@/lib/db";
 import { currencyLabel } from "@/lib/currency";
+import { itemSchema } from "@/lib/validation/schemas";
 import { ItemCurrencySection } from "./ItemCurrencySection";
+import { ItemExtraSection } from "./ItemExtraSection";
 import { ItemSpecsSection } from "./ItemSpecsSection";
 
 export interface ItemFormData {
@@ -47,15 +49,15 @@ export interface SpecDraft {
 }
 
 interface ItemFormProps {
-  form: ItemFormData;
-  setForm: (f: ItemFormData) => void;
+  defaultValues: ItemFormData;
   specs: SpecDraft[];
   setSpecs: React.Dispatch<React.SetStateAction<SpecDraft[]>>;
   editingId: string | null;
   entities: EntityRow[];
   categories: CategoryRow[];
   specTemplates: SpecTemplateRow[];
-  onSave: () => void;
+  onDraftChange: (f: ItemFormData) => void;
+  onSubmit: (f: ItemFormData) => void;
   onReset: () => void;
   onAddSpec: (tpl?: SpecTemplateRow) => void;
   onToggleKey: (id: string) => void;
@@ -63,36 +65,52 @@ interface ItemFormProps {
 }
 
 export function ItemForm({
-  form,
-  setForm,
+  defaultValues,
   specs,
   setSpecs,
   editingId,
   entities,
   categories,
   specTemplates,
-  onSave,
+  onDraftChange,
+  onSubmit,
   onReset,
   onAddSpec,
   onToggleKey,
   onAttachmentsChanged,
 }: ItemFormProps) {
   const { t } = useLanguage();
-  const [showExtra, setShowExtra] = useState(false);
-  const selectedEntity = entities.find(e => e.id === form.entityId);
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<ItemFormData>({
+    resolver: zodResolver(itemSchema(t)),
+    defaultValues,
+  });
 
-  const handleEntityChange = (entityId: string) => {
-    const ent = entities.find(e => e.id === entityId);
-    if (ent) {
-      setForm({
-        ...form,
-        entityId,
-        currency: ent.defaultCurrency || form.currency,
-        defaultExchangeRate: String(ent.defaultExchangeRate ?? form.defaultExchangeRate),
-      });
-    } else {
-      setForm({ ...form, entityId: "none" });
-    }
+  useEffect(() => {
+    const subscription = watch(values => onDraftChange(values as ItemFormData));
+    return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const entityId = watch("entityId");
+  const category = watch("category");
+  const selectedEntity = entities.find(e => e.id === entityId);
+
+  const handleEntityChange = (nextId: string) => {
+    const ent = entities.find(e => e.id === nextId);
+    if (!ent) return setValue("entityId", "none");
+    setValue("entityId", nextId);
+    setValue("currency", ent.defaultCurrency || watch("currency"));
+    setValue(
+      "defaultExchangeRate",
+      String(ent.defaultExchangeRate ?? watch("defaultExchangeRate"))
+    );
   };
 
   return (
@@ -103,23 +121,26 @@ export function ItemForm({
           <Field
             label={t("items.name")}
             required
+            htmlFor="item-name"
+            error={errors.name?.message}
             control={
               <Input
+                id="item-name"
                 className="field-input"
-                value={form.name}
-                onChange={e => setForm({ ...form, name: e.target.value })}
                 placeholder={t("common.examplealnokhbacompany")}
+                {...register("name")}
               />
             }
           />
           <Field
             label={t("items.code")}
+            htmlFor="item-code"
             control={
               <Input
+                id="item-code"
                 className="field-input"
                 dir="ltr"
-                value={form.code}
-                onChange={e => setForm({ ...form, code: e.target.value })}
+                {...register("code")}
               />
             }
           />
@@ -130,36 +151,42 @@ export function ItemForm({
           <Field
             label={t("items.selectPartner")}
             control={
-              <EntityPicker
-                value={form.entityId === "none" ? "" : form.entityId}
-                onChange={val => handleEntityChange(val || "none")}
-                placeholder={t("items.noPartner")}
-                searchPlaceholder={t("common.searchbynamecountrycityo")}
-                emptyMessage={t("common.nomatchingpartnersaddone")}
-                options={[
-                  { value: "none", label: t("items.noPartner") },
-                  ...entities.map(e => ({
-                    value: e.id,
-                    label: e.name,
-                    hint: `${currencyLabel(e.defaultCurrency, t)} · ${e.defaultExchangeRate}`,
-                  })),
-                ]}
+              <Controller
+                name="entityId"
+                control={control}
+                render={({ field }) => (
+                  <EntityPicker
+                    value={field.value === "none" ? "" : field.value}
+                    onChange={val => handleEntityChange(val || "none")}
+                    placeholder={t("items.noPartner")}
+                    searchPlaceholder={t("common.searchbynamecountrycityo")}
+                    emptyMessage={t("common.nomatchingpartnersaddone")}
+                    options={[
+                      { value: "none", label: t("items.noPartner") },
+                      ...entities.map(e => ({
+                        value: e.id,
+                        label: e.name,
+                        hint: `${currencyLabel(e.defaultCurrency, t)} · ${e.defaultExchangeRate}`,
+                      })),
+                    ]}
+                  />
+                )}
               />
             }
           />
           {selectedEntity ? (
-            <InheritedValue
-              className="mt-3"
-              label={t("items.inheritedFromPartner")}
+            <div className="mt-3">
+              <InheritedValue
+                label={t("items.inheritedFromPartner")}
               value={
                 <span>
-                  {currencyLabel(selectedEntity.defaultCurrency, t)} ·{" "}
-                  <span dir="ltr">{selectedEntity.defaultExchangeRate}</span>
+                  {currencyLabel(selectedEntity.defaultCurrency, t)} · <span dir="ltr">{selectedEntity.defaultExchangeRate}</span>
                 </span>
               }
-              source={selectedEntity.name}
-              tone="inherited"
-            />
+                source={selectedEntity.name}
+                tone="inherited"
+              />
+            </div>
           ) : null}
         </div>
 
@@ -168,31 +195,37 @@ export function ItemForm({
           <Field
             label={t("common.category")}
             required
+            error={errors.category?.message}
             control={
-              <Select
-                value={form.category}
-                onValueChange={v => setForm({ ...form, category: v })}
-              >
-                <SelectTrigger className="field-input w-full">
-                  <SelectValue placeholder={t("common.selectcategory")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map(c => (
-                    <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                name="category"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="field-input w-full">
+                      <SelectValue placeholder={t("common.selectcategory")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map(c => (
+                        <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             }
           />
           <Field
             label={t("items.unit")}
             required
+            htmlFor="item-unit"
+            error={errors.unit?.message}
             control={
               <Input
+                id="item-unit"
                 className="field-input"
-                value={form.unit}
-                onChange={e => setForm({ ...form, unit: e.target.value })}
                 placeholder={t("items.unitExample")}
+                {...register("unit")}
               />
             }
           />
@@ -200,54 +233,28 @@ export function ItemForm({
       </FormSection>
 
       {/* 5. عملة السعر (موروثة قابلة للتجاوز) · سعر الصرف · نسبة الجمارك % */}
-      <ItemCurrencySection form={form} setForm={setForm} />
+      <ItemCurrencySection control={control} register={register} errors={errors} />
 
       {/* 6. المواصفات الفنية */}
       <ItemSpecsSection
         specs={specs}
         setSpecs={setSpecs}
-        category={form.category}
+        category={category}
         specTemplates={specTemplates}
         onAddSpec={onAddSpec}
         onToggleKey={onToggleKey}
       />
 
       {/* 7. (قسم قابل للطي) ملاحظات · مرفقات */}
-      <div className="rounded-md border border-border/80 bg-secondary/20 p-3">
-        <button
-          type="button"
-          onClick={() => setShowExtra(v => !v)}
-          className="flex w-full items-center justify-between text-xs font-semibold text-[var(--ink)]"
-        >
-          <span>{t("common.extraDetails")}</span>
-          {showExtra ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </button>
-
-        {showExtra && (
-          <div className="mt-3 space-y-3 pt-2 border-t border-border/60">
-            <Field
-              label={t("common.notes")}
-              control={
-                <Textarea
-                  className="field-input min-h-20"
-                  value={form.notes}
-                  onChange={e => setForm({ ...form, notes: e.target.value })}
-                />
-              }
-            />
-            {editingId && (
-              <div className="pt-2">
-                <span className="text-[11px] font-semibold text-[var(--ink)]">{t("common.attachments")}</span>
-                <AttachmentsPanel itemId={editingId} compact onChanged={onAttachmentsChanged} />
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      <ItemExtraSection
+        register={register}
+        editingId={editingId}
+        onAttachmentsChanged={onAttachmentsChanged}
+      />
 
       {/* شريط الإجراءات */}
       <div className="flex gap-2 pt-2">
-        <Button onClick={onSave} className="form-action-bar flex-1">
+        <Button onClick={() => void handleSubmit(onSubmit)()} className="form-action-bar flex-1">
           <Plus className="h-4 w-4" />
           {editingId ? t("items.edit") : t("items.save")}
         </Button>
