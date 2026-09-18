@@ -16,6 +16,7 @@ import Entities from "./pages/Entities";
 import Items from "./pages/Items";
 import Prices from "./pages/Prices";
 import Pricing from "./pages/Pricing";
+import Runs from "./pages/cargo/Runs";
 import ExportLists from "./pages/ExportLists";
 import Backup from "./pages/Backup";
 import SettingsIndex from "./pages/settings/Index";
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/items" component={Items} />
       <Route path="/prices" component={Prices} />
       <Route path="/cargo" component={Pricing} />
+      <Route path="/cargo/runs" component={Runs} />
       <Route path="/pricing">
         <Redirect to="/cargo" />
       </Route>

@@ -18,6 +18,17 @@ const I18N_DIR = join(SRC, "lib", "i18n").split(sep).join("/");
 const ALLOW_DEC: Record<string, string[]> = {
   // قيم عملات/وحدات مخزَّنة (نصوص عربية) في ملفات S1 — الترحيل إلى ISO مؤجَّل إلى S5
   "pages/currencyData.ts": ["CURRENCY_OPTIONS"],
+  "pages/cargo/shared.ts": [
+    "COST_BLUEPRINTS",
+    "emptyDraft",
+    "CUSTOMS_LINE_NAME",
+    "FREIGHT_LINE_NAME",
+    "FALLBACK_FOREIGN_CURRENCY",
+    "CIF_INCLUDED_LABEL",
+    "CIF_INCLUDED_REASON",
+  ],
+  "pages/cargo/useCargoData.ts": ["CURRENCY_FALLBACKS"],
+  "pages/cargo/steps/RouteStep.tsx": ["TRANSPORT_MODES"],
   "pages/settings/Financial.tsx": ["FINANCE_DATA"],
   "pages/settings/logistics/RateSheet.tsx": ["RATE_DATA_DEFAULTS"],
   "pages/settings/logistics/TemplateSheet.tsx": ["TRANSPORT_MODES"],
