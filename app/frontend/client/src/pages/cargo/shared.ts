@@ -202,6 +202,19 @@ export const firstEmptyLevel = (
   return empty ?? fallback;
 };
 
+/**
+ * تحويل سعر محسوب بالعملة المحلية إلى عملة الصنف قبل التخزين —
+ * القاعدة التي تمنع خلط العملات داخل صف الأسعار. التقريب لمنزلتين
+ * (نفس عرض الواجهة) حتى لا تُخزَّن كسور عشرية طويلة مرعبة.
+ */
+export const convertToItemCurrency = (
+  suggestedLocal: number,
+  rate: number
+): number => {
+  if (!(rate > 0)) return suggestedLocal;
+  return Math.round((suggestedLocal / rate) * 100) / 100;
+};
+
 export const optionValue = (value: string) => value || "__none__";
 export const fromOption = (value: string) => (value === "__none__" ? "" : value);
 

@@ -19,7 +19,7 @@ import {
   persistRun,
   persistSalePrices,
 } from "./cargo/cargoPersistence";
-import { firstEmptyLevel } from "./cargo/shared";
+import { firstEmptyLevel, convertToItemCurrency } from "./cargo/shared";
 
 const STEPS = [
   { id: "load", labelKey: "cargo.stepTitleLoad" },
@@ -123,8 +123,7 @@ export default function Pricing() {
       itemId: item.itemId,
       name: file.itemById[item.itemId]?.name ?? "",
       suggested,
-      converted:
-        rate > 0 ? Math.round((suggested / rate) * 100) / 100 : suggested,
+      converted: convertToItemCurrency(suggested, rate),
       currency,
     };
   });
