@@ -43,6 +43,7 @@ interface PriceLevelsFormProps {
   items: ItemRow[];
   selectedId: string;
   onSelectId: (id: string) => void;
+  ready: boolean;
   defaultValues: PriceFormValues;
   history: PriceHistoryRow[];
   onDraftChange: (v: PriceFormValues) => void;
@@ -54,6 +55,7 @@ export function PriceLevelsForm({
   items,
   selectedId,
   onSelectId,
+  ready,
   defaultValues,
   history,
   onDraftChange,
@@ -68,6 +70,7 @@ export function PriceLevelsForm({
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<PriceFormValues>({
     resolver: zodResolver(
@@ -86,9 +89,13 @@ export function PriceLevelsForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const levels = watch("levels");
+  // إعادة التهيئة من القيم الطازجة عند الجاهزية فقط (key وحده يلتقط لقطة قديمة لأن التحميل لاحق)
+  useEffect(() => {
+    if (ready) reset(defaultValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedId, ready]);
 
-  // حساب آخر سعر مؤرخ بين المستويات الأربعة
+  const levels = watch("levels");
   const simulatedRow: ItemPriceRow | null = selectedItem
     ? {
         id: "",
@@ -134,7 +141,7 @@ export function PriceLevelsForm({
         />
 
         {/* 2. العملة الموروثة */}
-        {selectedItem && (
+        {selectedItem && ready && (
           <div className="mt-3">
             <InheritedValue
               label={t("items.priceCurrency")}
@@ -147,7 +154,7 @@ export function PriceLevelsForm({
       </FormSection>
 
       {/* 3. أربعة مستويات: المبلغ | تاريخ الاعتماد | مصدر/ملاحظة + وسم آخر سعر مؤرخ */}
-      {selectedItem ? (
+      {selectedItem && ready ? (
         <FormSection title={t("prices.pdfSubtitle")}>
           <div className="space-y-3">
             {[0, 1, 2, 3].map(index => {
@@ -225,7 +232,7 @@ export function PriceLevelsForm({
       ) : null}
 
       {/* 4. تفاصيل إضافية: نسبة الجمارك والملاحظات */}
-      {selectedItem && (
+      {selectedItem && ready && (
         <div className="rounded-md border border-border/80 bg-secondary/20 p-3">
           <button
             type="button"
@@ -268,7 +275,7 @@ export function PriceLevelsForm({
       )}
 
       {/* 5. شريط الإجراءات */}
-      {selectedItem && (
+      {selectedItem && ready && (
         <div className="flex gap-2 pt-2">
           <Button
             onClick={() => void handleSubmit(onSubmit)()}
@@ -285,7 +292,7 @@ export function PriceLevelsForm({
       )}
 
       {/* 6. سجل التغيرات أسفل النموذج */}
-      {selectedItem && (
+      {selectedItem && ready && (
         <PriceHistoryTable history={history} />
       )}
     </div>

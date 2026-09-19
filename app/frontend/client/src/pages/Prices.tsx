@@ -46,6 +46,9 @@ export default function Prices() {
     "smart-trader:draft:prices-customs-rate",
     ""
   );
+  // معرّف الصنف الذي تتوافق معه المسودات المحمّلة فعلاً — يمنع عرض قيم
+  // صنف سابق أثناء التحميل اللاحق (علة التبديل: key وحده لا يكفي لأن التحميل لاحق).
+  const [loadedId, setLoadedId] = useState("");
 
   const load = async () => {
     await db.init();
@@ -73,6 +76,7 @@ export default function Prices() {
       setDrafts(createEmptyDrafts());
       setNotes("");
       setCustomsRate("");
+      setLoadedId("");
       return;
     }
     let cancelled = false;
@@ -84,6 +88,7 @@ export default function Prices() {
       if (!row) {
         setDrafts(createEmptyDrafts());
         setNotes("");
+        setLoadedId(selectedId);
         return;
       }
       setDrafts([
@@ -93,6 +98,7 @@ export default function Prices() {
         { price: row.price4?.toString() ?? "", date: row.price4Date || todayInput(), source: "" },
       ]);
       setNotes(row.notes);
+      setLoadedId(selectedId);
     })();
     return () => {
       cancelled = true;
@@ -211,10 +217,10 @@ export default function Prices() {
             }
           >
             <PriceLevelsForm
-              key={selectedId}
               items={items}
               selectedId={selectedId}
               onSelectId={setSelectedId}
+              ready={selectedItem != null && loadedId === selectedId}
               defaultValues={{
                 levels: drafts,
                 notes,
@@ -222,6 +228,7 @@ export default function Prices() {
               }}
               history={currentHistory}
               onDraftChange={v => {
+                if (selectedId !== loadedId) return;
                 setDrafts(v.levels);
                 setNotes(v.notes);
                 setCustomsRate(v.customsRate);

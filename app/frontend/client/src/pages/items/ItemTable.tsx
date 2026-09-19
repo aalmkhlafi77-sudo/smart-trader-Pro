@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, Eye, Pencil, Copy, Calculator, Trash2, Paperclip } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { DataTable, StatusPill, type Column } from "@/components/patterns";
@@ -44,9 +44,14 @@ export function ItemTable({
   initialSearch?: string;
 }) {
   const { t } = useLanguage();
-  const [search, setSearch] = useState(initialSearch);
+  const [search, setSearch] = useState(initialSearch ?? "");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterEntity, setFilterEntity] = useState("all");
+
+  // مزامنة صريحة عند تغيّر قيمة التهيئة من الأب (روابط ?q= أثناء البقاء في الصفحة)
+  useEffect(() => {
+    setSearch(initialSearch ?? "");
+  }, [initialSearch]);
 
   const entityName = (id: string | null) =>
     entities.find(e => e.id === id)?.name ?? t("items.noPartner");
