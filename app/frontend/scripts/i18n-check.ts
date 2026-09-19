@@ -32,7 +32,7 @@ const ALLOW_DEC: Record<string, string[]> = {
   "pages/cargo/steps/RouteStep.tsx": ["TRANSPORT_MODES"],
   "pages/settings/logistics/TemplateSheet.tsx": ["TRANSPORT_MODES"],
   "pages/Pricing.tsx": ["COST_BLUEPRINTS"],
-  "pages/Reports.tsx": ["lookupSpec"],
+  "pages/reports/reportModel.ts": ["SPEC_LABEL_GROUPS"],
 };
 
 /** نصوص عربية حرفية يُسمح بها في ملف بعينه (قيم بيانات/عملات/أنواع نقل). */

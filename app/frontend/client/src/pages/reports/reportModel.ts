@@ -43,6 +43,13 @@ export const extractNumber = (value: string) => {
   return found ? Number(found[0]) : 0;
 };
 
+/** مجموعات تسميات المواصفات للمطابقة مع بيانات المستخدم العربية — محمية عبر ALLOW_DEC. */
+const SPEC_LABEL_GROUPS = {
+  weight: ["وزن", "جرام", "غرام"],
+  material: ["خامة", "مادة", "خيط"],
+  type: ["نوع"],
+};
+
 export function summarizeReportRows(filtered: ReportRow[]) {
   const withCost = filtered.filter(r => r.unitCost != null);
   const avg = (values: number[]) =>
@@ -95,9 +102,9 @@ export function buildReportRows(args: {
       item,
       entity: entities.find(entity => entity.id === item.entityId) ?? null,
       specs,
-      weight: lookupSpec(specs, ["وزن", "جرام", "غرام"]),
-      material: lookupSpec(specs, ["خامة", "مادة", "خيط"]),
-      type: lookupSpec(specs, ["نوع"]),
+        weight: lookupSpec(specs, SPEC_LABEL_GROUPS.weight),
+        material: lookupSpec(specs, SPEC_LABEL_GROUPS.material),
+        type: lookupSpec(specs, SPEC_LABEL_GROUPS.type),
       supplierPrice: price?.price1 ?? null,
       unitCost: latest?.unitCost ?? null,
       suggestedPrice: latest?.suggestedPrice ?? null,
