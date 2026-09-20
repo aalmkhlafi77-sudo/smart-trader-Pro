@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import { FolderOpen, Search } from "lucide-react";
+import { FolderOpen, Search, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
-import { DataTable, PageShell, StatusPill } from "@/components/patterns";
+import { ConfirmDialog, DataTable, PageShell, StatusPill } from "@/components/patterns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -36,21 +37,31 @@ export default function Runs() {
   const [runs, setRuns] = useState<CargoCostRunRow[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [pendingDelete, setPendingDelete] = useState<CargoCostRunRow | null>(null);
+
+  const reload = async () => {
+    await db.init();
+    const list = await db.listCargoCostRuns();
+    setRuns([...list].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)));
+  };
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      await db.init();
-      const list = await db.listCargoCostRuns();
-      if (cancelled) return;
-      setRuns(
-        [...list].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-      );
-    })();
-    return () => {
-      cancelled = true;
-    };
+    void reload();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const confirmDelete = async () => {
+    if (!pendingDelete) return;
+    if (pendingDelete.status === "approved" || pendingDelete.status === "archived") {
+      toast.error(t("cargo.deleteRunBlocked"));
+      setPendingDelete(null);
+      return;
+    }
+    await db.deleteCargoCostRun(pendingDelete.id);
+    setPendingDelete(null);
+    await reload();
+    toast.success(t("toast.deleted"));
+  };
 
   const q = search.trim().toLowerCase();
   const filtered = runs.filter(
@@ -159,15 +170,24 @@ export default function Runs() {
                 {
                   key: "open",
                   header: "",
-                  className: "w-24 text-left",
+                  className: "w-32 text-left",
                   cell: row => (
-                    <div onClick={e => e.stopPropagation()}>
+                    <div className="flex justify-end gap-1" onClick={e => e.stopPropagation()}>
                       <Link href={`/cargo?runId=${row.id}`}>
                         <Button size="sm" variant="outline" className="bg-card h-8 text-xs">
                           <FolderOpen className="h-3.5 w-3.5" />
                           {t("cargo.runsOpen")}
                         </Button>
                       </Link>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                        title={t("cargo.deleteRun")}
+                        onClick={() => setPendingDelete(row)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
                     </div>
                   ),
                 },
@@ -177,6 +197,19 @@ export default function Runs() {
             />
           )}
         </div>
+        <ConfirmDialog
+          open={pendingDelete !== null}
+          onOpenChange={v => !v && setPendingDelete(null)}
+          title={t("cargo.deleteRun")}
+          description={
+            pendingDelete
+              ? `${pendingDelete.name || pendingDelete.reference} — ${t("cargo.deleteRunConfirm")}`
+              : undefined
+          }
+          confirmLabel={t("common.delete")}
+          cancelLabel={t("common.cancel")}
+          onConfirm={() => void confirmDelete()}
+        />
       </PageShell>
     </AppLayout>
   );
