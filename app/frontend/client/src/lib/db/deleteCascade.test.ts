@@ -1,8 +1,9 @@
 import "fake-indexeddb/auto";
 
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { db } from "./index";
 import { DB_NAME } from "./schema";
+import { subscribeCargoData } from "./cargoDataEvents";
 import type {
   CargoCostAllocationRow,
   CargoCostItemRow,
@@ -125,8 +126,11 @@ describe("cargo cost cascade deletion", () => {
       db.saveCargoCostAllocation(allocation("run-keep-allocation", "run-keep")),
     ]);
 
+    const listener = vi.fn();
+    const unsubscribe = subscribeCargoData(listener);
     await db.deleteCargoCostRun("run-delete");
 
+    expect(listener).toHaveBeenCalledTimes(1);
     expect(await db.getCargoCostRun("run-delete")).toBeNull();
     expect(await db.listCargoCostItems("run-delete")).toEqual([]);
     expect(await db.listCargoCostLines("run-delete")).toEqual([]);
@@ -135,5 +139,6 @@ describe("cargo cost cascade deletion", () => {
     expect(await db.listCargoCostItems("run-keep")).toHaveLength(1);
     expect(await db.listCargoCostLines("run-keep")).toHaveLength(1);
     expect(await db.listCargoCostAllocations("run-keep")).toHaveLength(1);
+    unsubscribe();
   });
 });

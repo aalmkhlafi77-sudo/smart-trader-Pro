@@ -6,7 +6,9 @@
  * 2) القيمة المحفوظة بعملة الصنف (تحويل صريح مقرب)، لا SAR داخل صف أجنبي.
  * 3) الأجنبي بلا صرف صالح يُتخطَّى دون أي كتابة.
  */
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import "fake-indexeddb/auto";
+
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { mockSavePrice, mockSavePriceHistory } = vi.hoisted(() => ({
   mockSavePrice: vi.fn(),
@@ -14,8 +16,7 @@ const { mockSavePrice, mockSavePriceHistory } = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/db", async importOriginal => {
-  const actual =
-    await importOriginal<typeof import("@/lib/db")>();
+  const actual = await importOriginal<typeof import("@/lib/db")>();
   return {
     ...actual,
     db: {
@@ -35,9 +36,28 @@ vi.mock("sonner", () => ({
   },
 }));
 
-import { firstEmptyLevel, convertToItemCurrency } from "./shared";
-import { persistSalePrices } from "./cargoPersistence";
-import type { CargoCostItemRow, ItemPriceRow } from "@/lib/db";
+import {
+  db,
+  type CargoCostItemRow,
+  type CargoCostLineRow,
+  type ItemPriceRow,
+} from "@/lib/db";
+import { subscribeCargoData } from "@/lib/db/cargoDataEvents";
+import { DB_NAME } from "@/lib/db/schema";
+import { firstEmptyLevel, convertToItemCurrency, emptyDraft } from "./shared";
+import { persistRun, persistSalePrices } from "./cargoPersistence";
+
+function deleteDatabase(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase(DB_NAME);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+afterEach(async () => {
+  await deleteDatabase();
+});
 
 const t = (key: string) => key;
 
@@ -59,7 +79,9 @@ const priceRow = (patch: Partial<ItemPriceRow> = {}): ItemPriceRow => ({
   ...patch,
 });
 
-const cargoItem = (patch: Partial<CargoCostItemRow> = {}): CargoCostItemRow => ({
+const cargoItem = (
+  patch: Partial<CargoCostItemRow> = {}
+): CargoCostItemRow => ({
   id: "ci-1",
   runId: "run-1",
   itemId: "item-1",
@@ -185,5 +207,100 @@ describe("persistSalePrices", () => {
       price: 20.09,
       currency: "USD",
     });
+  });
+});
+
+describe("persistRun invalidation", () => {
+  it("publishes once after the run and all descendants are persisted", async () => {
+    const item: CargoCostItemRow = {
+      ...cargoItem(),
+      id: "persist-item",
+      runId: "",
+      quantity: 2,
+    };
+    const line: CargoCostLineRow = {
+      id: "persist-line",
+      runId: "",
+      name: "مصاريف أخرى",
+      stage: "other",
+      status: "entered",
+      method: "fixed",
+      allocationBasis: "value",
+      currency: "SAR",
+      exchangeRate: 1,
+      amount: 10,
+      referenceQuantity: 0,
+      referenceUnit: "",
+      percentageBase: 0,
+      itemIds: "",
+      sourceLabel: "",
+      rateId: "",
+      templateId: "",
+      effectiveDate: "2026-09-21",
+      reason: "",
+      sortOrder: 0,
+      createdAt: "2026-09-21T00:00:00.000Z",
+      updatedAt: "2026-09-21T00:00:00.000Z",
+    };
+    const draft = {
+      ...emptyDraft("SAR"),
+      name: "Persisted cargo",
+      items: [
+        {
+          id: item.id,
+          itemId: item.itemId,
+          priceLevel: item.priceLevel,
+          priceSource: item.priceSource,
+          priceEffectiveDate: item.priceEffectiveDate,
+          unitPrice: String(item.unitPrice),
+          currency: item.currency,
+          exchangeRate: String(item.exchangeRate),
+          quantity: String(item.quantity),
+          unit: item.unit,
+          customsRate: String(item.customsRate * 100),
+        },
+      ],
+    };
+
+    await db.init();
+    let snapshotPromise:
+      | Promise<{
+          run: Awaited<ReturnType<typeof db.listCargoCostRuns>>[number];
+          items: Awaited<ReturnType<typeof db.listCargoCostItems>>;
+          lines: Awaited<ReturnType<typeof db.listCargoCostLines>>;
+          allocations: Awaited<ReturnType<typeof db.listCargoCostAllocations>>;
+        }>
+      | undefined;
+    const listener = vi.fn(() => {
+      snapshotPromise = db.listCargoCostRuns().then(async runs => {
+        const savedRun = runs[0];
+        return {
+          run: savedRun,
+          items: await db.listCargoCostItems(savedRun.id),
+          lines: await db.listCargoCostLines(savedRun.id),
+          allocations: await db.listCargoCostAllocations(savedRun.id),
+        };
+      });
+    });
+    const unsubscribe = subscribeCargoData(listener);
+
+    const runId = await persistRun({
+      draft,
+      items: [item],
+      lines: [line],
+      status: "draft",
+      localCurrency: "SAR",
+      t,
+    });
+
+    expect(runId).toBeTruthy();
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(snapshotPromise).toBeDefined();
+    const snapshot = await snapshotPromise!;
+    expect(snapshot.run.id).toBe(runId);
+    expect(snapshot.items).toHaveLength(1);
+    expect(snapshot.lines).toHaveLength(1);
+    expect(snapshot.allocations).toHaveLength(1);
+    unsubscribe();
   });
 });

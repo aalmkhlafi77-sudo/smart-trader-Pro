@@ -4,6 +4,7 @@
  */
 
 import type { BackupPayload, Repository } from "./repository";
+import { invalidateCargoData, withCargoDataBatch } from "./cargoDataEvents";
 import {
   AR_CURRENCY_TO_ISO,
   DB_NAME,
@@ -320,7 +321,11 @@ const ISO_CODE_PATTERN = /^[A-Z]{3}$/;
  * آمنة التكرار: القيم المحوَّلة مسبقاً لا تطابق الخريطة فتُترك كما هي.
  */
 export async function migrateToV12(): Promise<MigrationStats> {
-  const stats: MigrationStats = { converted: {}, unknownValues: [], seeded: {} };
+  const stats: MigrationStats = {
+    converted: {},
+    unknownValues: [],
+    seeded: {},
+  };
   const seenUnknown = new Set<string>();
 
   const convertRow = (
@@ -377,7 +382,9 @@ export async function migrateToV12(): Promise<MigrationStats> {
 
   const existingCurrencies = await getAll<CurrencyRow>(TABLES.currencies);
   if (existingCurrencies.length === 0) {
-    await Promise.all(DEFAULT_CURRENCIES.map(row => put(TABLES.currencies, row)));
+    await Promise.all(
+      DEFAULT_CURRENCIES.map(row => put(TABLES.currencies, row))
+    );
     stats.seeded[TABLES.currencies] = DEFAULT_CURRENCIES.length;
   }
   const existingUnits = await getAll<UnitRow>(TABLES.units);
@@ -671,25 +678,31 @@ export const indexedDbRepository: Repository = {
     return rows.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   },
   getCargoCostRun: id => getById<CargoCostRunRow>(TABLES.cargoCostRuns, id),
-  saveCargoCostRun: row => put(TABLES.cargoCostRuns, row),
+  async saveCargoCostRun(row) {
+    await put(TABLES.cargoCostRuns, row);
+    invalidateCargoData();
+  },
   async deleteCargoCostRun(id) {
-    await remove(TABLES.cargoCostRuns, id);
-    const [items, lines, allocations] = await Promise.all([
-      getAll<CargoCostItemRow>(TABLES.cargoCostItems),
-      getAll<CargoCostLineRow>(TABLES.cargoCostLines),
-      getAll<CargoCostAllocationRow>(TABLES.cargoCostAllocations),
-    ]);
-    await Promise.all([
-      ...items
-        .filter(row => row.runId === id)
-        .map(row => remove(TABLES.cargoCostItems, row.id)),
-      ...lines
-        .filter(row => row.runId === id)
-        .map(row => remove(TABLES.cargoCostLines, row.id)),
-      ...allocations
-        .filter(row => row.runId === id)
-        .map(row => remove(TABLES.cargoCostAllocations, row.id)),
-    ]);
+    await withCargoDataBatch(async () => {
+      await remove(TABLES.cargoCostRuns, id);
+      invalidateCargoData();
+      const [items, lines, allocations] = await Promise.all([
+        getAll<CargoCostItemRow>(TABLES.cargoCostItems),
+        getAll<CargoCostLineRow>(TABLES.cargoCostLines),
+        getAll<CargoCostAllocationRow>(TABLES.cargoCostAllocations),
+      ]);
+      await Promise.all([
+        ...items
+          .filter(row => row.runId === id)
+          .map(row => remove(TABLES.cargoCostItems, row.id)),
+        ...lines
+          .filter(row => row.runId === id)
+          .map(row => remove(TABLES.cargoCostLines, row.id)),
+        ...allocations
+          .filter(row => row.runId === id)
+          .map(row => remove(TABLES.cargoCostAllocations, row.id)),
+      ]);
+    });
   },
   async listCargoCostItems(runId) {
     const rows = await getAll<CargoCostItemRow>(TABLES.cargoCostItems);
@@ -697,14 +710,19 @@ export const indexedDbRepository: Repository = {
       .filter(row => row.runId === runId)
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   },
-  saveCargoCostItem: row => put(TABLES.cargoCostItems, row),
+  async saveCargoCostItem(row) {
+    await put(TABLES.cargoCostItems, row);
+    invalidateCargoData();
+  },
   async deleteCargoCostItems(runId) {
-    const rows = await getAll<CargoCostItemRow>(TABLES.cargoCostItems);
-    await Promise.all(
-      rows
-        .filter(row => row.runId === runId)
-        .map(row => remove(TABLES.cargoCostItems, row.id))
-    );
+    await withCargoDataBatch(async () => {
+      const rows = await getAll<CargoCostItemRow>(TABLES.cargoCostItems);
+      const matching = rows.filter(row => row.runId === runId);
+      await Promise.all(
+        matching.map(row => remove(TABLES.cargoCostItems, row.id))
+      );
+      if (matching.length > 0) invalidateCargoData();
+    });
   },
   async listCargoCostLines(runId) {
     const rows = await getAll<CargoCostLineRow>(TABLES.cargoCostLines);
@@ -712,14 +730,19 @@ export const indexedDbRepository: Repository = {
       .filter(row => row.runId === runId)
       .sort((a, b) => a.sortOrder - b.sortOrder);
   },
-  saveCargoCostLine: row => put(TABLES.cargoCostLines, row),
+  async saveCargoCostLine(row) {
+    await put(TABLES.cargoCostLines, row);
+    invalidateCargoData();
+  },
   async deleteCargoCostLines(runId) {
-    const rows = await getAll<CargoCostLineRow>(TABLES.cargoCostLines);
-    await Promise.all(
-      rows
-        .filter(row => row.runId === runId)
-        .map(row => remove(TABLES.cargoCostLines, row.id))
-    );
+    await withCargoDataBatch(async () => {
+      const rows = await getAll<CargoCostLineRow>(TABLES.cargoCostLines);
+      const matching = rows.filter(row => row.runId === runId);
+      await Promise.all(
+        matching.map(row => remove(TABLES.cargoCostLines, row.id))
+      );
+      if (matching.length > 0) invalidateCargoData();
+    });
   },
   async listCargoCostAllocations(runId) {
     const rows = await getAll<CargoCostAllocationRow>(
@@ -727,16 +750,21 @@ export const indexedDbRepository: Repository = {
     );
     return rows.filter(row => row.runId === runId);
   },
-  saveCargoCostAllocation: row => put(TABLES.cargoCostAllocations, row),
+  async saveCargoCostAllocation(row) {
+    await put(TABLES.cargoCostAllocations, row);
+    invalidateCargoData();
+  },
   async deleteCargoCostAllocations(runId) {
-    const rows = await getAll<CargoCostAllocationRow>(
-      TABLES.cargoCostAllocations
-    );
-    await Promise.all(
-      rows
-        .filter(row => row.runId === runId)
-        .map(row => remove(TABLES.cargoCostAllocations, row.id))
-    );
+    await withCargoDataBatch(async () => {
+      const rows = await getAll<CargoCostAllocationRow>(
+        TABLES.cargoCostAllocations
+      );
+      const matching = rows.filter(row => row.runId === runId);
+      await Promise.all(
+        matching.map(row => remove(TABLES.cargoCostAllocations, row.id))
+      );
+      if (matching.length > 0) invalidateCargoData();
+    });
   },
 
   async listLogisticsLocations() {
@@ -921,31 +949,139 @@ export const indexedDbRepository: Repository = {
   },
 
   async importBackup(payload, mode) {
-    const rawPayload = payload as unknown as {
-      format?: string;
-      tables?: unknown;
-      entities?: unknown;
-      items?: unknown;
-    };
-    if (
-      rawPayload.format !== "smart-trader-backup" &&
-      !rawPayload.tables &&
-      !rawPayload.entities &&
-      !rawPayload.items
-    ) {
-      throw new Error("صيغة الملف غير صحيحة");
-    }
-    const normalized = normalizeBackupPayload(payload);
-    console.info(
-      "[S5] restore counts:",
-      Object.fromEntries(
-        Object.entries(normalized.tables).map(([key, rows]) => [
-          key,
-          (rows as unknown[]).length,
-        ])
-      )
-    );
-    if (mode === "replace") {
+    return withCargoDataBatch(async () => {
+      const rawPayload = payload as unknown as {
+        format?: string;
+        tables?: unknown;
+        entities?: unknown;
+        items?: unknown;
+      };
+      if (
+        rawPayload.format !== "smart-trader-backup" &&
+        !rawPayload.tables &&
+        !rawPayload.entities &&
+        !rawPayload.items
+      ) {
+        throw new Error("صيغة الملف غير صحيحة");
+      }
+      const normalized = normalizeBackupPayload(payload);
+      console.info(
+        "[S5] restore counts:",
+        Object.fromEntries(
+          Object.entries(normalized.tables).map(([key, rows]) => [
+            key,
+            (rows as unknown[]).length,
+          ])
+        )
+      );
+      if (mode === "replace") {
+        await Promise.all(
+          [
+            TABLES.entities,
+            TABLES.categories,
+            TABLES.items,
+            TABLES.specTemplates,
+            TABLES.itemSpecs,
+            TABLES.itemPrices,
+            TABLES.priceHistory,
+            TABLES.attachments,
+            TABLES.notes,
+            TABLES.tasks,
+            TABLES.backupLogs,
+            TABLES.pricingRuns,
+            TABLES.cargoCostRuns,
+            TABLES.cargoCostItems,
+            TABLES.cargoCostLines,
+            TABLES.cargoCostAllocations,
+            TABLES.logisticsLocations,
+            TABLES.logisticsRates,
+            TABLES.logisticsRouteTemplates,
+            TABLES.priceLists,
+            TABLES.priceListItems,
+            TABLES.currencies,
+            TABLES.units,
+            TABLES.entityContacts,
+          ].map(store => clearStore(store))
+        );
+      }
+      const t = normalized.tables;
+      const jobs: Promise<void>[] = [];
+      t.entities?.forEach(r => jobs.push(put(TABLES.entities, r)));
+      t.categories?.forEach(r => jobs.push(put(TABLES.categories, r)));
+      t.items?.forEach(r => jobs.push(put(TABLES.items, r)));
+      t.spec_templates?.forEach(r => jobs.push(put(TABLES.specTemplates, r)));
+      t.item_specs?.forEach(r => jobs.push(put(TABLES.itemSpecs, r)));
+      t.item_prices?.forEach(r => jobs.push(put(TABLES.itemPrices, r)));
+      t.price_history?.forEach(r => jobs.push(put(TABLES.priceHistory, r)));
+      t.attachments?.forEach(r => jobs.push(put(TABLES.attachments, r)));
+      t.notes?.forEach(r => jobs.push(put(TABLES.notes, r)));
+      t.tasks?.forEach(r => jobs.push(put(TABLES.tasks, r)));
+      t.backup_logs?.forEach(r => jobs.push(put(TABLES.backupLogs, r)));
+      t.pricing_runs?.forEach(r => jobs.push(put(TABLES.pricingRuns, r)));
+      t.cargo_cost_runs?.forEach(r => jobs.push(put(TABLES.cargoCostRuns, r)));
+      t.cargo_cost_items?.forEach(r =>
+        jobs.push(put(TABLES.cargoCostItems, r))
+      );
+      t.cargo_cost_lines?.forEach(r =>
+        jobs.push(put(TABLES.cargoCostLines, r))
+      );
+      t.cargo_cost_allocations?.forEach(r =>
+        jobs.push(put(TABLES.cargoCostAllocations, r))
+      );
+      t.logistics_locations?.forEach(r =>
+        jobs.push(put(TABLES.logisticsLocations, r))
+      );
+      t.logistics_rates?.forEach(r => jobs.push(put(TABLES.logisticsRates, r)));
+      t.logistics_route_templates?.forEach(r =>
+        jobs.push(put(TABLES.logisticsRouteTemplates, r))
+      );
+      t.price_lists?.forEach(r => jobs.push(put(TABLES.priceLists, r)));
+      t.price_list_items?.forEach(r =>
+        jobs.push(put(TABLES.priceListItems, r))
+      );
+      t.settings?.forEach(r => jobs.push(put(TABLES.settings, r)));
+      t.currencies?.forEach(r => jobs.push(put(TABLES.currencies, r)));
+      t.units?.forEach(r => jobs.push(put(TABLES.units, r)));
+      t.entity_contacts?.forEach(r => jobs.push(put(TABLES.entityContacts, r)));
+      await Promise.all(jobs);
+      const restoreStats = await migrateToV12();
+      console.warn("[S5] post-restore migration:", restoreStats);
+      if (!t.spec_templates?.length) {
+        const existingTemplates = await getAll<SpecTemplateRow>(
+          TABLES.specTemplates
+        );
+        if (existingTemplates.length === 0) {
+          const timestamp = nowIso();
+          await Promise.all(
+            DEFAULT_SPEC_TEMPLATES.map(template =>
+              put(TABLES.specTemplates, {
+                ...template,
+                createdAt: timestamp,
+                updatedAt: timestamp,
+              })
+            )
+          );
+        }
+      }
+      const currentMeta = await getById<MetaRow>(TABLES.meta, "app");
+      await put(TABLES.meta, {
+        ...(currentMeta ?? {
+          id: "app",
+          schemaVersion: SCHEMA_VERSION,
+          lastBackupAt: "",
+          updatedAt: nowIso(),
+        }),
+        schemaVersion: SCHEMA_VERSION,
+        specTemplatesSeeded: 1,
+        updatedAt: nowIso(),
+      } satisfies MetaRow);
+      invalidateCargoData();
+    });
+  },
+
+  async clearAll() {
+    await withCargoDataBatch(async () => {
+      invalidateCargoData();
       await Promise.all(
         [
           TABLES.entities,
@@ -972,104 +1108,8 @@ export const indexedDbRepository: Repository = {
           TABLES.currencies,
           TABLES.units,
           TABLES.entityContacts,
-        ].map(store => clearStore(store))
+        ].map(s => clearStore(s))
       );
-    }
-    const t = normalized.tables;
-    const jobs: Promise<void>[] = [];
-    t.entities?.forEach(r => jobs.push(put(TABLES.entities, r)));
-    t.categories?.forEach(r => jobs.push(put(TABLES.categories, r)));
-    t.items?.forEach(r => jobs.push(put(TABLES.items, r)));
-    t.spec_templates?.forEach(r => jobs.push(put(TABLES.specTemplates, r)));
-    t.item_specs?.forEach(r => jobs.push(put(TABLES.itemSpecs, r)));
-    t.item_prices?.forEach(r => jobs.push(put(TABLES.itemPrices, r)));
-    t.price_history?.forEach(r => jobs.push(put(TABLES.priceHistory, r)));
-    t.attachments?.forEach(r => jobs.push(put(TABLES.attachments, r)));
-    t.notes?.forEach(r => jobs.push(put(TABLES.notes, r)));
-    t.tasks?.forEach(r => jobs.push(put(TABLES.tasks, r)));
-    t.backup_logs?.forEach(r => jobs.push(put(TABLES.backupLogs, r)));
-    t.pricing_runs?.forEach(r => jobs.push(put(TABLES.pricingRuns, r)));
-    t.cargo_cost_runs?.forEach(r => jobs.push(put(TABLES.cargoCostRuns, r)));
-    t.cargo_cost_items?.forEach(r => jobs.push(put(TABLES.cargoCostItems, r)));
-    t.cargo_cost_lines?.forEach(r => jobs.push(put(TABLES.cargoCostLines, r)));
-    t.cargo_cost_allocations?.forEach(r =>
-      jobs.push(put(TABLES.cargoCostAllocations, r))
-    );
-    t.logistics_locations?.forEach(r =>
-      jobs.push(put(TABLES.logisticsLocations, r))
-    );
-    t.logistics_rates?.forEach(r => jobs.push(put(TABLES.logisticsRates, r)));
-    t.logistics_route_templates?.forEach(r =>
-      jobs.push(put(TABLES.logisticsRouteTemplates, r))
-    );
-    t.price_lists?.forEach(r => jobs.push(put(TABLES.priceLists, r)));
-    t.price_list_items?.forEach(r => jobs.push(put(TABLES.priceListItems, r)));
-    t.settings?.forEach(r => jobs.push(put(TABLES.settings, r)));
-    t.currencies?.forEach(r => jobs.push(put(TABLES.currencies, r)));
-    t.units?.forEach(r => jobs.push(put(TABLES.units, r)));
-    t.entity_contacts?.forEach(r => jobs.push(put(TABLES.entityContacts, r)));
-    await Promise.all(jobs);
-    const restoreStats = await migrateToV12();
-    console.warn("[S5] post-restore migration:", restoreStats);
-    if (!t.spec_templates?.length) {
-      const existingTemplates = await getAll<SpecTemplateRow>(
-        TABLES.specTemplates
-      );
-      if (existingTemplates.length === 0) {
-        const timestamp = nowIso();
-        await Promise.all(
-          DEFAULT_SPEC_TEMPLATES.map(template =>
-            put(TABLES.specTemplates, {
-              ...template,
-              createdAt: timestamp,
-              updatedAt: timestamp,
-            })
-          )
-        );
-      }
-    }
-    const currentMeta = await getById<MetaRow>(TABLES.meta, "app");
-    await put(TABLES.meta, {
-      ...(currentMeta ?? {
-        id: "app",
-        schemaVersion: SCHEMA_VERSION,
-        lastBackupAt: "",
-        updatedAt: nowIso(),
-      }),
-      schemaVersion: SCHEMA_VERSION,
-      specTemplatesSeeded: 1,
-      updatedAt: nowIso(),
-    } satisfies MetaRow);
-  },
-
-  async clearAll() {
-    await Promise.all(
-      [
-        TABLES.entities,
-        TABLES.categories,
-        TABLES.items,
-        TABLES.specTemplates,
-        TABLES.itemSpecs,
-        TABLES.itemPrices,
-        TABLES.priceHistory,
-        TABLES.attachments,
-        TABLES.notes,
-        TABLES.tasks,
-        TABLES.backupLogs,
-        TABLES.pricingRuns,
-        TABLES.cargoCostRuns,
-        TABLES.cargoCostItems,
-        TABLES.cargoCostLines,
-        TABLES.cargoCostAllocations,
-        TABLES.logisticsLocations,
-        TABLES.logisticsRates,
-        TABLES.logisticsRouteTemplates,
-        TABLES.priceLists,
-        TABLES.priceListItems,
-        TABLES.currencies,
-        TABLES.units,
-        TABLES.entityContacts,
-      ].map(s => clearStore(s))
-    );
+    });
   },
 };

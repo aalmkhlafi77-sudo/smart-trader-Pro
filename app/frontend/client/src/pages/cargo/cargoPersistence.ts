@@ -7,12 +7,15 @@ import {
   type ItemPriceRow,
   type PriceLevel,
 } from "@/lib/db";
+import { withCargoDataBatch } from "@/lib/db/cargoDataEvents";
 import { newId, nowIso } from "@/lib/id";
 import type { CargoCheck, CargoCostDraft, CargoDraft } from "./shared";
 import { FREIGHT_LINE_NAME, firstEmptyLevel } from "./shared";
 import { parseNumber } from "@/lib/pricing";
 
-export async function fetchCargoDraft(runId: string): Promise<CargoDraft | null> {
+export async function fetchCargoDraft(
+  runId: string
+): Promise<CargoDraft | null> {
   await db.init();
   const run = await db.getCargoCostRun(runId);
   if (!run) return null;
@@ -97,7 +100,8 @@ export async function persistRun(args: {
   const runId = draft.runId || newId("cargo");
   const run = {
     id: runId,
-    name: draft.name.trim() || `${t("cargo.loadWord")} ${timestamp.slice(0, 10)}`,
+    name:
+      draft.name.trim() || `${t("cargo.loadWord")} ${timestamp.slice(0, 10)}`,
     reference: draft.reference.trim(),
     operationType: draft.operationType,
     entityId: draft.entityId || null,
@@ -124,42 +128,46 @@ export async function persistRun(args: {
     createdAt: timestamp,
     updatedAt: timestamp,
   } as const;
-  await db.saveCargoCostRun(run);
-  await Promise.all([
-    db.deleteCargoCostItems(runId),
-    db.deleteCargoCostLines(runId),
-    db.deleteCargoCostAllocations(runId),
-  ]);
-  const allocationOf = (itemId: string) =>
-    result.items.find(row => row.itemId === itemId);
-  const savedItems = items.map(item => {
-    const calculation = allocationOf(item.itemId);
-    return {
-      ...item,
-      runId,
-      goodsValue: calculation?.goodsValue ?? 0,
-      allocatedCost: calculation?.allocatedCost ?? 0,
-      finalUnitCost: calculation?.unitCost ?? 0,
-      suggestedPrice: calculation?.suggestedPrice ?? 0,
-      updatedAt: timestamp,
-    };
-  });
-  await Promise.all(savedItems.map(item => db.saveCargoCostItem(item)));
-  await Promise.all(
-    lines.map(line => db.saveCargoCostLine({ ...line, runId, updatedAt: timestamp }))
-  );
-  await Promise.all(
-    result.allocations.map(allocation =>
-      db.saveCargoCostAllocation({
-        id: newId("alloc"),
+  await withCargoDataBatch(async () => {
+    await db.saveCargoCostRun(run);
+    await Promise.all([
+      db.deleteCargoCostItems(runId),
+      db.deleteCargoCostLines(runId),
+      db.deleteCargoCostAllocations(runId),
+    ]);
+    const allocationOf = (itemId: string) =>
+      result.items.find(row => row.itemId === itemId);
+    const savedItems = items.map(item => {
+      const calculation = allocationOf(item.itemId);
+      return {
+        ...item,
         runId,
-        costLineId: allocation.costLineId,
-        itemId: allocation.itemId,
-        amount: allocation.amount,
-        createdAt: timestamp,
-      })
-    )
-  );
+        goodsValue: calculation?.goodsValue ?? 0,
+        allocatedCost: calculation?.allocatedCost ?? 0,
+        finalUnitCost: calculation?.unitCost ?? 0,
+        suggestedPrice: calculation?.suggestedPrice ?? 0,
+        updatedAt: timestamp,
+      };
+    });
+    await Promise.all(savedItems.map(item => db.saveCargoCostItem(item)));
+    await Promise.all(
+      lines.map(line =>
+        db.saveCargoCostLine({ ...line, runId, updatedAt: timestamp })
+      )
+    );
+    await Promise.all(
+      result.allocations.map(allocation =>
+        db.saveCargoCostAllocation({
+          id: newId("alloc"),
+          runId,
+          costLineId: allocation.costLineId,
+          itemId: allocation.itemId,
+          amount: allocation.amount,
+          createdAt: timestamp,
+        })
+      )
+    );
+  });
   toast.success(
     status === "approved" ? t("cargo.cargoFileApproved") : t("cargo.draftSaved")
   );
@@ -176,7 +184,16 @@ export async function persistSalePrices(args: {
   localCurrency: string;
   t: (key: string) => string;
 }): Promise<boolean> {
-  const { items, saveRows, selection, levels, priceRows, fileName, localCurrency, t } = args;
+  const {
+    items,
+    saveRows,
+    selection,
+    levels,
+    priceRows,
+    fileName,
+    localCurrency,
+    t,
+  } = args;
   const selected = items.filter(item => selection[item.itemId]);
   if (selected.length === 0) {
     toast.info(t("cargo.selectItemToSaveSellingPrice"));
@@ -196,7 +213,8 @@ export async function persistSalePrices(args: {
       }
       const current = priceRows[cargoItem.itemId];
       const level =
-        levels[cargoItem.itemId] ?? firstEmptyLevel(current, cargoItem.priceLevel);
+        levels[cargoItem.itemId] ??
+        firstEmptyLevel(current, cargoItem.priceLevel);
       const value = row?.converted ?? 0;
       const currency = row?.currency || current?.currency || localCurrency;
       const fields =
@@ -238,7 +256,9 @@ export async function persistSalePrices(args: {
     })
   );
   if (skipped.length > 0) {
-    toast.warning(`${t("cargo.saleSaveSkipped")}: ${skipped.join(t("common.listSeparator"))}`);
+    toast.warning(
+      `${t("cargo.saleSaveSkipped")}: ${skipped.join(t("common.listSeparator"))}`
+    );
     return selected.length > skipped.length;
   }
   toast.success(t("cargo.sellingPricesSaved"));
@@ -256,17 +276,31 @@ export function buildChecklist(args: {
   const freight = costs.find(c => c.name === FREIGHT_LINE_NAME);
   const cifOk =
     incoterm !== "CIF" ||
-    !(freight && freight.status === "entered" && parseNumber(freight.amount) > 0);
+    !(
+      freight &&
+      freight.status === "entered" &&
+      parseNumber(freight.amount) > 0
+    );
   return [
-    { id: "incoterm", labelKey: "cargo.checkIncoterm", ok: incoterm.trim() !== "" },
+    {
+      id: "incoterm",
+      labelKey: "cargo.checkIncoterm",
+      ok: incoterm.trim() !== "",
+    },
     { id: "cif", labelKey: "cargo.checkCifFreight", ok: cifOk },
     {
       id: "dated",
       labelKey: "cargo.checkDatedPrices",
-      ok: items.length > 0 && items.every(i => i.priceEffectiveDate.trim() !== ""),
+      ok:
+        items.length > 0 &&
+        items.every(i => i.priceEffectiveDate.trim() !== ""),
       warnOnly: true,
     },
-    { id: "lines", labelKey: "cargo.checkNoMissing", ok: missingCostCount === 0 },
+    {
+      id: "lines",
+      labelKey: "cargo.checkNoMissing",
+      ok: missingCostCount === 0,
+    },
     { id: "base", labelKey: "cargo.checkCustomsBase", ok: customsBase > 0 },
   ];
 }
