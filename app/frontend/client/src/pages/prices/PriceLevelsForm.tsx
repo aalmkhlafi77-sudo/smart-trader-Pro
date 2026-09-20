@@ -1,28 +1,25 @@
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Save, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Field,
-  CurrencyField,
-  DateField,
   RateField,
   FormGrid,
   FormSection,
   ItemPicker,
-  StatusPill,
   InheritedValue,
 } from "@/components/patterns";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { latestDatedItemPrice } from "@/lib/latestItemPrice";
 import { currencyLabel } from "@/lib/currency";
 import { priceLevelSchema, optionalNonNegativeText } from "@/lib/validation/schemas";
-import type { ItemPriceRow, ItemRow, PriceHistoryRow, PriceLevel } from "@/lib/db";
+import type { ItemPriceRow, ItemRow, EntityRow, PriceHistoryRow, PriceLevel } from "@/lib/db";
 import { PriceHistoryTable } from "./PriceHistoryTable";
+import { PriceLevelCard } from "./PriceLevelCard";
 
 export interface PriceDraft {
   price: string;
@@ -41,6 +38,7 @@ const FALLBACK_CURRENCY = "USD";
 
 interface PriceLevelsFormProps {
   items: ItemRow[];
+  entities: EntityRow[];
   selectedId: string;
   onSelectId: (id: string) => void;
   ready: boolean;
@@ -53,6 +51,7 @@ interface PriceLevelsFormProps {
 
 export function PriceLevelsForm({
   items,
+  entities,
   selectedId,
   onSelectId,
   ready,
@@ -131,11 +130,14 @@ export function PriceLevelsForm({
               placeholder={t("prices.selectFirst")}
               searchPlaceholder={t("items.searchPlaceholder")}
               emptyMessage={t("common.nomatchingrecordsfound")}
-              options={items.map(item => ({
-                value: item.id,
-                label: item.name,
-                hint: `${item.code ? `[${item.code}] ` : ""}${currencyLabel(item.currency || FALLBACK_CURRENCY, t)}`,
-              }))}
+              options={items.map(item => {
+                const supplier = entities.find(e => e.id === item.entityId)?.name ?? "";
+                return {
+                  value: item.id,
+                  label: item.name,
+                  hint: `${item.code ? `[${item.code}] ` : ""}${currencyLabel(item.currency || FALLBACK_CURRENCY, t)}${supplier ? ` · ${supplier}` : ""}`,
+                };
+              })}
             />
           }
         />
@@ -159,72 +161,17 @@ export function PriceLevelsForm({
           <div className="space-y-3">
             {[0, 1, 2, 3].map(index => {
               const level = (index + 1) as PriceLevel;
-              const isActive = latest?.level === level;
-              const levelError = errors.levels?.[index];
-
               return (
-                <div
+                <PriceLevelCard
                   key={level}
-                  className={`rounded-md border p-2.5 transition-colors ${
-                    isActive
-                      ? "border-[var(--port-green)] bg-[var(--port-green-soft)]/50"
-                      : "border-border bg-card"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-[var(--ink)]">
-                      {t("prices.priceLevel")} {level}
-                    </span>
-                    {isActive ? (
-                      <StatusPill tone="success">{t("prices.latestDated")}</StatusPill>
-                    ) : null}
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <Field
-                      label={t("prices.price")}
-                      htmlFor={`price-amount-${level}`}
-                      error={levelError?.price?.message}
-                      control={
-                        <CurrencyField
-                          id={`price-amount-${level}`}
-                          suffix={currencyLabel(selectedItem.currency, t)}
-                          placeholder="0.00"
-                          {...register(`levels.${index}.price` as const)}
-                        />
-                      }
-                    />
-                    <Field
-                      label={t("prices.date")}
-                      error={levelError?.date?.message}
-                      control={
-                        <Controller
-                          name={`levels.${index}.date` as const}
-                          control={control}
-                          render={({ field }) => (
-                            <DateField
-                              value={field.value}
-                              onChange={field.onChange}
-                              ariaLabel={`${t("prices.date")} ${level}`}
-                            />
-                          )}
-                        />
-                      }
-                    />
-                    <Field
-                      label={t("prices.sourceNote")}
-                      htmlFor={`price-source-${level}`}
-                      control={
-                        <Input
-                          id={`price-source-${level}`}
-                          className="field-input text-xs"
-                          placeholder={t("prices.sourceExample")}
-                          {...register(`levels.${index}.source` as const)}
-                        />
-                      }
-                    />
-                  </div>
-                </div>
+                  index={index}
+                  level={level}
+                  isActive={latest?.level === level}
+                  currency={selectedItem.currency}
+                  control={control}
+                  register={register}
+                  error={errors.levels?.[index]}
+                />
               );
             })}
           </div>

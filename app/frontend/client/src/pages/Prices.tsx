@@ -7,6 +7,7 @@ import { PageShell, SectionCard } from "@/components/patterns";
 import { Button } from "@/components/ui/button";
 import {
   db,
+  type EntityRow,
   type ItemPriceRow,
   type ItemRow,
   type ItemSpecRow,
@@ -29,6 +30,7 @@ const toNum = (v: string) => {
 export default function Prices() {
   const { t } = useLanguage();
   const [items, setItems] = useState<ItemRow[]>([]);
+  const [entities, setEntities] = useState<EntityRow[]>([]);
   const [prices, setPrices] = useState<ItemPriceRow[]>([]);
   const [priceHistory, setPriceHistory] = useState<PriceHistoryRow[]>([]);
   const [allSpecsByItem, setAllSpecsByItem] = useState<Record<string, ItemSpecRow[]>>({});
@@ -52,13 +54,15 @@ export default function Prices() {
 
   const load = async () => {
     await db.init();
-    const [itemList, priceList, historyList] = await Promise.all([
+    const [itemList, entityList, priceList, historyList] = await Promise.all([
       db.listItems(),
+      db.listEntities(),
       db.listPrices(),
       db.listPriceHistory(),
     ]);
     const sorted = [...itemList].sort((a, b) => a.name.localeCompare(b.name, "ar"));
     setItems(sorted);
+    setEntities(entityList);
     setPrices(priceList);
     setPriceHistory(historyList);
 
@@ -218,6 +222,7 @@ export default function Prices() {
           >
             <PriceLevelsForm
               items={items}
+              entities={entities}
               selectedId={selectedId}
               onSelectId={setSelectedId}
               ready={selectedItem != null && loadedId === selectedId}

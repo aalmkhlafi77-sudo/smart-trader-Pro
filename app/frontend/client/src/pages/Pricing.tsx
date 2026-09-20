@@ -32,7 +32,7 @@ const STEPS = [
 export default function Pricing() {
   const { t } = useLanguage();
   const data = useCargoData();
-  const { items, priceRows, locations, rates, templates, localCurrency, foreignCurrency, reload } = data;
+  const { items, priceRows, locations, rates, templates, entities, localCurrency, foreignCurrency, reload } = data;
   const file = useCargoDraft({
     items,
     settings: data.settings,
@@ -178,6 +178,7 @@ export default function Pricing() {
                 itemById={file.itemById}
                 priceRows={priceRows}
                 localCurrency={localCurrency}
+                entities={entities}
                 onUpdateDraft={file.updateDraft}
                 onUpdateItem={file.updateItem}
                 onAddItem={file.addSelectedItem}

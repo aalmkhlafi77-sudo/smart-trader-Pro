@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { latestDatedItemPrice } from "@/lib/latestItemPrice";
-import type { ItemPriceRow, ItemRow } from "@/lib/db";
+import type { ItemPriceRow, ItemRow, EntityRow } from "@/lib/db";
 import type { PriceLevel } from "@/lib/db";
 import type { CargoDraft, CargoItemDraft } from "../shared";
 import { fromOption, optionValue, priceAtLevel } from "../shared";
@@ -21,6 +21,7 @@ export function CargoStep({
   itemById,
   priceRows,
   localCurrency,
+  entities,
   onUpdateDraft,
   onUpdateItem,
   onAddItem,
@@ -32,6 +33,7 @@ export function CargoStep({
   itemById: Record<string, ItemRow>;
   priceRows: Record<string, ItemPriceRow>;
   localCurrency: string;
+  entities: EntityRow[];
   onUpdateDraft: (patch: Partial<CargoDraft>) => void;
   onUpdateItem: (id: string, patch: Partial<CargoItemDraft>) => void;
   onAddItem: () => void;
@@ -39,6 +41,8 @@ export function CargoStep({
   onRemoveItem: (id: string) => void;
 }) {
   const { t } = useLanguage();
+  const entityName = (id: string | null) =>
+    entities.find(e => e.id === id)?.name ?? "";
 
   return (
     <SectionCard
@@ -62,12 +66,16 @@ export function CargoStep({
             }
           >
             <option value="__none__">{t("common.selectanitem")}</option>
-            {matchingItems.map(item => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-                {item.code ? ` — ${item.code}` : ""}
-              </option>
-            ))}
+            {matchingItems.map(item => {
+              const supplier = entityName(item.entityId);
+              return (
+                <option key={item.id} value={item.id}>
+                  {item.code ? `${item.code} — ` : ""}
+                  {item.name}
+                  {supplier ? ` · ${supplier}` : ""}
+                </option>
+              );
+            })}
           </select>
           <Button type="button" className="min-h-11" onClick={onAddItem}>
             <PackagePlus className="h-4 w-4" />

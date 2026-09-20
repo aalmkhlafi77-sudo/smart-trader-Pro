@@ -89,6 +89,7 @@ vi.mock("@/lib/db", async importOriginal => {
       ...actual.db,
       init: vi.fn(async () => {}),
       listItems: vi.fn(async () => items),
+      listEntities: vi.fn(async () => []),
       listPrices: vi.fn(async () => prices),
       listPriceHistory: vi.fn(async () => []),
       listSpecsByItem: vi.fn(async () => []),
