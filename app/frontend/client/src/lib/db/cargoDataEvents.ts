@@ -11,7 +11,7 @@ function flush(): void {
   pending = false;
   revision += 1;
 
-  for (const listener of [...listeners]) {
+  for (const listener of Array.from(listeners)) {
     listener();
   }
 }
