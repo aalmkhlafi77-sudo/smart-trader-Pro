@@ -19,6 +19,7 @@ import {
 } from "@/lib/cargoDecisionReports";
 import { formatDate, formatMoney, formatNumber } from "@/lib/pricing";
 import { shareReport } from "@/lib/shareReport";
+import { costLineLabel } from "@/pages/cargo/shared";
 import {
   exportBreakdownPdf,
   exportComprehensivePdf,
@@ -255,7 +256,7 @@ export function CostBreakdownCard({
                 <tbody>
                   {breakdown.lines.map(({ line, localAmount }) => (
                     <tr key={line.id} className="border-b border-border/60">
-                      <td className="px-2 py-2 font-medium">{line.name}</td>
+                      <td className="px-2 py-2 font-medium">{costLineLabel(line.name, t)}</td>
                       <td className="px-2 py-2">
                         {labels.stageMeta[line.stage].label}
                       </td>

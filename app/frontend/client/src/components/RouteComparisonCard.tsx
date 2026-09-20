@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDate, formatMoney, formatNumber } from "@/lib/pricing";
 import { shareReport } from "@/lib/shareReport";
+import { costLineLabel } from "@/pages/cargo/shared";
 import type { RouteComparisonRow } from "@/lib/cargoDecisionReports";
 import { exportRoutesExcel } from "./decisionExports";
 import { useDecisionLabels } from "./useDecisionLabels";
@@ -116,12 +117,12 @@ export function RouteComparisonCard({
                   </div>
                 </div>
                 {row.missingLines.length > 0 && (
-                  <p className="mt-2 text-[10px] text-[var(--calc-amber)]">
-                    {t("cargo.needsPricing")}:{" "}
-                    {row.missingLines
-                      .map(line => line.name)
-                      .join(t("common.listSeparator"))}
-                  </p>
+                    <p className="mt-2 text-[10px] text-[var(--calc-amber)]">
+                      {t("cargo.needsPricing")}:{" "}
+                      {row.missingLines
+                        .map(line => costLineLabel(line.name, t))
+                        .join(t("common.listSeparator"))}
+                    </p>
                 )}
                 {index === 0 && (
                   <p className="mt-2 text-[10px] text-[var(--port-green)]">
@@ -198,11 +199,11 @@ export function RouteComparisonCard({
                         ? "—"
                         : formatMoney(row.unitCost, row.run.currency)}
                     </td>
-                    <td className="px-3 py-3 text-xs text-[var(--calc-amber)]">
-                      {row.missingLines
-                        .map(line => line.name)
-                        .join(t("common.listSeparator")) || "—"}
-                    </td>
+                      <td className="px-3 py-3 text-xs text-[var(--calc-amber)]">
+                        {row.missingLines
+                          .map(line => costLineLabel(line.name, t))
+                          .join(t("common.listSeparator")) || "—"}
+                      </td>
                     <td className="px-3 py-3 text-xs" dir="ltr">
                       {formatDate(row.run.updatedAt)}
                     </td>

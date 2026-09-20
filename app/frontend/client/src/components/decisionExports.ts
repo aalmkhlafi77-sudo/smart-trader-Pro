@@ -1,6 +1,7 @@
 import type { TFunction } from "@/lib/validation/schemas";
 import { exportExcel, exportPdf } from "@/lib/exporters";
 import { formatDate, formatMoney, formatNumber } from "@/lib/pricing";
+import { costLineLabel } from "@/pages/cargo/shared";
 import type {
   CargoDecisionRun,
   CostStageKey,
@@ -46,7 +47,7 @@ export function exportRoutesExcel(
       formatNumber(row.totalCost),
       row.unitCost == null ? "—" : formatNumber(row.unitCost),
       row.missingLines
-        .map(line => line.name)
+        .map(line => costLineLabel(line.name, t))
         .join(t("common.listSeparator")) || "—",
     ]),
   });
@@ -77,7 +78,7 @@ export function exportBreakdownPdf(
       t("cargo.localAmountWord"),
     ],
     rows: breakdown.lines.map(({ line, localAmount }) => [
-      line.name,
+      costLineLabel(line.name, t),
       labels.stageMeta[line.stage].label,
       labels.costStatusLabel[line.status],
       line.sourceLabel || t("cargo.manualEditEntry"),
@@ -141,7 +142,7 @@ export function exportComprehensivePdf(
             ? "—"
             : formatMoney(row.unitCost, row.run.currency),
           row.missingLines
-            .map(line => line.name)
+            .map(line => costLineLabel(line.name, t))
             .join(t("common.listSeparator")) || "—",
         ]),
       },
@@ -210,7 +211,7 @@ export function exportComprehensivePdf(
           t("cargo.localAmountWord"),
         ],
         rows: breakdown.lines.map(({ line, localAmount }) => [
-          line.name,
+          costLineLabel(line.name, t),
           labels.stageMeta[line.stage].label,
           labels.costStatusLabel[line.status],
           line.sourceLabel || line.reason || t("cargo.manualEditEntryFull"),

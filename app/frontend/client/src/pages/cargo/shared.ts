@@ -75,6 +75,28 @@ export const FALLBACK_FOREIGN_CURRENCY = "USD";
 export const CIF_INCLUDED_LABEL = "مشمول في شرط التوريد (CIF)";
 export const CIF_INCLUDED_REASON = "المورد يتحمل الشحن ضمن شرط التوريد";
 
+/**
+ * خريطة عرض أسماء البنود البدائية: المخزن يبقى عربياً ثابتاً (يطابقه المحرك
+ * والمنطق حرفياً)، والعرض يُترجم حسب اللغة. البنود الحرة (يدوية/معدلة) تُعرض كما كُتبت.
+ */
+const COST_NAME_KEYS: Record<string, string> = {
+  [FREIGHT_LINE_NAME]: "cargo.costName.freight",
+  [CUSTOMS_LINE_NAME]: "cargo.costName.customs",
+  "مصاريف ورسوم التخليص": "cargo.costName.clearance",
+  "أتعاب مكتب التخليص": "cargo.costName.clearanceOffice",
+  "النقل الداخلي": "cargo.costName.transport",
+  "التحميل والتنزيل": "cargo.costName.handling",
+  "مصاريف أخرى": "cargo.costName.other",
+};
+
+export const costLineLabel = (
+  name: string,
+  t: (key: string) => string
+): string => {
+  const key = COST_NAME_KEYS[name];
+  return key ? t(key) : name;
+};
+
 export const COST_BLUEPRINTS: Array<
   Pick<
     CargoCostDraft,

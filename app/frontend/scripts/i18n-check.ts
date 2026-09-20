@@ -28,6 +28,7 @@ const ALLOW_DEC: Record<string, string[]> = {
     "FREIGHT_LINE_NAME",
     "CIF_INCLUDED_LABEL",
     "CIF_INCLUDED_REASON",
+    "COST_NAME_KEYS",
   ],
   "pages/cargo/steps/RouteStep.tsx": ["TRANSPORT_MODES"],
   "pages/settings/logistics/TemplateSheet.tsx": ["TRANSPORT_MODES"],

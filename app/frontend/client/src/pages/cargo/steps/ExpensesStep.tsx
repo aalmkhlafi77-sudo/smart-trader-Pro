@@ -18,7 +18,7 @@ import type {
   CargoCostStatus,
 } from "@/lib/db";
 import type { CargoCostDraft, CargoDraft } from "../shared";
-import { CUSTOMS_LINE_NAME, fromOption, optionValue } from "../shared";
+import { CUSTOMS_LINE_NAME, costLineLabel, fromOption, optionValue } from "../shared";
 import { ExpenseLineSheet } from "./ExpenseLineSheet";
 
 const STATUS_PILL: Record<
@@ -89,7 +89,7 @@ export function ExpensesStep({
                     {stageLabel[cost.stage]}
                   </span>
                   <p className="text-sm font-semibold text-[var(--ink)]">
-                    {cost.name}
+                    {costLineLabel(cost.name, t)}
                   </p>
                   <StatusPill tone={pill.tone}>{t(pill.key)}</StatusPill>
                 </div>
