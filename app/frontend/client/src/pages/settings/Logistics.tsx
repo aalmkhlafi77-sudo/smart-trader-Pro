@@ -54,14 +54,23 @@ export default function SettingsLogistics() {
           stamp={t("settings.routeLibrary")}
         >
           <Tabs defaultValue="locations" dir="rtl">
-            <TabsList className="w-full sm:w-auto">
-              <TabsTrigger value="locations">
+            <TabsList className="w-full sm:w-auto border border-border bg-secondary/40 p-1 gap-1">
+              <TabsTrigger
+                value="locations"
+                className="border border-transparent rounded-md data-[state=active]:bg-card data-[state=active]:border-border data-[state=active]:shadow-sm data-[state=inactive]:text-muted-foreground"
+              >
                 {t("settings.openLocations")} ({locations.length})
               </TabsTrigger>
-              <TabsTrigger value="rates">
+              <TabsTrigger
+                value="rates"
+                className="border border-transparent rounded-md data-[state=active]:bg-card data-[state=active]:border-border data-[state=active]:shadow-sm data-[state=inactive]:text-muted-foreground"
+              >
                 {t("settings.servicePrices")} ({rates.length})
               </TabsTrigger>
-              <TabsTrigger value="templates">
+              <TabsTrigger
+                value="templates"
+                className="border border-transparent rounded-md data-[state=active]:bg-card data-[state=active]:border-border data-[state=active]:shadow-sm data-[state=inactive]:text-muted-foreground"
+              >
                 {t("settings.routeTemplates")} ({templates.length})
               </TabsTrigger>
             </TabsList>
