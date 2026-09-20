@@ -14,6 +14,7 @@ import { FileHeader } from "./cargo/FileHeader";
 import { WizardNav } from "./cargo/WizardNav";
 import { useCargoData } from "./cargo/useCargoData";
 import { useCargoDraft } from "./cargo/useCargoDraft";
+import { useCargoRuns } from "./cargo/useCargoRuns";
 import {
   fetchCargoDraft,
   persistRun,
@@ -32,7 +33,7 @@ const STEPS = [
 export default function Pricing() {
   const { t } = useLanguage();
   const data = useCargoData();
-  const { items, priceRows, locations, rates, templates, entities, localCurrency, foreignCurrency, reload } = data;
+  const { items, priceRows, locations, rates, templates, entities, runs, localCurrency, foreignCurrency, reload } = data;
   const file = useCargoDraft({
     items,
     settings: data.settings,
@@ -97,6 +98,7 @@ export default function Pricing() {
     });
     if (!runId) return;
     file.updateDraft({ runId, status });
+    await reload();
     if (status === "approved") {
       setPriceSaveSelection(
         Object.fromEntries(file.cargoItems.map(item => [item.itemId, false]))
@@ -150,6 +152,16 @@ export default function Pricing() {
     toast.info(t("cargo.newCargoFileStarted"));
   };
 
+  const { openRun, deleteRun } = useCargoRuns({
+    runs,
+    activeRunId: draft.runId,
+    t,
+    setDraft: file.setDraft,
+    setStep,
+    doNewWork,
+    reloadData: reload,
+  });
+
   return (
     <AppLayout
       title={t("cargo.cargoCostFile")}
@@ -161,6 +173,9 @@ export default function Pricing() {
           localCurrency={localCurrency}
           onUpdateDraft={file.updateDraft}
           onNewWork={doNewWork}
+          runs={runs}
+          onOpenRun={openRun}
+          onDeleteRun={deleteRun}
         />
 
         <StepWizard

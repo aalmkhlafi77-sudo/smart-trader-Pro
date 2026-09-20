@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { db,
+  type CargoCostRunRow,
   type EntityRow,
   type ItemPriceRow,
   type ItemRow,
@@ -20,6 +21,7 @@ export function useCargoData() {
   const [rates, setRates] = useState<LogisticsRateRow[]>([]);
   const [templates, setTemplates] = useState<LogisticsRouteTemplateRow[]>([]);
   const [entities, setEntities] = useState<EntityRow[]>([]);
+  const [runs, setRuns] = useState<CargoCostRunRow[]>([]);
 
   const load = async () => {
     await db.init();
@@ -31,6 +33,7 @@ export function useCargoData() {
       rateList,
       templateList,
       entityList,
+      runList,
     ] = await Promise.all([
       db.listItems(),
       db.getSettings(),
@@ -39,6 +42,7 @@ export function useCargoData() {
       db.listLogisticsRates(),
       db.listLogisticsRouteTemplates(),
       db.listEntities(),
+      db.listCargoCostRuns(),
     ]);
     setItems([...itemList].sort((a, b) => a.name.localeCompare(b.name, "ar")));
     setSettings(settingsRow);
@@ -47,6 +51,7 @@ export function useCargoData() {
     setRates(rateList.filter(row => row.active === 1));
     setTemplates(templateList.filter(row => row.active === 1));
     setEntities(entityList);
+    setRuns([...runList].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)));
     return settingsRow;
   };
 
@@ -62,6 +67,7 @@ export function useCargoData() {
     rates,
     templates,
     entities,
+    runs,
     localCurrency: settings?.localCurrency ?? CURRENCY_FALLBACKS.local,
     foreignCurrency: settings?.foreignCurrency ?? CURRENCY_FALLBACKS.foreign,
     reload: load,
