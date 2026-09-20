@@ -47,8 +47,14 @@ const KEY_PATHS: Record<TableName, "id" | "code"> = Object.fromEntries(
   STORES.map(store => [store, store === TABLES.currencies ? "code" : "id"])
 ) as Record<TableName, "id" | "code">;
 
+let cachedDb: IDBDatabase | null = null;
+let openingDb: Promise<IDBDatabase> | null = null;
+
 function openDb(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
+  if (cachedDb) return Promise.resolve(cachedDb);
+  if (openingDb) return openingDb;
+
+  openingDb = new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, SCHEMA_VERSION);
     request.onupgradeneeded = () => {
       const db = request.result;
@@ -66,9 +72,29 @@ function openDb(): Promise<IDBDatabase> {
         }
       }
     };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      const database = request.result;
+      database.onversionchange = () => {
+        database.close();
+        if (cachedDb === database) cachedDb = null;
+      };
+      cachedDb = database;
+      openingDb = null;
+      resolve(database);
+    };
+    request.onerror = () => {
+      openingDb = null;
+      reject(request.error);
+    };
   });
+
+  return openingDb;
+}
+
+export function closeIndexedDbConnection(): void {
+  cachedDb?.close();
+  cachedDb = null;
+  openingDb = null;
 }
 
 async function withStore<T>(
@@ -80,9 +106,24 @@ async function withStore<T>(
   return new Promise<T>((resolve, reject) => {
     const tx = db.transaction(store, mode);
     const req = fn(tx.objectStore(store));
-    req.onsuccess = () => resolve(req.result as T);
-    req.onerror = () => reject(req.error);
-    tx.oncomplete = () => db.close();
+    let result: T;
+    let settled = false;
+    const fail = (error: DOMException | null) => {
+      if (settled) return;
+      settled = true;
+      reject(error ?? new Error("IndexedDB transaction failed"));
+    };
+    req.onsuccess = () => {
+      result = req.result as T;
+    };
+    req.onerror = () => fail(req.error);
+    tx.onerror = () => fail(tx.error);
+    tx.onabort = () => fail(tx.error);
+    tx.oncomplete = () => {
+      if (settled) return;
+      settled = true;
+      resolve(result);
+    };
   });
 }
 
@@ -419,8 +460,7 @@ export async function migrateToV12(): Promise<MigrationStats> {
 
 export const indexedDbRepository: Repository = {
   async init() {
-    const initializedDb = await openDb();
-    initializedDb.close();
+    await openDb();
     const settings = await getById<SettingsRow>(TABLES.settings, "app");
     if (!settings)
       await put(TABLES.settings, { ...DEFAULT_SETTINGS, updatedAt: nowIso() });
