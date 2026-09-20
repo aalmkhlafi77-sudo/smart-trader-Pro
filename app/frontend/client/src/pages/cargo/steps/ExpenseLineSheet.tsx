@@ -127,8 +127,10 @@ export function ExpenseLineSheet({
           <Field
             label={t("cargo.lineItemWord")}
             required
+            htmlFor="custom-line-name"
             control={
               <Input
+                id="custom-line-name"
                 className="field-input"
                 value={name}
                 onChange={e => setName(e.target.value)}
