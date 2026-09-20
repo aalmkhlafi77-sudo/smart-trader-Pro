@@ -18,6 +18,7 @@ import { DataHealthCard } from "./home/DataHealthCard";
 import { HardDrive } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
+import { useCargoDataRevision } from "@/lib/useCargoDataRevision";
 
 const ENTRY_DESCS: Record<string, string> = {
   "/entities": "entities.subtitle",
@@ -42,6 +43,7 @@ const ACTIVITY_LABEL_KEYS: Record<string, string> = {
 
 export default function Home() {
   const { t } = useLanguage();
+  const cargoRevision = useCargoDataRevision();
   const { visibleWidgets } = useWorkspacePreferences();
   const { icon: ActivityIcon } = useActivityTheme();
   const [counts, setCounts] = useState({
@@ -86,7 +88,7 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [cargoRevision]);
   const activityLabel =
     activity === "custom" && customActivity
       ? customActivity

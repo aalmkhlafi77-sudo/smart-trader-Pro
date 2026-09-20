@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
-import { Building2, ClipboardList, FileText, Package, Search } from "lucide-react";
+import {
+  Building2,
+  ClipboardList,
+  FileText,
+  Package,
+  Search,
+} from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +31,7 @@ import {
   type ItemRow,
   type TaskRow,
 } from "@/lib/db";
+import { useCargoDataRevision } from "@/lib/useCargoDataRevision";
 
 interface SearchIndex {
   entities: EntityRow[];
@@ -73,15 +80,25 @@ export function GlobalSearchButton() {
   );
 }
 
-function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => void }) {
+function GlobalSearch({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const { t } = useLanguage();
+  const cargoRevision = useCargoDataRevision();
   const [, navigate] = useLocation();
   const [query, setQuery] = useState("");
   const [index, setIndex] = useState<SearchIndex | null>(null);
 
   useEffect(() => {
+    if (open) setQuery("");
+  }, [open]);
+
+  useEffect(() => {
     if (!open) return;
-    setQuery("");
     let cancelled = false;
     (async () => {
       await db.init();
@@ -106,7 +123,7 @@ function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => void })
     return () => {
       cancelled = true;
     };
-  }, [open ]);
+  }, [open, cargoRevision]);
 
   const go = (href: string) => {
     onClose();
@@ -128,9 +145,7 @@ function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => void })
             has(index.specsByItem[i.id] ?? "")
         )
         .slice(0, 6),
-      runs: index.runs
-        .filter(r => has(`${r.name} ${r.reference}`))
-        .slice(0, 6),
+      runs: index.runs.filter(r => has(`${r.name} ${r.reference}`)).slice(0, 6),
       tasks: index.tasks
         .filter(x => has(`${x.title} ${x.details}`))
         .slice(0, 6),
@@ -163,14 +178,17 @@ function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => void })
                       <CommandItem
                         key={item.id}
                         value={`item-${item.id}`}
-                        onSelect={() => go(`/items?q=${encodeURIComponent(item.name)}`)}
+                        onSelect={() =>
+                          go(`/items?q=${encodeURIComponent(item.name)}`)
+                        }
                       >
                         <Package className="h-4 w-4" />
                         <span className="truncate">
                           {item.name}
                           {item.code ? (
                             <span className="text-muted-foreground" dir="ltr">
-                              {" "}[{item.code}]
+                              {" "}
+                              [{item.code}]
                             </span>
                           ) : null}
                         </span>

@@ -3,7 +3,12 @@ import { Link } from "wouter";
 import { FolderOpen, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
-import { ConfirmDialog, DataTable, PageShell, StatusPill } from "@/components/patterns";
+import {
+  ConfirmDialog,
+  DataTable,
+  PageShell,
+  StatusPill,
+} from "@/components/patterns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,6 +23,7 @@ import { db, type CargoCostRunRow, type CargoRunStatus } from "@/lib/db";
 import { clearSessionDraft } from "@/hooks/useSessionDraft";
 import { formatDateTime, formatMoney } from "@/lib/pricing";
 import { currencyLabel } from "@/lib/currency";
+import { useCargoDataRevision } from "@/lib/useCargoDataRevision";
 
 /** مفتاح مسودة ملف الحمولة — يجب إبطالها عند حذف ملفها حتى لا يعود شبحاً. */
 const CARGO_DRAFT_KEY = "smart-trader:draft:cargo-pricing";
@@ -39,7 +45,10 @@ function invalidateCargoDraft(deletedRunId: string) {
   }
 }
 
-const STATUS_TONE: Record<CargoRunStatus, "neutral" | "info" | "success" | "warning"> = {
+const STATUS_TONE: Record<
+  CargoRunStatus,
+  "neutral" | "info" | "success" | "warning"
+> = {
   draft: "neutral",
   review: "info",
   approved: "success",
@@ -55,10 +64,13 @@ const STATUS_KEY: Record<CargoRunStatus, string> = {
 
 export default function Runs() {
   const { t } = useLanguage();
+  const cargoRevision = useCargoDataRevision();
   const [runs, setRuns] = useState<CargoCostRunRow[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [pendingDelete, setPendingDelete] = useState<CargoCostRunRow | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<CargoCostRunRow | null>(
+    null
+  );
 
   const reload = async () => {
     await db.init();
@@ -68,12 +80,14 @@ export default function Runs() {
 
   useEffect(() => {
     void reload();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cargoRevision]);
 
   const confirmDelete = async () => {
     if (!pendingDelete) return;
-    if (pendingDelete.status === "approved" || pendingDelete.status === "archived") {
+    if (
+      pendingDelete.status === "approved" ||
+      pendingDelete.status === "archived"
+    ) {
       toast.error(t("cargo.deleteRunBlocked"));
       setPendingDelete(null);
       return;
@@ -155,7 +169,10 @@ export default function Runs() {
                         {row.name}
                       </span>
                       {row.reference ? (
-                        <span className="text-[11px] text-muted-foreground" dir="ltr">
+                        <span
+                          className="text-[11px] text-muted-foreground"
+                          dir="ltr"
+                        >
                           {row.reference}
                         </span>
                       ) : null}
@@ -176,7 +193,10 @@ export default function Runs() {
                   header: t("cargo.totalCost"),
                   cell: row => (
                     <span className="font-bold tabular-nums" dir="ltr">
-                      {formatMoney(row.totalCost, currencyLabel(row.currency, t))}
+                      {formatMoney(
+                        row.totalCost,
+                        currencyLabel(row.currency, t)
+                      )}
                     </span>
                   ),
                 },
@@ -184,7 +204,10 @@ export default function Runs() {
                   key: "updated",
                   header: t("common.lastupdated"),
                   cell: row => (
-                    <span className="text-[11px] text-muted-foreground" dir="ltr">
+                    <span
+                      className="text-[11px] text-muted-foreground"
+                      dir="ltr"
+                    >
                       {formatDateTime(row.updatedAt)}
                     </span>
                   ),
@@ -194,9 +217,16 @@ export default function Runs() {
                   header: "",
                   className: "w-32 text-left",
                   cell: row => (
-                    <div className="flex justify-end gap-1" onClick={e => e.stopPropagation()}>
+                    <div
+                      className="flex justify-end gap-1"
+                      onClick={e => e.stopPropagation()}
+                    >
                       <Link href={`/cargo?runId=${row.id}`}>
-                        <Button size="sm" variant="outline" className="bg-card h-8 text-xs">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="bg-card h-8 text-xs"
+                        >
                           <FolderOpen className="h-3.5 w-3.5" />
                           {t("cargo.runsOpen")}
                         </Button>

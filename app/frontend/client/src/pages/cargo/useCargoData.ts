@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { db,
+import {
+  db,
   type CargoCostRunRow,
   type EntityRow,
   type ItemPriceRow,
@@ -9,11 +10,13 @@ import { db,
   type LogisticsRouteTemplateRow,
   type SettingsRow,
 } from "@/lib/db";
+import { useCargoDataRevision } from "@/lib/useCargoDataRevision";
 
 /** عملتا العرض الاحتياطيتان (رمزا ISO منذ S5). */
 const CURRENCY_FALLBACKS = { local: "SAR", foreign: "USD" };
 
 export function useCargoData() {
+  const cargoRevision = useCargoDataRevision();
   const [items, setItems] = useState<ItemRow[]>([]);
   const [settings, setSettings] = useState<SettingsRow | null>(null);
   const [priceRows, setPriceRows] = useState<Record<string, ItemPriceRow>>({});
@@ -51,13 +54,15 @@ export function useCargoData() {
     setRates(rateList.filter(row => row.active === 1));
     setTemplates(templateList.filter(row => row.active === 1));
     setEntities(entityList);
-    setRuns([...runList].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)));
+    setRuns(
+      [...runList].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+    );
     return settingsRow;
   };
 
   useEffect(() => {
     void load();
-  }, []);
+  }, [cargoRevision]);
 
   return {
     items,

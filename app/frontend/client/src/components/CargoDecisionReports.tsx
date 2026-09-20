@@ -18,11 +18,8 @@ import {
   buildRouteComparisonRows,
   type CargoDecisionRun,
 } from "@/lib/cargoDecisionReports";
-import {
-  db,
-  type CargoCostRunRow,
-  type LogisticsLocationRow,
-} from "@/lib/db";
+import { db, type CargoCostRunRow, type LogisticsLocationRow } from "@/lib/db";
+import { useCargoDataRevision } from "@/lib/useCargoDataRevision";
 import { ShipWheel, ReceiptText } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { CostBreakdownCard } from "./CostBreakdownCard";
@@ -31,6 +28,7 @@ import { RouteComparisonCard } from "./RouteComparisonCard";
 
 export default function CargoDecisionReports() {
   const { t } = useLanguage();
+  const cargoRevision = useCargoDataRevision();
   const [details, setDetails] = useState<CargoDecisionRun[]>([]);
   const [locations, setLocations] = useState<LogisticsLocationRow[]>([]);
   const [operation, setOperation] = useState<
@@ -61,7 +59,7 @@ export default function CargoDecisionReports() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [cargoRevision]);
 
   const filteredDetails = useMemo(
     () =>

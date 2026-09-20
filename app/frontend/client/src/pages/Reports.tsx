@@ -23,8 +23,13 @@ import {
   type SpecTemplateRow,
 } from "@/lib/db";
 import { useEffect, useMemo, useState } from "react";
-import { ItemFilters, initialFilters, type ItemFilterValues } from "./reports/ItemFilters";
+import {
+  ItemFilters,
+  initialFilters,
+  type ItemFilterValues,
+} from "./reports/ItemFilters";
 import { ItemResults } from "./reports/ItemResults";
+import { useCargoDataRevision } from "@/lib/useCargoDataRevision";
 import {
   buildReportRows,
   extractNumber,
@@ -33,6 +38,7 @@ import {
 
 export default function Reports() {
   const { t } = useLanguage();
+  const cargoRevision = useCargoDataRevision();
   const [items, setItems] = useState<ItemRow[]>([]);
   const [entities, setEntities] = useState<EntityRow[]>([]);
   const [prices, setPrices] = useState<ItemPriceRow[]>([]);
@@ -52,15 +58,21 @@ export default function Reports() {
     let cancelled = false;
     (async () => {
       await db.init();
-      const [itemList, entityList, priceList, legacyRuns, cargoRuns, templateList] =
-        await Promise.all([
-          db.listItems(),
-          db.listEntities(),
-          db.listPrices(),
-          db.listPricingRuns(),
-          db.listCargoCostRuns(),
-          db.listSpecTemplates(),
-        ]);
+      const [
+        itemList,
+        entityList,
+        priceList,
+        legacyRuns,
+        cargoRuns,
+        templateList,
+      ] = await Promise.all([
+        db.listItems(),
+        db.listEntities(),
+        db.listPrices(),
+        db.listPricingRuns(),
+        db.listCargoCostRuns(),
+        db.listSpecTemplates(),
+      ]);
       const cargoItemsNested = await Promise.all(
         cargoRuns.map(run => db.listCargoCostItems(run.id))
       );
@@ -108,7 +120,7 @@ export default function Reports() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [cargoRevision]);
 
   const rows = useMemo<ReportRow[]>(
     () =>
@@ -152,14 +164,23 @@ export default function Reports() {
         return false;
       if (filters.entityId !== "all" && row.item.entityId !== filters.entityId)
         return false;
-      if (filters.entityKind !== "all" && row.entity?.kind !== filters.entityKind)
+      if (
+        filters.entityKind !== "all" &&
+        row.entity?.kind !== filters.entityKind
+      )
         return false;
       if (filters.category !== "all" && row.item.category !== filters.category)
         return false;
       if (!includes(row.weight, filters.weight)) return false;
       if (!includes(row.material, filters.material)) return false;
       if (!includes(row.type, filters.type)) return false;
-      if (!withinRange(row.supplierPrice, filters.supplierMin, filters.supplierMax))
+      if (
+        !withinRange(
+          row.supplierPrice,
+          filters.supplierMin,
+          filters.supplierMax
+        )
+      )
         return false;
       if (!withinRange(row.unitCost, filters.costMin, filters.costMax))
         return false;
