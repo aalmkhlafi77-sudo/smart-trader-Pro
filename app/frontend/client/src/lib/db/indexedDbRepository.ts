@@ -146,6 +146,47 @@ async function remove(store: string, id: string): Promise<void> {
   await withStore(store, "readwrite", s => s.delete(id));
 }
 
+const CARGO_CASCADE_STORES = [
+  TABLES.cargoCostRuns,
+  TABLES.cargoCostItems,
+  TABLES.cargoCostLines,
+  TABLES.cargoCostAllocations,
+] as const;
+
+async function deleteCargoCostRunAtomic(id: string): Promise<void> {
+  const db = await openDb();
+  await new Promise<void>((resolve, reject) => {
+    const transaction = db.transaction([...CARGO_CASCADE_STORES], "readwrite");
+    let settled = false;
+    const fail = (error: DOMException | null) => {
+      if (settled) return;
+      settled = true;
+      reject(error ?? new Error("IndexedDB cascade transaction failed"));
+    };
+
+    transaction.onerror = () => fail(transaction.error);
+    transaction.onabort = () => fail(transaction.error);
+    transaction.oncomplete = () => {
+      if (settled) return;
+      settled = true;
+      resolve();
+    };
+
+    transaction.objectStore(TABLES.cargoCostRuns).delete(id);
+    for (const storeName of CARGO_CASCADE_STORES.slice(1)) {
+      const cursorRequest = transaction.objectStore(storeName).openCursor();
+      cursorRequest.onerror = () => fail(cursorRequest.error);
+      cursorRequest.onsuccess = () => {
+        const cursor = cursorRequest.result;
+        if (!cursor) return;
+        const row = cursor.value as { runId?: string };
+        if (row.runId === id) cursor.delete();
+        cursor.continue();
+      };
+    }
+  });
+}
+
 async function clearStore(store: string): Promise<void> {
   await withStore(store, "readwrite", s => s.clear());
 }
@@ -724,24 +765,8 @@ export const indexedDbRepository: Repository = {
   },
   async deleteCargoCostRun(id) {
     await withCargoDataBatch(async () => {
-      await remove(TABLES.cargoCostRuns, id);
+      await deleteCargoCostRunAtomic(id);
       invalidateCargoData();
-      const [items, lines, allocations] = await Promise.all([
-        getAll<CargoCostItemRow>(TABLES.cargoCostItems),
-        getAll<CargoCostLineRow>(TABLES.cargoCostLines),
-        getAll<CargoCostAllocationRow>(TABLES.cargoCostAllocations),
-      ]);
-      await Promise.all([
-        ...items
-          .filter(row => row.runId === id)
-          .map(row => remove(TABLES.cargoCostItems, row.id)),
-        ...lines
-          .filter(row => row.runId === id)
-          .map(row => remove(TABLES.cargoCostLines, row.id)),
-        ...allocations
-          .filter(row => row.runId === id)
-          .map(row => remove(TABLES.cargoCostAllocations, row.id)),
-      ]);
     });
   },
   async listCargoCostItems(runId) {

@@ -2,6 +2,7 @@ import "fake-indexeddb/auto";
 
 import { afterEach, describe, expect, it } from "vitest";
 import { db } from "./index";
+import { closeIndexedDbConnection } from "./indexedDbRepository";
 import type { BackupPayload } from "./repository";
 import { DB_NAME } from "./schema";
 
@@ -15,6 +16,7 @@ function deleteDatabase(): Promise<void> {
 
 describe("legacy backup without currencies", () => {
   afterEach(async () => {
+    closeIndexedDbConnection();
     await deleteDatabase();
   });
 

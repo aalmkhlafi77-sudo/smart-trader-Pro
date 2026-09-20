@@ -43,6 +43,7 @@ import {
   type ItemPriceRow,
 } from "@/lib/db";
 import { subscribeCargoData } from "@/lib/db/cargoDataEvents";
+import { closeIndexedDbConnection } from "@/lib/db/indexedDbRepository";
 import { DB_NAME } from "@/lib/db/schema";
 import { firstEmptyLevel, convertToItemCurrency, emptyDraft } from "./shared";
 import { persistRun, persistSalePrices } from "./cargoPersistence";
@@ -56,6 +57,7 @@ function deleteDatabase(): Promise<void> {
 }
 
 afterEach(async () => {
+  closeIndexedDbConnection();
   await deleteDatabase();
 });
 

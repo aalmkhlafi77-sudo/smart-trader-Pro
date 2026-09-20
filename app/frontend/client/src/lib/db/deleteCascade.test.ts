@@ -2,6 +2,7 @@ import "fake-indexeddb/auto";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { db } from "./index";
+import { closeIndexedDbConnection } from "./indexedDbRepository";
 import { DB_NAME } from "./schema";
 import { subscribeCargoData } from "./cargoDataEvents";
 import type {
@@ -108,6 +109,7 @@ const allocation = (id: string, runId: string): CargoCostAllocationRow => ({
 
 describe("cargo cost cascade deletion", () => {
   afterEach(async () => {
+    closeIndexedDbConnection();
     await deleteDatabase();
   });
 

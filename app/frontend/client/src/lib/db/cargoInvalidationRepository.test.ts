@@ -2,6 +2,7 @@ import "fake-indexeddb/auto";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { db } from "./index";
+import { closeIndexedDbConnection } from "./indexedDbRepository";
 import { DB_NAME } from "./schema";
 import { subscribeCargoData } from "./cargoDataEvents";
 import type {
@@ -117,6 +118,7 @@ async function seedRunWithItemLineAndAllocation(runId: string) {
 
 describe("cargo repository invalidation", () => {
   afterEach(async () => {
+    closeIndexedDbConnection();
     await deleteDatabase();
   });
 

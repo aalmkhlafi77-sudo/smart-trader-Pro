@@ -11,6 +11,7 @@ import { LoginBackgroundProvider } from "@/contexts/LoginBackgroundContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { WorkspacePreferencesProvider } from "@/contexts/WorkspacePreferencesContext";
 import { db, type CargoCostRunRow } from "@/lib/db";
+import { closeIndexedDbConnection } from "@/lib/db/indexedDbRepository";
 import { DB_NAME } from "@/lib/db/schema";
 import Runs from "./Runs";
 
@@ -104,6 +105,7 @@ describe("mounted cargo invalidation", () => {
 
   afterEach(async () => {
     cleanup();
+    closeIndexedDbConnection();
     await deleteDatabase();
   });
 
