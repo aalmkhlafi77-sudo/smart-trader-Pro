@@ -12,6 +12,7 @@ import {
   SCHEMA_VERSION,
   TABLES,
   mapCurrencyToISO,
+  type TableName,
   type AttachmentRow,
   type BackupLogRow,
   type CargoCostAllocationRow,
@@ -41,15 +42,26 @@ import {
 } from "./schema";
 
 const STORES = Object.values(TABLES);
+const KEY_PATHS: Record<TableName, "id" | "code"> = Object.fromEntries(
+  STORES.map(store => [store, store === TABLES.currencies ? "code" : "id"])
+) as Record<TableName, "id" | "code">;
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, SCHEMA_VERSION);
     request.onupgradeneeded = () => {
       const db = request.result;
+      if (db.objectStoreNames.contains(TABLES.currencies)) {
+        const currenciesStore = request.transaction?.objectStore(
+          TABLES.currencies
+        );
+        if (currenciesStore?.keyPath !== KEY_PATHS[TABLES.currencies]) {
+          db.deleteObjectStore(TABLES.currencies);
+        }
+      }
       for (const store of STORES) {
         if (!db.objectStoreNames.contains(store)) {
-          db.createObjectStore(store, { keyPath: "id" });
+          db.createObjectStore(store, { keyPath: KEY_PATHS[store] });
         }
       }
     };
@@ -307,7 +319,7 @@ const ISO_CODE_PATTERN = /^[A-Z]{3}$/;
  * في نفس الحقول (تُبقى الأعمدة للقراءة فقط)، وبذر العملات والوحدات.
  * آمنة التكرار: القيم المحوَّلة مسبقاً لا تطابق الخريطة فتُترك كما هي.
  */
-export async function migrateToV11(): Promise<MigrationStats> {
+export async function migrateToV12(): Promise<MigrationStats> {
   const stats: MigrationStats = { converted: {}, unknownValues: [], seeded: {} };
   const seenUnknown = new Set<string>();
 
@@ -400,7 +412,8 @@ export async function migrateToV11(): Promise<MigrationStats> {
 
 export const indexedDbRepository: Repository = {
   async init() {
-    await openDb();
+    const initializedDb = await openDb();
+    initializedDb.close();
     const settings = await getById<SettingsRow>(TABLES.settings, "app");
     if (!settings)
       await put(TABLES.settings, { ...DEFAULT_SETTINGS, updatedAt: nowIso() });
@@ -430,9 +443,9 @@ export const indexedDbRepository: Repository = {
         updatedAt: nowIso(),
       } satisfies MetaRow);
     }
-    if ((meta?.schemaVersion ?? 10) < 11) {
-      const stats = await migrateToV11();
-      console.warn("[S5] currency migration v10→v11:", stats);
+    if ((meta?.schemaVersion ?? 10) < SCHEMA_VERSION) {
+      const stats = await migrateToV12();
+      console.warn("[S5] currency migration v10→v12:", stats);
     }
     if (!meta?.specTemplatesSeeded) {
       const templates = await getAll<SpecTemplateRow>(TABLES.specTemplates);
@@ -996,7 +1009,7 @@ export const indexedDbRepository: Repository = {
     t.units?.forEach(r => jobs.push(put(TABLES.units, r)));
     t.entity_contacts?.forEach(r => jobs.push(put(TABLES.entityContacts, r)));
     await Promise.all(jobs);
-    const restoreStats = await migrateToV11();
+    const restoreStats = await migrateToV12();
     console.warn("[S5] post-restore migration:", restoreStats);
     if (!t.spec_templates?.length) {
       const existingTemplates = await getAll<SpecTemplateRow>(
