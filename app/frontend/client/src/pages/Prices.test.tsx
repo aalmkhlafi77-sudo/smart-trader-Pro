@@ -5,8 +5,8 @@
  * كان يُبقي قيم المستويات من الصنف السابق (لقطات المستخدم الثلاث).
  * يحاكي خطوات البريف حرفياً: A(3.7) → B(5) → A(3.7).
  */
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AccessProvider } from "@/contexts/AccessContext";
@@ -128,6 +128,9 @@ class MockResizeObserver {
 }
 
 describe("تبديل الصنف في نموذج الأسعار دون حفظ", () => {
+  afterEach(() => {
+    cleanup();
+  });
   beforeEach(() => {
     window.localStorage.clear();
     window.sessionStorage.clear();
