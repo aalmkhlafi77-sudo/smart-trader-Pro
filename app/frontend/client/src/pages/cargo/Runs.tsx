@@ -15,8 +15,29 @@ import {
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { db, type CargoCostRunRow, type CargoRunStatus } from "@/lib/db";
+import { clearSessionDraft } from "@/hooks/useSessionDraft";
 import { formatDateTime, formatMoney } from "@/lib/pricing";
 import { currencyLabel } from "@/lib/currency";
+
+/** مفتاح مسودة ملف الحمولة — يجب إبطالها عند حذف ملفها حتى لا يعود شبحاً. */
+const CARGO_DRAFT_KEY = "smart-trader:draft:cargo-pricing";
+
+/**
+ * تُبطل مسودة الجلسة فقط إن كانت تشير للملف المحذوف نفسه —
+ * مسودات الملفات الأخرى عمل غير محفوظ لا يُمس.
+ */
+function invalidateCargoDraft(deletedRunId: string) {
+  try {
+    const raw = window.sessionStorage.getItem(CARGO_DRAFT_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as { runId?: string };
+    if (parsed && parsed.runId === deletedRunId) {
+      clearSessionDraft(CARGO_DRAFT_KEY);
+    }
+  } catch {
+    // التخزين غير متاح — الحذف نفسه تم بنجاح ولا يُعطَّل بسببه.
+  }
+}
 
 const STATUS_TONE: Record<CargoRunStatus, "neutral" | "info" | "success" | "warning"> = {
   draft: "neutral",
@@ -58,6 +79,7 @@ export default function Runs() {
       return;
     }
     await db.deleteCargoCostRun(pendingDelete.id);
+    invalidateCargoDraft(pendingDelete.id);
     setPendingDelete(null);
     await reload();
     toast.success(t("toast.deleted"));
