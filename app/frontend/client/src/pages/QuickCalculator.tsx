@@ -49,6 +49,7 @@ export default function QuickCalculator() {
   const { t } = useLanguage();
   const [entities, setEntities] = useState<EntityRow[]>([]);
   const [items, setItems] = useState<ItemRow[]>([]);
+  const [localCurrency, setLocalCurrency] = useState("SAR");
   const [currency, setCurrency] = useState("USD");
   const [supplierName, setSupplierName] = useState("");
   const [itemId, setItemId] = useState("");
@@ -71,6 +72,7 @@ export default function QuickCalculator() {
     ]).then(([nextEntities, nextItems, settings, nextSaved]) => {
       setEntities(nextEntities);
       setItems(nextItems);
+      setLocalCurrency(settings.localCurrency || "SAR");
       setCurrency(settings.foreignCurrency || "USD");
       setExchangeRate(String(settings.defaultExchangeRate || 1));
       setCustomsRate(String((settings.defaultCustomsRate || 0) * 100));
@@ -185,7 +187,7 @@ export default function QuickCalculator() {
           </div>
           <div className="space-y-5">
             <SectionCard title={t("quick.results")} stamp={t("quick.calculated")} tone="result">
-              {calculation.result ? <dl className="grid gap-2">{resultRows.map(([label, value], index) => <div key={String(label)} className={`flex items-center justify-between gap-3 rounded px-2 py-2 ${index === 0 || index === 2 ? "bg-[var(--computed-surface)]" : ""}`}><dt className="text-xs text-[var(--ink)]">{label}</dt><dd className="ledger-figure text-sm font-bold">{formatMoney(Number(value), "SAR")}</dd></div>)}</dl> : <p className="text-xs text-destructive">{calculation.error || t("quick.noResults")}</p>}
+              {calculation.result ? <dl className="grid gap-2">{resultRows.map(([label, value], index) => <div key={String(label)} className={`flex items-center justify-between gap-3 rounded px-2 py-2 ${index === 0 || index === 2 ? "bg-[var(--computed-surface)]" : ""}`}><dt className="text-xs text-[var(--ink)]">{label}</dt><dd className="ledger-figure text-sm font-bold">{formatMoney(Number(value), localCurrency)}</dd></div>)}</dl> : <p className="text-xs text-destructive">{calculation.error || t("quick.noResults")}</p>}
             </SectionCard>
             <SectionCard title={t("quick.savedDrafts")} description={t("quick.savedHint")}>
               {savedRows.length ? <div className="space-y-2">{savedRows.slice(0, 6).map(row => <button type="button" key={row.id} className="flex w-full items-center justify-between rounded border border-border px-3 py-2 text-right hover:bg-secondary" onClick={() => { setSupplierName(row.supplierName); setItemId(row.itemId || ""); setItemName(row.itemName); setQuantity(String(row.quantity)); setUnitPrice(String(row.unitPrice)); setCurrency(row.currency); setExchangeRate(String(row.exchangeRate)); setCustomsRate(String(row.customsRate * 100)); setMarginRate(String(row.marginRate * 100)); try { setExternalExpenses(JSON.parse(row.externalExpensesJson) as QuickExpense[]); setInternalExpenses(JSON.parse(row.internalExpensesJson) as QuickExpense[]); } catch { setExternalExpenses(cloneExpenses(defaultExternal)); setInternalExpenses(cloneExpenses(defaultInternal)); } }}><span className="text-xs font-semibold">{row.itemName || t("quick.manualItem")}</span><span className="text-[11px] text-muted-foreground">{formatMoney(row.unitCost, row.currency)} {t("quick.perUnit")}</span></button>)}</div> : <p className="text-xs text-muted-foreground">{t("quick.noDrafts")}</p>}

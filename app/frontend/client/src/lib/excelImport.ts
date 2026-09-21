@@ -75,6 +75,11 @@ const number = (row: Record<string, unknown>, ...keys: string[]) => {
   return Number.isFinite(parsed) ? parsed : null;
 };
 
+const rate = (row: Record<string, unknown>, ...keys: string[]) => {
+  const value = number(row, ...keys);
+  return value != null && value > 1 ? value / 100 : value;
+};
+
 const date = (row: Record<string, unknown>, ...keys: string[]) => text(row, ...keys);
 
 function canonicalSheetName(name: string) {
@@ -200,7 +205,7 @@ export function buildExcelImportPlan(
       unit: text(raw, "unit", "الوحدة"),
       currency: text(raw, "currency", "العملة") || existing?.currency || "USD",
       defaultExchangeRate: number(raw, "defaultExchangeRate", "سعر الصرف") ?? existing?.defaultExchangeRate ?? 1,
-      customsRate: number(raw, "customsRate", "نسبة الجمارك") ?? existing?.customsRate ?? null,
+      customsRate: rate(raw, "customsRate", "نسبة الجمارك") ?? existing?.customsRate ?? null,
       notes: text(raw, "notes", "ملاحظات"),
       updatedAt: now,
     };
@@ -281,6 +286,13 @@ export function buildExcelImportPlan(
       error("المصاريف", row, "قيمة المصروف مطلوبة وغير سالبة");
       return;
     }
+    const itemReferenceText = text(raw, "itemIds", "أصناف");
+    const itemReferences = itemReferenceText.split(/[|,]/).map(value => value.trim()).filter(Boolean);
+    const linkedItems = itemReferences.map(reference => findItem(reference, items));
+    if (linkedItems.some(item => !item)) {
+      error("المصاريف", row, `الصنف المرتبط غير معروف: ${itemReferenceText}`);
+      return;
+    }
     plan.cargoCostLines.push({
       id: newId("cargo-line"), runId: cargo.id, name: text(raw, "name", "الاسم") || "مصروف مستورد",
       stage: stage(text(raw, "stage", "المرحلة")), status: "entered",
@@ -288,7 +300,7 @@ export function buildExcelImportPlan(
       currency: text(raw, "currency", "العملة") || cargo.currency, exchangeRate: number(raw, "exchangeRate", "سعر الصرف") ?? 1,
       amount, referenceQuantity: number(raw, "referenceQuantity", "الكمية المرجعية") ?? 0,
       referenceUnit: text(raw, "referenceUnit", "وحدة المرجع"), percentageBase: number(raw, "percentageBase", "أساس النسبة") ?? 0,
-      itemIds: text(raw, "itemIds", "أصناف"), sourceLabel: text(raw, "sourceLabel", "المصدر"), rateId: "", templateId: "",
+      itemIds: linkedItems.filter((item): item is ItemRow => Boolean(item)).map(item => item.id).join("|"), sourceLabel: text(raw, "sourceLabel", "المصدر"), rateId: "", templateId: "",
       effectiveDate: date(raw, "effectiveDate", "التاريخ") || now.slice(0, 10), reason: text(raw, "reason", "السبب"),
       sortOrder: (index + 1) * 10, createdAt: now, updatedAt: now,
     });

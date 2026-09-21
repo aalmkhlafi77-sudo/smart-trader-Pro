@@ -143,4 +143,14 @@ describe("excel import", () => {
     expect(plan.errors.some(error => error.sheet === "الأصناف" && error.message.includes("موجود"))).toBe(true);
     expect(plan.items).toEqual([]);
   });
+
+  it("resolves cargo expense item codes to stored item ids", () => {
+    const workbook = parseExcelWorkbook(workbookBuffer());
+    workbook.sheets["المصاريف"][0].itemIds = "PLY-001";
+
+    const plan = buildExcelImportPlan(workbook, context, { duplicateMode: "update" });
+
+    expect(plan.errors).toEqual([]);
+    expect(plan.cargoCostLines[0].itemIds).toBe(item.id);
+  });
 });
