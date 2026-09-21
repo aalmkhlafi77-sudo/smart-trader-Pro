@@ -29,6 +29,7 @@ import SettingsSecurity from "./pages/settings/Security";
 import SettingsData from "./pages/settings/Data";
 import Reports from "./pages/Reports";
 import FollowUp from "./pages/FollowUp";
+import QuickCalculator from "./pages/QuickCalculator";
 
 function Router() {
   return (
@@ -38,6 +39,7 @@ function Router() {
       <Route path="/items" component={Items} />
       <Route path="/prices" component={Prices} />
       <Route path="/cargo" component={Pricing} />
+      <Route path="/quick-calculator" component={QuickCalculator} />
       <Route path="/cargo/runs" component={Runs} />
       <Route path="/pricing">
         <Redirect to="/cargo" />

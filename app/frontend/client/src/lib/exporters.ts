@@ -13,6 +13,39 @@ export interface SheetSpec {
   fileName: string;
 }
 
+export interface WorkbookSheetSpec {
+  sheetName: string;
+  header: string[];
+  rows: (string | number)[][];
+}
+
+/** يبني مصنفاً متعدد الأوراق؛ لا ينفذ أي كتابة حتى يستدعيه المصدر صراحة. */
+export function buildWorkbook(sheets: WorkbookSheetSpec[]) {
+  const wb = XLSX.utils.book_new();
+  for (const sheet of sheets) {
+    const ws = XLSX.utils.aoa_to_sheet([sheet.header, ...sheet.rows]);
+    ws["!cols"] = sheet.header.map((h, i) => {
+      const maxCell = sheet.rows.reduce(
+        (m, r) => Math.max(m, String(r[i] ?? "").length),
+        h.length
+      );
+      return { wch: Math.min(Math.max(maxCell + 4, 10), 48) };
+    });
+    XLSX.utils.book_append_sheet(wb, ws, sheet.sheetName);
+  }
+  return wb;
+}
+
+export function exportWorkbook({
+  sheets,
+  fileName,
+}: {
+  sheets: WorkbookSheetSpec[];
+  fileName: string;
+}) {
+  XLSX.writeFile(buildWorkbook(sheets), `${fileName}.xlsx`);
+}
+
 /** تصدير جدول إلى ملف Excel حقيقي بصيغة xlsx */
 export function exportExcel({ sheetName, header, rows, fileName }: SheetSpec) {
   const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);

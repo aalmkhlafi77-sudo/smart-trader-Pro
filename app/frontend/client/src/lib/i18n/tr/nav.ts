@@ -13,6 +13,7 @@ const dict: Record<string, string> = {
   "nav.items": "Ürünler",
   "nav.prices": "Fiyatlar",
   "nav.pricing": "Maliyet hesaplayıcı",
+  "nav.quickCalculator": "Hızlı hesaplayıcı",
   "nav.reports": "Akıllı raporlar",
   "nav.settings": "Ayarlar",
 };
