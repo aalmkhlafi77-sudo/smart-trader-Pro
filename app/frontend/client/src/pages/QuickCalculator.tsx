@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Download, Save } from "lucide-react";
+import { Download, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import AppLayout from "@/components/AppLayout";
@@ -146,6 +146,17 @@ export default function QuickCalculator() {
     toast.success(t("quick.saved"));
   };
 
+  const deleteDraft = async (id: string) => {
+    if (!window.confirm(t("quick.deleteDraftConfirm"))) return;
+    try {
+      await db.deleteQuickCalculation(id);
+      setSavedRows(rows => rows.filter(row => row.id !== id));
+      toast.success(t("quick.deleted"));
+    } catch {
+      toast.error(t("quick.deleteFailed"));
+    }
+  };
+
   const resultRows = calculation.result
     ? [
         [t("quick.totalCost"), calculation.result.totalCost],
@@ -190,7 +201,7 @@ export default function QuickCalculator() {
               {calculation.result ? <dl className="grid gap-2">{resultRows.map(([label, value], index) => <div key={String(label)} className={`flex items-center justify-between gap-3 rounded px-2 py-2 ${index === 0 || index === 2 ? "bg-[var(--computed-surface)]" : ""}`}><dt className="text-xs text-[var(--ink)]">{label}</dt><dd className="ledger-figure text-sm font-bold">{formatMoney(Number(value), localCurrency)}</dd></div>)}</dl> : <p className="text-xs text-destructive">{calculation.error || t("quick.noResults")}</p>}
             </SectionCard>
             <SectionCard title={t("quick.savedDrafts")} description={t("quick.savedHint")}>
-              {savedRows.length ? <div className="space-y-2">{savedRows.slice(0, 6).map(row => <button type="button" key={row.id} className="flex w-full items-center justify-between rounded border border-border px-3 py-2 text-right hover:bg-secondary" onClick={() => { setSupplierName(row.supplierName); setItemId(row.itemId || ""); setItemName(row.itemName); setQuantity(String(row.quantity)); setUnitPrice(String(row.unitPrice)); setCurrency(row.currency); setExchangeRate(String(row.exchangeRate)); setCustomsRate(String(row.customsRate * 100)); setMarginRate(String(row.marginRate * 100)); try { setExternalExpenses(JSON.parse(row.externalExpensesJson) as QuickExpense[]); setInternalExpenses(JSON.parse(row.internalExpensesJson) as QuickExpense[]); } catch { setExternalExpenses(cloneExpenses(defaultExternal)); setInternalExpenses(cloneExpenses(defaultInternal)); } }}><span className="text-xs font-semibold">{row.itemName || t("quick.manualItem")}</span><span className="text-[11px] text-muted-foreground">{formatMoney(row.unitCost, row.currency)} {t("quick.perUnit")}</span></button>)}</div> : <p className="text-xs text-muted-foreground">{t("quick.noDrafts")}</p>}
+              {savedRows.length ? <div className="space-y-2">{savedRows.slice(0, 6).map(row => <div key={row.id} className="flex items-center gap-2 rounded border border-border px-2 py-1.5"><button type="button" className="flex min-w-0 flex-1 items-center justify-between rounded px-1 py-1.5 text-right hover:bg-secondary" onClick={() => { setSupplierName(row.supplierName); setItemId(row.itemId || ""); setItemName(row.itemName); setQuantity(String(row.quantity)); setUnitPrice(String(row.unitPrice)); setCurrency(row.currency); setExchangeRate(String(row.exchangeRate)); setCustomsRate(String(row.customsRate * 100)); setMarginRate(String(row.marginRate * 100)); try { setExternalExpenses(JSON.parse(row.externalExpensesJson) as QuickExpense[]); setInternalExpenses(JSON.parse(row.internalExpensesJson) as QuickExpense[]); } catch { setExternalExpenses(cloneExpenses(defaultExternal)); setInternalExpenses(cloneExpenses(defaultInternal)); } }}><span className="truncate text-xs font-semibold">{row.itemName || t("quick.manualItem")}</span><span className="shrink-0 text-[11px] text-muted-foreground">{formatMoney(row.unitCost, row.currency)} {t("quick.perUnit")}</span></button><Button type="button" variant="ghost" size="icon-sm" aria-label={t("quick.deleteDraft")} title={t("quick.deleteDraft")} onClick={() => void deleteDraft(row.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></div>)}</div> : <p className="text-xs text-muted-foreground">{t("quick.noDrafts")}</p>}
             </SectionCard>
           </div>
         </div>
