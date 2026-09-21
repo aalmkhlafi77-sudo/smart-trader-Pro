@@ -84,14 +84,6 @@ export default function Runs() {
 
   const confirmDelete = async () => {
     if (!pendingDelete) return;
-    if (
-      pendingDelete.status === "approved" ||
-      pendingDelete.status === "archived"
-    ) {
-      toast.error(t("cargo.deleteRunBlocked"));
-      setPendingDelete(null);
-      return;
-    }
     await db.deleteCargoCostRun(pendingDelete.id);
     invalidateCargoDraft(pendingDelete.id);
     setPendingDelete(null);

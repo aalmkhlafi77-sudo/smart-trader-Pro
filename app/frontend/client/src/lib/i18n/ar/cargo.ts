@@ -71,7 +71,6 @@ const dict: Record<string, string> = {
   "cargo.decisionReportTitle": "تقرير قرار الشحن والتكلفة",
   "cargo.decisionReportsTitle": "تقارير قرار الشحن والتكلفة",
   "cargo.deleteRun": "حذف ملف الحمولة",
-  "cargo.deleteRunBlocked": "لا يمكن حذف ملف معتمد أو مؤرشف",
   "cargo.deleteRunConfirm": "سيُحذف الملف مع بنوده وتوزيعاته نهائياً.",
   "cargo.deliveryLocation": "موقع التسليم والاستلام",
   "cargo.dischargePort": "منفذ التفريغ",

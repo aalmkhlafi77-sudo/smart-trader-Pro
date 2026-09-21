@@ -71,7 +71,6 @@ const dict: Record<string, string> = {
   "cargo.decisionReportTitle": "Shipping & cost decision report",
   "cargo.decisionReportsTitle": "Shipping & cost decision reports",
   "cargo.deleteRun": "Delete cargo file",
-  "cargo.deleteRunBlocked": "Cannot delete an approved or archived file",
   "cargo.deleteRunConfirm": "The file with its lines and allocations will be permanently deleted.",
   "cargo.deliveryLocation": "Delivery & pickup location",
   "cargo.dischargePort": "Discharge port",

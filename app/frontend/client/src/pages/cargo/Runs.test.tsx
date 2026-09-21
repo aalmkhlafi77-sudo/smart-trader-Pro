@@ -147,22 +147,27 @@ describe("حذف ملف الحمولة ينظف مسودته من الجلسة",
     expect(window.sessionStorage.getItem(DRAFT_KEY)).toBeNull();
   });
 
-  it("حذف ملف معتمد مرفوض ولا يمس المسودة", async () => {
-    mockListRuns.mockResolvedValue([runRow({ id: "run-a", status: "approved" })]);
-    window.sessionStorage.setItem(
-      DRAFT_KEY,
-      JSON.stringify({ runId: "run-a", name: "x", items: [], costs: [] })
-    );
-    const user = userEvent.setup();
-    renderRuns();
+  it.each(["approved", "archived"] as const)(
+    "حذف ملف %s متاح ويمسح مسودته فلا يبقى في الواجهة أو التقارير",
+    async status => {
+      mockListRuns
+        .mockResolvedValueOnce([runRow({ id: "run-a", status })])
+        .mockResolvedValue([]);
+      window.sessionStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ runId: "run-a", name: "x", items: [], costs: [] })
+      );
+      const user = userEvent.setup();
+      renderRuns();
 
-    await screen.findByText("حمولة تجريبية");
-    await user.click(
-      screen.getByRole("button", { name: "حذف ملف الحمولة" })
-    );
-    await user.click(screen.getByRole("button", { name: "حذف" }));
+      await screen.findByText("حمولة تجريبية");
+      await user.click(
+        screen.getByRole("button", { name: "حذف ملف الحمولة" })
+      );
+      await user.click(screen.getByRole("button", { name: "حذف" }));
 
-    expect(mockDeleteRun).not.toHaveBeenCalled();
-    expect(window.sessionStorage.getItem(DRAFT_KEY)).not.toBeNull();
-  });
+      expect(mockDeleteRun).toHaveBeenCalledWith("run-a");
+      expect(window.sessionStorage.getItem(DRAFT_KEY)).toBeNull();
+    }
+  );
 });

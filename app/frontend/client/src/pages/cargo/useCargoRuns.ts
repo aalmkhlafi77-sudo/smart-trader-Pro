@@ -5,7 +5,7 @@ import type { CargoDraft } from "./shared";
 
 /**
  * التنقل بين ملفات الحمولة المحفوظة من داخل صفحة الحمولة:
- * فتح ملف في المعالج، وحذف محمي (المعتمد/المؤرشف لا يُحذف).
+ * فتح ملف في المعالج، وحذفه مع بياناته التابعة بعد تأكيد المستخدم.
  */
 export function useCargoRuns(args: {
   runs: CargoCostRunRow[];
@@ -28,10 +28,6 @@ export function useCargoRuns(args: {
   const deleteRun = async (id: string) => {
     const target = runs.find(r => r.id === id);
     if (!target) return;
-    if (target.status === "approved" || target.status === "archived") {
-      toast.error(t("cargo.deleteRunBlocked"));
-      return;
-    }
     await db.deleteCargoCostRun(id);
     if (activeRunId === id) doNewWork();
     await reloadData();

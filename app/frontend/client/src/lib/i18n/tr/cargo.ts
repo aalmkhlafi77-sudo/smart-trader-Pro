@@ -71,7 +71,6 @@ const dict: Record<string, string> = {
   "cargo.decisionReportTitle": "Nakliye ve maliyet karar raporu",
   "cargo.decisionReportsTitle": "Nakliye ve maliyet karar raporları",
   "cargo.deleteRun": "Yük dosyasını sil",
-  "cargo.deleteRunBlocked": "Onaylı veya arşivlenmiş dosya silinemez",
   "cargo.deleteRunConfirm": "Dosya, kalemleri ve dağıtımlarıyla kalıcı olarak silinecek.",
   "cargo.deliveryLocation": "Teslim ve alım konumu",
   "cargo.dischargePort": "Boşaltma limanı",
