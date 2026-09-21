@@ -33,6 +33,7 @@ import type {
   TaskRow,
   UnitRow,
 } from "./schema";
+import type { ExcelImportPlan } from "../excelImport";
 
 export interface BackupPayload {
   format: "smart-trader-backup";
@@ -134,6 +135,8 @@ export interface Repository {
   listQuickCalculations(): Promise<QuickCalculationRow[]>;
   saveQuickCalculation(row: QuickCalculationRow): Promise<void>;
   deleteQuickCalculation(id: string): Promise<void>;
+
+  importExcel(plan: ExcelImportPlan): Promise<void>;
 
   listCargoCostRuns(): Promise<CargoCostRunRow[]>;
   getCargoCostRun(id: string): Promise<CargoCostRunRow | null>;

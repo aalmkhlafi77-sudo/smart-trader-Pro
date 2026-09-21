@@ -4,6 +4,8 @@
  */
 
 import type { BackupPayload, Repository } from "./repository";
+import type { ExcelImportPlan } from "../excelImport";
+import { assertExcelImportPlan } from "./excelImportRepository";
 import { invalidateCargoData, withCargoDataBatch } from "./cargoDataEvents";
 import {
   AR_CURRENCY_TO_ISO,
@@ -504,6 +506,51 @@ export async function migrateToV12(): Promise<MigrationStats> {
   return stats;
 }
 
+function putRequest(transaction: IDBTransaction, store: string, row: unknown) {
+  transaction.objectStore(store).put(row as Record<string, unknown>);
+}
+
+async function importExcelAtomic(plan: ExcelImportPlan): Promise<void> {
+  assertExcelImportPlan(plan);
+  const db = await openDb();
+  const stores = [
+    TABLES.entities,
+    TABLES.items,
+    TABLES.itemPrices,
+    TABLES.priceHistory,
+    TABLES.itemSpecs,
+    TABLES.cargoCostLines,
+  ];
+  await new Promise<void>((resolve, reject) => {
+    const transaction = db.transaction(stores, "readwrite");
+    let settled = false;
+    const fail = (error: Error | null) => {
+      if (settled) return;
+      settled = true;
+      reject(error ?? new Error("فشلت معاملة استيراد Excel"));
+    };
+    transaction.onerror = () => fail(transaction.error);
+    transaction.onabort = () => fail(transaction.error);
+    transaction.oncomplete = () => {
+      if (settled) return;
+      settled = true;
+      resolve();
+    };
+    try {
+      plan.entities.forEach(row => putRequest(transaction, TABLES.entities, row));
+      plan.items.forEach(row => putRequest(transaction, TABLES.items, row));
+      plan.itemPrices.forEach(row => putRequest(transaction, TABLES.itemPrices, row));
+      plan.priceHistory.forEach(row => putRequest(transaction, TABLES.priceHistory, row));
+      plan.itemSpecs.forEach(row => putRequest(transaction, TABLES.itemSpecs, row));
+      plan.cargoCostLines.forEach(row => putRequest(transaction, TABLES.cargoCostLines, row));
+    } catch (error) {
+      transaction.abort();
+      fail(error instanceof Error ? error : new Error("فشلت معاملة استيراد Excel"));
+    }
+  });
+  if (plan.cargoCostLines.length > 0) invalidateCargoData();
+}
+
 const LEGACY_CARGO_SALE_PREFIXES = [
   String.fromCodePoint(
     0x645, 0x646, 0x20, 0x645, 0x644, 0x641, 0x20, 0x62a, 0x643, 0x644,
@@ -948,6 +995,7 @@ export const indexedDbRepository: Repository = {
   },
   saveQuickCalculation: row => put(TABLES.quickCalculations, row),
   deleteQuickCalculation: id => remove(TABLES.quickCalculations, id),
+  importExcel: importExcelAtomic,
 
   async listCargoCostRuns() {
     const rows = await getAll<CargoCostRunRow>(TABLES.cargoCostRuns);
