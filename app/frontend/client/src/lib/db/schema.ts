@@ -4,7 +4,7 @@
  * لا كائنات متداخلة، المفاتيح نصية، التواريخ ISO، القيم المالية أرقام.
  */
 
-export const SCHEMA_VERSION = 12;
+export const SCHEMA_VERSION = 13;
 export const DB_NAME = "smart_trader_db";
 
 export type EntityKind = "supplier" | "customer" | "factory" | "other";
@@ -196,6 +196,33 @@ export interface PricingRunRow {
   suggestedPrice: number;
   currency: string;
   notes: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** مسودة حاسبة سريعة؛ مستقلة عن ملفات الحمولات وأسعار البيع. */
+export interface QuickCalculationRow {
+  id: string;
+  supplierName: string;
+  itemId: string | null;
+  itemName: string;
+  quantity: number;
+  unitPrice: number;
+  currency: string;
+  exchangeRate: number;
+  customsRate: number;
+  marginRate: number;
+  externalExpensesJson: string;
+  internalExpensesJson: string;
+  goodsValue: number;
+  externalExpenses: number;
+  internalExpenses: number;
+  customsBaseExtra: number;
+  customsBase: number;
+  customsAmount: number;
+  totalCost: number;
+  unitCost: number;
+  suggestedPrice: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -522,6 +549,7 @@ export const TABLES = {
   tasks: "tasks",
   backupLogs: "backup_logs",
   pricingRuns: "pricing_runs",
+  quickCalculations: "quick_calculations",
   cargoCostRuns: "cargo_cost_runs",
   cargoCostItems: "cargo_cost_items",
   cargoCostLines: "cargo_cost_lines",
@@ -608,6 +636,15 @@ CREATE TABLE IF NOT EXISTS pricing_runs (
   customsRate REAL, clearance REAL, transport REAL, otherCosts REAL,
   marginRate REAL, goodsValue REAL, customsAmount REAL, totalContainerCost REAL,
   unitCost REAL, suggestedPrice REAL, currency TEXT, notes TEXT,
+  createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS quick_calculations (
+  id TEXT PRIMARY KEY, supplierName TEXT, itemId TEXT, itemName TEXT,
+  quantity REAL, unitPrice REAL, currency TEXT, exchangeRate REAL,
+  customsRate REAL, marginRate REAL, externalExpensesJson TEXT,
+  internalExpensesJson TEXT, goodsValue REAL, externalExpenses REAL,
+  internalExpenses REAL, customsBaseExtra REAL, customsBase REAL,
+  customsAmount REAL, totalCost REAL, unitCost REAL, suggestedPrice REAL,
   createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS cargo_cost_runs (

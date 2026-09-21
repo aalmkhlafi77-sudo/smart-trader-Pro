@@ -26,6 +26,7 @@ import type {
   PriceListRow,
   PricingRunRow,
   PriceHistoryRow,
+  QuickCalculationRow,
   SettingsRow,
   SpecTemplateRow,
   NoteRow,
@@ -50,6 +51,7 @@ export interface BackupPayload {
     tasks: TaskRow[];
     backup_logs: BackupLogRow[];
     pricing_runs: PricingRunRow[];
+    quick_calculations: QuickCalculationRow[];
     cargo_cost_runs: CargoCostRunRow[];
     cargo_cost_items: CargoCostItemRow[];
     cargo_cost_lines: CargoCostLineRow[];
@@ -128,6 +130,10 @@ export interface Repository {
   listPricingRuns(): Promise<PricingRunRow[]>;
   savePricingRun(row: PricingRunRow): Promise<void>;
   deletePricingRun(id: string): Promise<void>;
+
+  listQuickCalculations(): Promise<QuickCalculationRow[]>;
+  saveQuickCalculation(row: QuickCalculationRow): Promise<void>;
+  deleteQuickCalculation(id: string): Promise<void>;
 
   listCargoCostRuns(): Promise<CargoCostRunRow[]>;
   getCargoCostRun(id: string): Promise<CargoCostRunRow | null>;
