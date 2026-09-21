@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Download, Save } from "lucide-react";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 import AppLayout from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +46,7 @@ const defaultInternal: QuickExpense[] = [
 const cloneExpenses = (rows: QuickExpense[]) => rows.map(row => ({ ...row }));
 
 export default function QuickCalculator() {
+  const { t } = useLanguage();
   const [entities, setEntities] = useState<EntityRow[]>([]);
   const [items, setItems] = useState<ItemRow[]>([]);
   const [currency, setCurrency] = useState("USD");
@@ -95,7 +97,7 @@ export default function QuickCalculator() {
     try {
       return { result: calculateQuickCalculator(input), error: "" };
     } catch (error) {
-      return { result: null, error: error instanceof Error ? error.message : "تحقق من المدخلات" };
+      return { result: null, error: error instanceof Error ? error.message : t("quick.invalid") };
     }
   }, [input]);
 
@@ -120,7 +122,7 @@ export default function QuickCalculator() {
 
   const save = async () => {
     if (!calculation.result) {
-      toast.error(calculation.error || "تحقق من المدخلات");
+      toast.error(calculation.error || t("quick.invalid"));
       return;
     }
     const timestamp = nowIso();
@@ -139,54 +141,54 @@ export default function QuickCalculator() {
     };
     await db.saveQuickCalculation(row);
     setSavedRows(rows => [row, ...rows]);
-    toast.success("تم حفظ مسودة الحاسبة");
+    toast.success(t("quick.saved"));
   };
 
   const resultRows = calculation.result
     ? [
-        ["إجمالي التكلفة", calculation.result.totalCost],
-        ["تكلفة الوحدة", calculation.result.unitCost],
-        ["سعر البيع التقريبي", calculation.result.suggestedPrice],
-        ["قيمة البضاعة", calculation.result.goodsValue],
-        ["المصاريف الخارجية", calculation.result.externalExpenses],
-        ["الوعاء الجمركي", calculation.result.customsBase],
-        ["الجمارك", calculation.result.customsAmount],
-        ["المصاريف الداخلية", calculation.result.internalExpenses],
+        [t("quick.totalCost"), calculation.result.totalCost],
+        [t("quick.unitCost"), calculation.result.unitCost],
+        [t("quick.suggestedPrice"), calculation.result.suggestedPrice],
+        [t("quick.goodsValue"), calculation.result.goodsValue],
+        [t("quick.externalTotal"), calculation.result.externalExpenses],
+        [t("quick.customsBase"), calculation.result.customsBase],
+        [t("quick.customsAmount"), calculation.result.customsAmount],
+        [t("quick.internalTotal"), calculation.result.internalExpenses],
       ]
     : [];
 
   return (
-    <AppLayout title="الحاسبة السريعة" subtitle="حساب تكلفة الوحدة وسعر البيع التقريبي">
+    <AppLayout title={t("quick.title")} subtitle={t("quick.subtitle")}>
       <PageShell
-        title="الحاسبة السريعة"
-        description="نموذج مستقل للحساب السريع؛ لا يغيّر أسعار المورد أو قوائم أسعار البيع تلقائياً."
-        crumbs={[{ label: "لوحة العمل", href: "/" }, { label: "الحاسبة السريعة" }]}
-        actions={<div className="flex flex-wrap gap-2"><Button variant="outline" onClick={() => calculation.result && exportQuickCalculator(input, calculation.result)} disabled={!calculation.result}><Download className="h-4 w-4" /> تصدير Excel</Button><Button onClick={() => void save()} disabled={!calculation.result}><Save className="h-4 w-4" /> حفظ مسودة</Button></div>}
+        title={t("quick.title")}
+        description={t("quick.description")}
+        crumbs={[{ label: t("quick.home"), href: "/" }, { label: t("quick.title") }]}
+        actions={<div className="flex flex-wrap gap-2"><Button variant="outline" onClick={() => calculation.result && exportQuickCalculator(input, calculation.result)} disabled={!calculation.result}><Download className="h-4 w-4" /> {t("quick.export")}</Button><Button onClick={() => void save()} disabled={!calculation.result}><Save className="h-4 w-4" /> {t("quick.saveDraft")}</Button></div>}
       >
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(300px,0.8fr)]">
           <div className="space-y-5">
-            <SectionCard title="بيانات الشراء" description="اختر السجلات الموجودة أو أدخل بيانات يدوية." tone="input">
+            <SectionCard title={t("quick.purchaseData")} description={t("quick.purchaseHint")} tone="input">
               <FormGrid cols={2}>
-                <Field label="المورد" control={<select className="field-input" value={supplierName} onChange={e => setSupplierName(e.target.value)}><option value="">إدخال يدوي</option>{entities.filter(e => e.kind === "supplier" || e.kind === "factory").map(entity => <option key={entity.id} value={entity.name}>{entity.name}</option>)}</select>} />
-                <Field label="الصنف" control={<select className="field-input" value={itemId} onChange={e => selectItem(e.target.value)}><option value="">إدخال يدوي</option>{items.map(item => <option key={item.id} value={item.id}>{item.name}{item.code ? ` · ${item.code}` : ""}</option>)}</select>} />
-                <Field label="اسم الصنف" required control={<Input className="field-input" value={itemName} onChange={e => setItemName(e.target.value)} />} />
-                <Field label="العملة" control={<Input className="field-input" value={currency} onChange={e => setCurrency(e.target.value.toUpperCase())} />} />
-                <Field label="الكمية" required control={<NumberField value={quantity} onChange={e => setQuantity(e.target.value)} />} />
-                <Field label="سعر الوحدة" required control={<NumberField value={unitPrice} onChange={e => setUnitPrice(e.target.value)} />} />
-                <Field label="سعر الصرف" required hint="سعر العملة الأجنبية مقابل العملة المحلية" control={<NumberField value={exchangeRate} onChange={e => setExchangeRate(e.target.value)} />} />
-                <Field label="نسبة الجمارك" control={<NumberField value={customsRate} onChange={e => setCustomsRate(e.target.value)} />} />
-                <Field label="نسبة الزيادة على التكلفة" hint="ليست هامشاً من سعر البيع النهائي" control={<NumberField value={marginRate} onChange={e => setMarginRate(e.target.value)} />} />
+                <Field label={t("quick.supplier")} control={<select className="field-input" value={supplierName} onChange={e => setSupplierName(e.target.value)}><option value="">{t("quick.manualEntry")}</option>{entities.filter(e => e.kind === "supplier" || e.kind === "factory").map(entity => <option key={entity.id} value={entity.name}>{entity.name}</option>)}</select>} />
+                <Field label={t("quick.item")} control={<select className="field-input" value={itemId} onChange={e => selectItem(e.target.value)}><option value="">{t("quick.manualEntry")}</option>{items.map(item => <option key={item.id} value={item.id}>{item.name}{item.code ? ` · ${item.code}` : ""}</option>)}</select>} />
+                <Field label={t("quick.itemName")} required control={<Input className="field-input" value={itemName} onChange={e => setItemName(e.target.value)} />} />
+                <Field label={t("quick.currency")} control={<Input className="field-input" value={currency} onChange={e => setCurrency(e.target.value.toUpperCase())} />} />
+                <Field label={t("quick.quantity")} required control={<NumberField value={quantity} onChange={e => setQuantity(e.target.value)} />} />
+                <Field label={t("quick.unitPrice")} required control={<NumberField value={unitPrice} onChange={e => setUnitPrice(e.target.value)} />} />
+                <Field label={t("quick.exchangeRate")} required hint={t("quick.exchangeRateHint")} control={<NumberField value={exchangeRate} onChange={e => setExchangeRate(e.target.value)} />} />
+                <Field label={t("quick.customsRate")} control={<NumberField value={customsRate} onChange={e => setCustomsRate(e.target.value)} />} />
+                <Field label={t("quick.markup")} hint={t("quick.markupHint")} control={<NumberField value={marginRate} onChange={e => setMarginRate(e.target.value)} />} />
               </FormGrid>
             </SectionCard>
-            <SectionCard title="المصاريف الخارجية" description="حدد المصاريف التي تدخل في الوعاء الجمركي بشكل صريح."><div className="space-y-2">{externalExpenses.map(expense => <ExpenseEditor key={expense.id} expense={expense} onChange={patch => updateExpense("external", expense.id, patch)} />)}</div></SectionCard>
-            <SectionCard title="المصاريف الداخلية"><div className="space-y-2">{internalExpenses.map(expense => <ExpenseEditor key={expense.id} expense={expense} onChange={patch => updateExpense("internal", expense.id, patch)} />)}</div></SectionCard>
+            <SectionCard title={t("quick.external")} description={t("quick.externalHint")}><div className="space-y-2">{externalExpenses.map(expense => <ExpenseEditor key={expense.id} expense={expense} onChange={patch => updateExpense("external", expense.id, patch)} t={t} />)}</div></SectionCard>
+            <SectionCard title={t("quick.internal")}><div className="space-y-2">{internalExpenses.map(expense => <ExpenseEditor key={expense.id} expense={expense} onChange={patch => updateExpense("internal", expense.id, patch)} t={t} />)}</div></SectionCard>
           </div>
           <div className="space-y-5">
-            <SectionCard title="النتائج" stamp="محسوبة" tone="result">
-              {calculation.result ? <dl className="grid gap-2">{resultRows.map(([label, value], index) => <div key={String(label)} className={`flex items-center justify-between gap-3 rounded px-2 py-2 ${index === 0 || index === 2 ? "bg-[var(--computed-surface)]" : ""}`}><dt className="text-xs text-[var(--ink)]">{label}</dt><dd className="ledger-figure text-sm font-bold">{formatMoney(Number(value), "SAR")}</dd></div>)}</dl> : <p className="text-xs text-destructive">{calculation.error || "أدخل البيانات لعرض النتائج"}</p>}
+            <SectionCard title={t("quick.results")} stamp={t("quick.calculated")} tone="result">
+              {calculation.result ? <dl className="grid gap-2">{resultRows.map(([label, value], index) => <div key={String(label)} className={`flex items-center justify-between gap-3 rounded px-2 py-2 ${index === 0 || index === 2 ? "bg-[var(--computed-surface)]" : ""}`}><dt className="text-xs text-[var(--ink)]">{label}</dt><dd className="ledger-figure text-sm font-bold">{formatMoney(Number(value), "SAR")}</dd></div>)}</dl> : <p className="text-xs text-destructive">{calculation.error || t("quick.noResults")}</p>}
             </SectionCard>
-            <SectionCard title="المسودات المحفوظة" description="هذه المسودات لا تنشئ سعراً للبيع ولا تعدّل سعر المورد.">
-              {savedRows.length ? <div className="space-y-2">{savedRows.slice(0, 6).map(row => <button type="button" key={row.id} className="flex w-full items-center justify-between rounded border border-border px-3 py-2 text-right hover:bg-secondary" onClick={() => { setSupplierName(row.supplierName); setItemId(row.itemId || ""); setItemName(row.itemName); setQuantity(String(row.quantity)); setUnitPrice(String(row.unitPrice)); setCurrency(row.currency); setExchangeRate(String(row.exchangeRate)); setCustomsRate(String(row.customsRate * 100)); setMarginRate(String(row.marginRate * 100)); }}><span className="text-xs font-semibold">{row.itemName || "صنف يدوي"}</span><span className="text-[11px] text-muted-foreground">{formatMoney(row.unitCost, row.currency)} / وحدة</span></button>)}</div> : <p className="text-xs text-muted-foreground">لا توجد مسودات بعد.</p>}
+            <SectionCard title={t("quick.savedDrafts")} description={t("quick.savedHint")}>
+              {savedRows.length ? <div className="space-y-2">{savedRows.slice(0, 6).map(row => <button type="button" key={row.id} className="flex w-full items-center justify-between rounded border border-border px-3 py-2 text-right hover:bg-secondary" onClick={() => { setSupplierName(row.supplierName); setItemId(row.itemId || ""); setItemName(row.itemName); setQuantity(String(row.quantity)); setUnitPrice(String(row.unitPrice)); setCurrency(row.currency); setExchangeRate(String(row.exchangeRate)); setCustomsRate(String(row.customsRate * 100)); setMarginRate(String(row.marginRate * 100)); try { setExternalExpenses(JSON.parse(row.externalExpensesJson) as QuickExpense[]); setInternalExpenses(JSON.parse(row.internalExpensesJson) as QuickExpense[]); } catch { setExternalExpenses(cloneExpenses(defaultExternal)); setInternalExpenses(cloneExpenses(defaultInternal)); } }}><span className="text-xs font-semibold">{row.itemName || t("quick.manualItem")}</span><span className="text-[11px] text-muted-foreground">{formatMoney(row.unitCost, row.currency)} {t("quick.perUnit")}</span></button>)}</div> : <p className="text-xs text-muted-foreground">{t("quick.noDrafts")}</p>}
             </SectionCard>
           </div>
         </div>
@@ -195,6 +197,6 @@ export default function QuickCalculator() {
   );
 }
 
-function ExpenseEditor({ expense, onChange }: { expense: QuickExpense; onChange: (patch: Partial<QuickExpense>) => void }) {
-  return <div className="grid gap-2 rounded border border-border bg-card p-2 sm:grid-cols-[minmax(0,1fr)_120px_105px_auto] sm:items-center"><Input className="field-input" value={expense.name} onChange={e => onChange({ name: e.target.value })} /><NumberField value={String(expense.amount)} onChange={e => onChange({ amount: parseNumber(e.target.value) })} /><select className="field-input" value={expense.currency} onChange={e => onChange({ currency: e.target.value as QuickExpense["currency"] })}><option value="foreign">أجنبية</option><option value="local">محلية</option></select><label className="flex items-center gap-1.5 text-[10px] text-[var(--ink)]"><input type="checkbox" checked={expense.includeInCustomsBase} onChange={e => onChange({ includeInCustomsBase: e.target.checked })} /> وعاء جمركي</label></div>;
+function ExpenseEditor({ expense, onChange, t }: { expense: QuickExpense; onChange: (patch: Partial<QuickExpense>) => void; t: (key: string) => string }) {
+  return <div className="grid gap-2 rounded border border-border bg-card p-2 sm:grid-cols-[minmax(0,1fr)_120px_105px_auto] sm:items-center"><Input className="field-input" value={expense.name} onChange={e => onChange({ name: e.target.value })} /><NumberField value={String(expense.amount)} onChange={e => onChange({ amount: parseNumber(e.target.value) })} /><select className="field-input" value={expense.currency} onChange={e => onChange({ currency: e.target.value as QuickExpense["currency"] })}><option value="foreign">{t("quick.foreign")}</option><option value="local">{t("quick.local")}</option></select><label className="flex items-center gap-1.5 text-[10px] text-[var(--ink)]"><input type="checkbox" checked={expense.includeInCustomsBase} onChange={e => onChange({ includeInCustomsBase: e.target.checked })} /> {t("quick.taxable")}</label></div>;
 }

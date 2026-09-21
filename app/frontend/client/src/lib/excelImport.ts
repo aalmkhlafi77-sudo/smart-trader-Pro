@@ -152,6 +152,10 @@ export function buildExcelImportPlan(
       duplicate("الجهات", row, "تم تخطي سجل موجود");
       return;
     }
+    if (existing && options.duplicateMode === "add") {
+      error("الجهات", row, "سجل بالمعرف نفسه موجود؛ استخدم معرفاً فريداً للإضافة");
+      return;
+    }
     const timestamp = existing?.createdAt ?? now;
     const entity: EntityRow = {
       ...(existing ?? { id: id || newId("entity"), createdAt: timestamp }),
@@ -177,6 +181,10 @@ export function buildExcelImportPlan(
     if (!id && !code) duplicate("الأصناف", row, "لا يوجد معرف أو كود ثابت؛ سيُضاف كسجل جديد دون مطابقة بالاسم");
     if (existing && options.duplicateMode === "skip") {
       duplicate("الأصناف", row, "تم تخطي سجل موجود");
+      return;
+    }
+    if (existing && options.duplicateMode === "add") {
+      error("الأصناف", row, "سجل بالمعرف أو الكود نفسه موجود؛ استخدم مفتاحاً فريداً للإضافة");
       return;
     }
     const entityReference = text(raw, "entityId", "entityCode", "معرف الجهة", "كود الجهة");
@@ -212,6 +220,10 @@ export function buildExcelImportPlan(
     const existing = context.prices.find(price => price.itemId === item.id);
     if (existing && options.duplicateMode === "skip") {
       duplicate("أسعار الموردين", row, "تم تخطي أسعار موجودة");
+      return;
+    }
+    if (existing && options.duplicateMode === "add") {
+      error("أسعار الموردين", row, "سعر المورد للصنف موجود؛ استخدم تحديثاً أو مفتاح صنف فريداً");
       return;
     }
     const values = [1, 2, 3, 4].map(level => number(raw, `price${level}`, `سعر${level}`, `السعر${level}`));

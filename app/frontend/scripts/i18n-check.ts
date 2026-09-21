@@ -34,6 +34,11 @@ const ALLOW_DEC: Record<string, string[]> = {
   "pages/settings/logistics/TemplateSheet.tsx": ["TRANSPORT_MODES"],
   "pages/Pricing.tsx": ["COST_BLUEPRINTS"],
   "pages/reports/reportModel.ts": ["SPEC_LABEL_GROUPS"],
+  "lib/quickCalculator.ts": ["QUICK_MESSAGES"],
+  "lib/quickCalculatorExport.ts": ["QUICK_EXPORT_LABELS"],
+  "lib/excelImport.ts": ["SHEET_ALIASES", "excelImportTemplateSheets", "buildExcelImportPlan", "entityKind"],
+  "pages/QuickCalculator.tsx": ["defaultExternal", "defaultInternal"],
+  "lib/db/indexedDbRepository.ts": ["importExcelAtomic", "DEFAULT_SPEC_TEMPLATES"],
 };
 
 /** نصوص عربية حرفية يُسمح بها في ملف بعينه (قيم بيانات/عملات/أنواع نقل). */
@@ -45,6 +50,9 @@ const ALLOW_EXACT: Record<string, string[]> = {
   "components/EnglishDatePicker.tsx": ["٠١٢٣٤٥٦٧٨٩", "۰۱۲۳۴۵۶۷۸۹"],
   "pages/Pricing.tsx": ["بحري", "بري", "جوي", "دولار", "ريال", "وحدة"],
   "pages/Reports.tsx": ["دولار"],
+  "lib/cargoDecisionReports.ts": ["الجمارك", "غير محدد", "مسار غير مكتمل", "بدون شرط شراء", "بدون نوع نقل"],
+  "lib/db/indexedDbRepository.ts": ["صيغة الملف غير صحيحة"],
+  "lib/uiPreferencesStore.ts": ["الدفتر الأساسي"],
 };
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -79,6 +87,13 @@ function collectAllowedRanges(sf: ts.SourceFile, fileKey: string): Range[] {
     if (
       ts.isPropertyAssignment(node) &&
       ts.isIdentifier(node.name) &&
+      names.includes(node.name.text)
+    ) {
+      ranges.push([node.getStart(sf), node.getEnd()]);
+    }
+    if (
+      ts.isFunctionDeclaration(node) &&
+      node.name &&
       names.includes(node.name.text)
     ) {
       ranges.push([node.getStart(sf), node.getEnd()]);

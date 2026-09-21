@@ -55,7 +55,7 @@ export default function SettingsData() {
       );
       setPreview({ fileName: file.name, plan });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "تعذر قراءة ملف Excel");
+      toast.error(error instanceof Error ? error.message : t("settings.excelReadFailed"));
     }
   };
 
@@ -64,10 +64,10 @@ export default function SettingsData() {
     setIsImporting(true);
     try {
       await db.importExcel(preview.plan);
-      toast.success("تم استيراد البيانات في معاملة واحدة");
+      toast.success(t("settings.excelImported"));
       setPreview(null);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "تعذر تطبيق الاستيراد");
+      toast.error(error instanceof Error ? error.message : t("settings.excelApplyFailed"));
     } finally {
       setIsImporting(false);
     }
@@ -120,14 +120,14 @@ export default function SettingsData() {
 
         <SectionCard
           className="mt-5"
-          title="استيراد Excel"
-          description="استيراد الجهات والأصناف وأسعار الموردين والمواصفات ومصاريف مرتبطة بحمولة محددة بعد معاينة كاملة."
-          stamp="معاينة قبل الحفظ"
+          title={t("settings.excelImport")}
+          description={t("settings.excelImportDescription")}
+          stamp={t("settings.previewBeforeSave")}
         >
           <div className="space-y-3">
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" onClick={() => exportExcelImportTemplate()}>
-                <Download className="h-4 w-4" /> تنزيل القالب
+                <Download className="h-4 w-4" /> {t("settings.downloadTemplate")}
               </Button>
               <input
                 ref={fileRef}
@@ -141,35 +141,35 @@ export default function SettingsData() {
                 }}
               />
               <Button onClick={() => fileRef.current?.click()}>
-                <Upload className="h-4 w-4" /> معاينة ملف Excel
+                <Upload className="h-4 w-4" /> {t("settings.previewExcel")}
               </Button>
               <label className="flex items-center gap-2 rounded border border-border px-3 text-xs">
-                <span>التكرار</span>
+                <span>{t("settings.duplicatePolicy")}</span>
                 <select className="bg-transparent py-1.5" value={duplicateMode} onChange={event => setDuplicateMode(event.target.value as ExcelDuplicateMode)}>
-                  <option value="update">تحديث المطابق</option>
-                  <option value="skip">تخطي المطابق</option>
-                  <option value="add">إضافة كسجل جديد</option>
+                  <option value="update">{t("settings.updateMatching")}</option>
+                  <option value="skip">{t("settings.skipMatching")}</option>
+                  <option value="add">{t("settings.addNew")}</option>
                 </select>
               </label>
             </div>
             <div className="flex items-start gap-2 rounded border border-[var(--amber-line)] bg-[var(--amber-field)] px-3 py-2.5 text-[11px] leading-relaxed text-[#7a5200]">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-              <p>أسعار الموردين تذهب إلى مستويات المورد وسجل التاريخ فقط. المصروف لا يُقبل بلا مرجع حمولة معروف.</p>
+              <p>{t("settings.importWarning")}</p>
             </div>
             {preview ? (
               <div className="rounded border-2 border-[var(--port-green)]/45 bg-card p-3 space-y-3">
                 <div className="flex items-start gap-2">
                   <FileSearch className="mt-0.5 h-4 w-4 shrink-0 text-[var(--port-green)]" />
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[var(--ink)]">نتيجة المعاينة</p>
+                    <p className="text-sm font-semibold text-[var(--ink)]">{t("settings.previewResult")}</p>
                     <p className="break-all text-[10px] text-muted-foreground">{preview.fileName}</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {Object.entries(preview.plan.counts).map(([label, count]) => <div key={label} className="rounded border border-border px-2.5 py-2"><p className="text-[10px] text-muted-foreground">{label}</p><p className="ledger-figure text-base">{count}</p></div>)}
                 </div>
-                {preview.plan.errors.length ? <div className="space-y-2 rounded border border-destructive/30 bg-destructive/5 p-2.5"><p className="text-xs font-bold text-destructive">لا يمكن التطبيق قبل تصحيح {preview.plan.errors.length} أخطاء</p><ul className="list-disc space-y-1 ps-4 text-[11px] text-destructive">{preview.plan.errors.slice(0, 8).map((error, index) => <li key={`${error.sheet}-${error.row}-${index}`}>{error.sheet} · صف {error.row}: {error.message}</li>)}</ul><Button variant="outline" size="sm" onClick={downloadErrors}><Download className="h-3.5 w-3.5" /> تنزيل تقرير الأخطاء</Button></div> : <p className="text-xs text-[var(--port-green)]">المعاينة سليمة ويمكن تطبيقها بأمان.</p>}
-                <div className="flex flex-wrap gap-2"><Button disabled={!preview.plan.canApply || isImporting} onClick={() => void applyExcel()}>{isImporting ? "جارٍ الاستيراد..." : "تطبيق الاستيراد"}</Button><Button variant="outline" onClick={() => setPreview(null)}>إلغاء المعاينة</Button></div>
+                {preview.plan.errors.length ? <div className="space-y-2 rounded border border-destructive/30 bg-destructive/5 p-2.5"><p className="text-xs font-bold text-destructive">{t("settings.applyBlocked")} {preview.plan.errors.length} {t("settings.errors")}</p><ul className="list-disc space-y-1 ps-4 text-[11px] text-destructive">{preview.plan.errors.slice(0, 8).map((error, index) => <li key={`${error.sheet}-${error.row}-${index}`}>{error.sheet} · {error.row}: {error.message}</li>)}</ul><Button variant="outline" size="sm" onClick={downloadErrors}><Download className="h-3.5 w-3.5" /> {t("settings.downloadErrorReport")}</Button></div> : <p className="text-xs text-[var(--port-green)]">{t("settings.previewValid")}</p>}
+                <div className="flex flex-wrap gap-2"><Button disabled={!preview.plan.canApply || isImporting} onClick={() => void applyExcel()}>{isImporting ? t("settings.importing") : t("settings.applyImport")}</Button><Button variant="outline" onClick={() => setPreview(null)}>{t("settings.cancelPreview")}</Button></div>
               </div>
             ) : null}
           </div>

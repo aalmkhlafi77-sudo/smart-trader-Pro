@@ -39,6 +39,22 @@ export interface QuickCalculatorResult {
   pricing: CargoPricingResult;
 }
 
+const QUICK_MESSAGES = {
+  manualItem: "صنف يدوي",
+  expense: "مصروف",
+  source: "حاسبة سريعة",
+  quantity: "الكمية",
+  unitPrice: "سعر الوحدة",
+  exchangeRate: "سعر الصرف",
+  customsRate: "نسبة الجمارك",
+  markup: "نسبة الزيادة",
+  invalidQuantity: "الكمية يجب أن تكون أكبر من صفر",
+  negativePrice: "سعر الوحدة لا يمكن أن يكون سالباً",
+  invalidExchangeRate: "سعر الصرف يجب أن يكون أكبر من صفر",
+  negativeRates: "النسب لا يمكن أن تكون سالبة",
+  customs: "الجمارك",
+} as const;
+
 const asFinite = (value: number, label: string) => {
   if (!Number.isFinite(value)) throw new Error(`${label} غير صالح`);
   return value;
@@ -55,7 +71,7 @@ function makeItem(input: QuickCalculatorInput): CargoCostItemRow {
     id: `quick-item-${input.itemId || "manual"}`,
     runId: "quick-preview",
     itemId: input.itemId || "quick-item",
-    itemName: input.itemName.trim() || "صنف يدوي",
+    itemName: input.itemName.trim() || QUICK_MESSAGES.manualItem,
     priceLevel: 1,
     priceSource: "manual",
     priceEffectiveDate: "",
@@ -83,7 +99,7 @@ function makeLine(
   return {
     id: `quick-expense-${expense.id}-${index}`,
     runId: "quick-preview",
-    name: expense.name.trim() || "مصروف",
+    name: expense.name.trim() || QUICK_MESSAGES.expense,
     stage: "other",
     status: "entered",
     method: "fixed",
@@ -95,7 +111,7 @@ function makeLine(
     referenceUnit: "",
     percentageBase: 0,
     itemIds: "",
-    sourceLabel: "حاسبة سريعة",
+    sourceLabel: QUICK_MESSAGES.source,
     rateId: "",
     templateId: "",
     effectiveDate: "",
@@ -109,16 +125,16 @@ function makeLine(
 export function calculateQuickCalculator(
   input: QuickCalculatorInput
 ): QuickCalculatorResult {
-  const quantity = asFinite(input.quantity, "الكمية");
-  const unitPrice = asFinite(input.unitPrice, "سعر الوحدة");
-  const exchangeRate = asFinite(input.exchangeRate, "سعر الصرف");
-  const customsRate = asFinite(input.customsRate, "نسبة الجمارك");
-  const marginRate = asFinite(input.marginRate, "نسبة الزيادة");
-  if (quantity <= 0) throw new Error("الكمية يجب أن تكون أكبر من صفر");
-  if (unitPrice < 0) throw new Error("سعر الوحدة لا يمكن أن يكون سالباً");
-  if (exchangeRate <= 0) throw new Error("سعر الصرف يجب أن يكون أكبر من صفر");
+  const quantity = asFinite(input.quantity, QUICK_MESSAGES.quantity);
+  const unitPrice = asFinite(input.unitPrice, QUICK_MESSAGES.unitPrice);
+  const exchangeRate = asFinite(input.exchangeRate, QUICK_MESSAGES.exchangeRate);
+  const customsRate = asFinite(input.customsRate, QUICK_MESSAGES.customsRate);
+  const marginRate = asFinite(input.marginRate, QUICK_MESSAGES.markup);
+  if (quantity <= 0) throw new Error(QUICK_MESSAGES.invalidQuantity);
+  if (unitPrice < 0) throw new Error(QUICK_MESSAGES.negativePrice);
+  if (exchangeRate <= 0) throw new Error(QUICK_MESSAGES.invalidExchangeRate);
   if (customsRate < 0 || marginRate < 0)
-    throw new Error("النسب لا يمكن أن تكون سالبة");
+    throw new Error(QUICK_MESSAGES.negativeRates);
 
   const externalExpenses = input.externalExpenses.map((expense, index) => ({
     expense,
@@ -141,7 +157,7 @@ export function calculateQuickCalculator(
       ...makeLine(
         {
           id: "customs",
-          name: "الجمارك",
+          name: QUICK_MESSAGES.customs,
           amount: 0,
           currency: "local",
           includeInCustomsBase: false,

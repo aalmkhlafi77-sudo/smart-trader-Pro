@@ -135,4 +135,12 @@ describe("excel import", () => {
     expect(plan.items).toHaveLength(1);
     expect(plan.items[0].id).not.toBe(item.id);
   });
+
+  it("rejects add mode when a stable item key already exists", () => {
+    const plan = buildExcelImportPlan(parseExcelWorkbook(workbookBuffer()), context, { duplicateMode: "add" });
+
+    expect(plan.canApply).toBe(false);
+    expect(plan.errors.some(error => error.sheet === "الأصناف" && error.message.includes("موجود"))).toBe(true);
+    expect(plan.items).toEqual([]);
+  });
 });
