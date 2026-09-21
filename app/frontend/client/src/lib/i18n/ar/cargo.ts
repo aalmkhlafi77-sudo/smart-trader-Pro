@@ -180,7 +180,7 @@ const dict: Record<string, string> = {
   "cargo.selectItemToSaveSellingPrice": "اختر صنفاً واحداً على الأقل لحفظ سعر البيع",
   "cargo.selectLocationIfNeeded": "حدد الموقع عند الحاجة",
   "cargo.selectRouteTemplateFirst": "اختر قالب مسار أولاً",
-  "cargo.sellingPricesSaved": "تم حفظ أسعار البيع المختارة كسجلات مؤرخة",
+  "cargo.sellingPricesSaved": "تم حفظ أسعار البيع المختارة في قائمة أسعار مستقلة",
   "cargo.servicePricesNote": "يمكن تطبيق أسعار الخدمات من قالب المسار أو إدخالها يدوياً",
   "cargo.shareWord": "النسبة",
   "cargo.shipmentCostBreakdown": "تفكيك تكلفة الشحنة",

@@ -3,7 +3,6 @@ import { StepWizard } from "@/components/patterns";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import type { PriceLevel } from "@/lib/db";
 import { CargoStep } from "./cargo/steps/CargoStep";
 import { RouteStep } from "./cargo/steps/RouteStep";
 import { ExpensesStep } from "./cargo/steps/ExpensesStep";
@@ -20,7 +19,7 @@ import {
   persistRun,
   persistSalePrices,
 } from "./cargo/cargoPersistence";
-import { firstEmptyLevel, convertToItemCurrency } from "./cargo/shared";
+import { convertToItemCurrency } from "./cargo/shared";
 
 const STEPS = [
   { id: "load", labelKey: "cargo.stepTitleLoad" },
@@ -49,7 +48,6 @@ export default function Pricing() {
   const [showTemplatePreview, setShowTemplatePreview] = useState(false);
   const [showPriceSave, setShowPriceSave] = useState(false);
   const [priceSaveSelection, setPriceSaveSelection] = useState<Record<string, boolean>>({});
-  const [priceSaveLevels, setPriceSaveLevels] = useState<Record<string, PriceLevel>>({});
 
   useEffect(() => {
     const runId = new URLSearchParams(window.location.search).get("runId");
@@ -103,14 +101,6 @@ export default function Pricing() {
       setPriceSaveSelection(
         Object.fromEntries(file.cargoItems.map(item => [item.itemId, false]))
       );
-      setPriceSaveLevels(
-        Object.fromEntries(
-          file.cargoItems.map(item => [
-            item.itemId,
-            firstEmptyLevel(priceRows[item.itemId], item.priceLevel),
-          ])
-        )
-      );
       setShowPriceSave(true);
     }
   };
@@ -135,8 +125,6 @@ export default function Pricing() {
       items: file.cargoItems,
       saveRows,
       selection: priceSaveSelection,
-      levels: priceSaveLevels,
-      priceRows,
       fileName: draft.name || draft.runId,
       localCurrency,
       t,
@@ -275,12 +263,8 @@ export default function Pricing() {
             onTogglePriceSave={() => setShowPriceSave(v => !v)}
             saveRows={saveRows}
             priceSaveSelection={priceSaveSelection}
-            priceSaveLevels={priceSaveLevels}
             onToggleSelect={(itemId, v) =>
               setPriceSaveSelection(current => ({ ...current, [itemId]: v }))
-            }
-            onLevelChange={(itemId, level) =>
-              setPriceSaveLevels(current => ({ ...current, [itemId]: level }))
             }
             onSaveSelected={() => void doSaveSalePrices()}
           />

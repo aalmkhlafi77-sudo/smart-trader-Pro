@@ -87,7 +87,7 @@ export interface ItemSpecRow {
   updatedAt: string;
 }
 
-/** أربعة أسعار يدوية، ولكل سعر تاريخ اعتماد مستقل يدخله المستخدم. */
+/** أربعة عروض شراء من المورد/المصنع، ولكل عرض تاريخ اعتماد مستقل يدخله المستخدم. */
 export interface ItemPriceRow {
   id: string;
   itemId: string;
@@ -107,7 +107,7 @@ export interface ItemPriceRow {
 
 export type PriceLevel = 1 | 2 | 3 | 4;
 
-/** لقطة مؤرخة لقيمة مستوى سعر قبل تعديله، للحفاظ على تاريخ التفاوض. */
+/** لقطة مؤرخة لعرض شراء من المورد/المصنع، للحفاظ على تاريخ التفاوض. */
 export interface PriceHistoryRow {
   id: string;
   itemId: string;

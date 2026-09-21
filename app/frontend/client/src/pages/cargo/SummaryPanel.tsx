@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { formatMoney } from "@/lib/pricing";
 import { currencyLabel } from "@/lib/currency";
 import type { CargoPricingResult } from "@/lib/cargoPricing";
-import type { PriceLevel } from "@/lib/db";
 
 export interface PriceSaveRow {
   itemId: string;
@@ -28,9 +27,7 @@ export function SummaryPanel({
   onTogglePriceSave,
   saveRows,
   priceSaveSelection,
-  priceSaveLevels,
   onToggleSelect,
-  onLevelChange,
   onSaveSelected,
 }: {
   result: CargoPricingResult;
@@ -42,9 +39,7 @@ export function SummaryPanel({
   onTogglePriceSave: () => void;
   saveRows: PriceSaveRow[];
   priceSaveSelection: Record<string, boolean>;
-  priceSaveLevels: Record<string, PriceLevel>;
   onToggleSelect: (itemId: string, v: boolean) => void;
-  onLevelChange: (itemId: string, level: PriceLevel) => void;
   onSaveSelected: () => void;
 }) {
   const { t } = useLanguage();
@@ -150,9 +145,7 @@ export function SummaryPanel({
             saveRows={saveRows}
             localCurrency={localCurrency}
             priceSaveSelection={priceSaveSelection}
-            priceSaveLevels={priceSaveLevels}
             onToggleSelect={onToggleSelect}
-            onLevelChange={onLevelChange}
             onSaveSelected={onSaveSelected}
           />
         ) : null}
@@ -169,17 +162,13 @@ function PriceSavePanel({
   saveRows,
   localCurrency,
   priceSaveSelection,
-  priceSaveLevels,
   onToggleSelect,
-  onLevelChange,
   onSaveSelected,
 }: {
   saveRows: PriceSaveRow[];
   localCurrency: string;
   priceSaveSelection: Record<string, boolean>;
-  priceSaveLevels: Record<string, PriceLevel>;
   onToggleSelect: (itemId: string, v: boolean) => void;
-  onLevelChange: (itemId: string, level: PriceLevel) => void;
   onSaveSelected: () => void;
 }) {
   const { t } = useLanguage();
@@ -188,7 +177,7 @@ function PriceSavePanel({
       {saveRows.map(row => (
         <div
           key={row.itemId}
-          className="grid grid-cols-[auto_minmax(0,1fr)_90px] items-center gap-2"
+          className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2"
         >
           <input
             type="checkbox"
@@ -201,18 +190,6 @@ function PriceSavePanel({
             {" ≈ "}
             {formatMoney(row.converted, currencyLabel(row.currency, t))}
           </span>
-          <select
-            className="field-input h-8 text-xs"
-            value={String(priceSaveLevels[row.itemId] ?? 1)}
-            onChange={event =>
-              onLevelChange(row.itemId, Number(event.target.value) as PriceLevel)
-            }
-          >
-            <option value="1">{t("cargo.priceWord")} 1</option>
-            <option value="2">{t("cargo.priceWord")} 2</option>
-            <option value="3">{t("cargo.priceWord")} 3</option>
-            <option value="4">{t("cargo.priceWord")} 4</option>
-          </select>
         </div>
       ))}
       <Button

@@ -3,8 +3,8 @@
  *
  * اختبار تكامل لمسار حفظ أسعار البيع عبر الأزرار الحقيقية
  * (سيناريو صنفي تركواز/تيفاني): النقر على مربع اختيار صنف واحد
- * ثم زر "حفظ المختار فقط" يجب أن يعزل الصنف الآخر تماماً —
- * القيمة المحوَّلة بعملة الصنف نفسه، لا عملة أو قيمة الجار.
+ * ثم زر "حفظ المختار فقط" يجب أن ينشئ قائمة بيع محلية للصنف المحدد
+ * من دون أي كتابة في مستويات أسعار المورد.
  */
 import { useState } from "react";
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
@@ -13,16 +13,19 @@ import userEvent from "@testing-library/user-event";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SummaryPanel } from "./SummaryPanel";
 import { persistSalePrices } from "./cargoPersistence";
-import type {
-  CargoCostItemRow,
-  ItemPriceRow,
-  PriceLevel,
-} from "@/lib/db";
+import type { CargoCostItemRow } from "@/lib/db";
 import type { CargoPricingResult } from "@/lib/cargoPricing";
 
-const { mockSavePrice, mockSavePriceHistory } = vi.hoisted(() => ({
+const {
+  mockSavePrice,
+  mockSavePriceHistory,
+  mockSavePriceList,
+  mockSavePriceListItem,
+} = vi.hoisted(() => ({
   mockSavePrice: vi.fn(),
   mockSavePriceHistory: vi.fn(),
+  mockSavePriceList: vi.fn(),
+  mockSavePriceListItem: vi.fn(),
 }));
 
 vi.mock("@/lib/db", async importOriginal => {
@@ -33,6 +36,8 @@ vi.mock("@/lib/db", async importOriginal => {
       ...actual.db,
       savePrice: mockSavePrice,
       savePriceHistory: mockSavePriceHistory,
+      savePriceList: mockSavePriceList,
+      savePriceListItem: mockSavePriceListItem,
     },
   };
 });
@@ -82,33 +87,13 @@ const cargoItem = (patch: Partial<CargoCostItemRow>): CargoCostItemRow => ({
   ...patch,
 });
 
-const priceRow = (patch: Partial<ItemPriceRow>): ItemPriceRow => ({
-  id: `prc-${patch.itemId ?? "x"}`,
-  itemId: "item-x",
-  price1: null,
-  price1Date: "",
-  price2: null,
-  price2Date: "",
-  price3: null,
-  price3Date: "",
-  price4: null,
-  price4Date: "",
-  currency: "USD",
-  notes: "",
-  createdAt: "2026-09-18",
-  updatedAt: "2026-09-18",
-  ...patch,
-});
-
 const TQZ = {
   item: cargoItem({ itemId: "item-tqz", itemName: "تركواز", unitPrice: 7.4 }),
-  row: priceRow({ itemId: "item-tqz", price1: 7.4, price1Date: "2026-09-18" }),
   suggested: 33.31,
   converted: 8.86,
 };
 const TFN = {
   item: cargoItem({ itemId: "item-tfn", itemName: "تيفاني", unitPrice: 8.1 }),
-  row: priceRow({ itemId: "item-tfn", price1: 8.1, price1Date: "2026-09-18" }),
   suggested: 35.86,
   converted: 9.54,
 };
@@ -135,7 +120,6 @@ const resultOf = (entries: { itemId: string; suggested: number }[]): CargoPricin
 
 function Harness() {
   const [selection, setSelection] = useState<Record<string, boolean>>({});
-  const [levels, setLevels] = useState<Record<string, PriceLevel>>({});
   const saveRows = [TQZ, TFN].map(e => ({
     itemId: e.item.itemId,
     name: e.item.itemName,
@@ -158,16 +142,12 @@ function Harness() {
         onTogglePriceSave={() => {}}
         saveRows={saveRows}
         priceSaveSelection={selection}
-        priceSaveLevels={levels}
         onToggleSelect={(id, v) => setSelection(s => ({ ...s, [id]: v }))}
-        onLevelChange={(id, level) => setLevels(s => ({ ...s, [id]: level }))}
         onSaveSelected={() =>
           void persistSalePrices({
             items: [TQZ.item, TFN.item],
             saveRows,
             selection,
-            levels,
-            priceRows: { "item-tqz": TQZ.row, "item-tfn": TFN.row },
             fileName: "test-file",
             localCurrency: "SAR",
             t,
@@ -201,33 +181,33 @@ describe("حفظ أسعار البيع من الأزرار الحقيقية يع
     );
   });
 
-  it("تحديد تيفاني فقط يحفظ تيفاني بقيمتها المحولة ويترك تركواز untouched", async () => {
+  it("تحديد تيفاني فقط يحفظ سعر بيعها المحلي ويترك أسعار المورد untouched", async () => {
+    render(<Harness />);
+    expect(screen.queryByRole("combobox")).toBeNull();
+    cleanup();
     await checkOnly("تيفاني");
 
-    expect(mockSavePrice).toHaveBeenCalledTimes(1);
-    const saved = mockSavePrice.mock.calls[0][0];
-    expect(saved.itemId).toBe("item-tfn");
-    expect(saved.price1).toBe(8.1);
-    expect(saved.price1Date).toBe("2026-09-18");
-    expect(saved.price2).toBe(9.54);
-    expect(saved.currency).toBe("USD");
-    expect(mockSavePriceHistory).toHaveBeenCalledTimes(1);
-    expect(mockSavePriceHistory.mock.calls[0][0]).toMatchObject({
+    expect(mockSavePrice).not.toHaveBeenCalled();
+    expect(mockSavePriceHistory).not.toHaveBeenCalled();
+    expect(mockSavePriceList).toHaveBeenCalledTimes(1);
+    expect(mockSavePriceListItem).toHaveBeenCalledTimes(1);
+    expect(mockSavePriceListItem.mock.calls[0][0]).toMatchObject({
       itemId: "item-tfn",
-      priceLevel: 2,
-      price: 9.54,
-      currency: "USD",
+      price: 35.86,
+      currency: "SAR",
     });
   });
 
-  it("تحديد تركواز فقط يحفظ تركواز بقيمته المحولة ويترك تيفاني untouched", async () => {
+  it("تحديد تركواز فقط يحفظ تركواز في قائمة البيع دون تيفاني", async () => {
     await checkOnly("تركواز");
 
-    expect(mockSavePrice).toHaveBeenCalledTimes(1);
-    const saved = mockSavePrice.mock.calls[0][0];
-    expect(saved.itemId).toBe("item-tqz");
-    expect(saved.price1).toBe(7.4);
-    expect(saved.price2).toBe(8.86);
-    expect(saved.currency).toBe("USD");
+    expect(mockSavePrice).not.toHaveBeenCalled();
+    expect(mockSavePriceHistory).not.toHaveBeenCalled();
+    expect(mockSavePriceListItem).toHaveBeenCalledTimes(1);
+    expect(mockSavePriceListItem.mock.calls[0][0]).toMatchObject({
+      itemId: "item-tqz",
+      price: 33.31,
+      currency: "SAR",
+    });
   });
 });

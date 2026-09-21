@@ -180,7 +180,7 @@ const dict: Record<string, string> = {
   "cargo.selectItemToSaveSellingPrice": "Select at least one item to save the selling price",
   "cargo.selectLocationIfNeeded": "Select a location if needed",
   "cargo.selectRouteTemplateFirst": "Select a route template first",
-  "cargo.sellingPricesSaved": "Selected selling prices saved as dated records",
+  "cargo.sellingPricesSaved": "Selected selling prices saved in a separate price list",
   "cargo.servicePricesNote": "Service prices can be applied from the route template or entered manually.",
   "cargo.shareWord": "Share",
   "cargo.shipmentCostBreakdown": "Shipment cost breakdown",

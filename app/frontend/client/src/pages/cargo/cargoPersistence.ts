@@ -4,13 +4,11 @@ import {
   db,
   type CargoCostItemRow,
   type CargoCostLineRow,
-  type ItemPriceRow,
-  type PriceLevel,
 } from "@/lib/db";
 import { withCargoDataBatch } from "@/lib/db/cargoDataEvents";
 import { newId, nowIso } from "@/lib/id";
 import type { CargoCheck, CargoCostDraft, CargoDraft } from "./shared";
-import { FREIGHT_LINE_NAME, firstEmptyLevel } from "./shared";
+import { FREIGHT_LINE_NAME } from "./shared";
 import { parseNumber } from "@/lib/pricing";
 
 export async function fetchCargoDraft(
@@ -176,91 +174,57 @@ export async function persistRun(args: {
 
 export async function persistSalePrices(args: {
   items: CargoCostItemRow[];
-  saveRows: { itemId: string; converted: number; currency: string }[];
+  saveRows: {
+    itemId: string;
+    name: string;
+    suggested: number;
+    converted: number;
+    currency: string;
+  }[];
   selection: Record<string, boolean>;
-  levels: Record<string, PriceLevel>;
-  priceRows: Record<string, ItemPriceRow>;
   fileName: string;
   localCurrency: string;
   t: (key: string) => string;
 }): Promise<boolean> {
-  const {
-    items,
-    saveRows,
-    selection,
-    levels,
-    priceRows,
-    fileName,
-    localCurrency,
-    t,
-  } = args;
+  const { items, saveRows, selection, fileName, localCurrency, t } = args;
   const selected = items.filter(item => selection[item.itemId]);
   if (selected.length === 0) {
     toast.info(t("cargo.selectItemToSaveSellingPrice"));
     return false;
   }
-  // القيمة المخزَّنة بعملة الصنف دائماً (لا تُخلط عملات داخل الصف أبداً)؛
-  // الأجنبي بلا صرف صالح يُتخطَّى بدل تخزين قمامة.
-  const skipped: string[] = [];
+
+  // أسعار البيع ناتج مستقل عن عروض المورد: تُحفظ بعملة ملف الحمولة
+  // في قائمة أسعار بيع، ولا تكتب إطلاقاً في مستويات item_prices أو سجل تفاوضها.
   const timestamp = nowIso();
+  const listId = newId("plist");
+  const title = fileName.trim() || t("cargo.cargoCostFile");
+  await db.savePriceList({
+    id: listId,
+    title,
+    clientName: "",
+    priceLevel: 1,
+    currency: localCurrency,
+    notes: `${t("cargo.fromCargoFile")} ${title}`,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  });
   await Promise.all(
-    selected.map(async cargoItem => {
-      const row = saveRows.find(r => r.itemId === cargoItem.itemId);
-      const rate = cargoItem.exchangeRate;
-      if (row && row.currency !== localCurrency && !(rate > 0)) {
-        skipped.push(cargoItem.itemName || cargoItem.itemId);
-        return;
-      }
-      const current = priceRows[cargoItem.itemId];
-      const level =
-        levels[cargoItem.itemId] ??
-        firstEmptyLevel(current, cargoItem.priceLevel);
-      const value = row?.converted ?? 0;
-      const currency = row?.currency || current?.currency || localCurrency;
-      const fields =
-        level === 1
-          ? { price1: value, price1Date: timestamp.slice(0, 10) }
-          : level === 2
-            ? { price2: value, price2Date: timestamp.slice(0, 10) }
-            : level === 3
-              ? { price3: value, price3Date: timestamp.slice(0, 10) }
-              : { price4: value, price4Date: timestamp.slice(0, 10) };
-      const next: ItemPriceRow = {
-        id: current?.id ?? newId("prc"),
+    selected.map(async (cargoItem, sortOrder) => {
+      const row = saveRows.find(candidate => candidate.itemId === cargoItem.itemId);
+      await db.savePriceListItem({
+        id: newId("plistitem"),
+        priceListId: listId,
         itemId: cargoItem.itemId,
-        price1: current?.price1 ?? null,
-        price1Date: current?.price1Date ?? "",
-        price2: current?.price2 ?? null,
-        price2Date: current?.price2Date ?? "",
-        price3: current?.price3 ?? null,
-        price3Date: current?.price3Date ?? "",
-        price4: current?.price4 ?? null,
-        price4Date: current?.price4Date ?? "",
-        currency,
-        notes: `${t("cargo.fromCargoFile")} ${fileName}`,
-        createdAt: current?.createdAt ?? timestamp,
-        updatedAt: timestamp,
-        ...fields,
-      };
-      await db.savePrice(next);
-      await db.savePriceHistory({
-        id: newId("hist"),
-        itemId: cargoItem.itemId,
-        priceLevel: level,
-        price: value,
-        effectiveDate: timestamp.slice(0, 10),
-        currency,
-        notes: next.notes,
+        itemName: row?.name || cargoItem.itemName || cargoItem.itemId,
+        specSummary: "",
+        price: row?.suggested ?? cargoItem.suggestedPrice ?? 0,
+        currency: localCurrency,
+        sortOrder,
         createdAt: timestamp,
+        updatedAt: timestamp,
       });
     })
   );
-  if (skipped.length > 0) {
-    toast.warning(
-      `${t("cargo.saleSaveSkipped")}: ${skipped.join(t("common.listSeparator"))}`
-    );
-    return selected.length > skipped.length;
-  }
   toast.success(t("cargo.sellingPricesSaved"));
   return true;
 }

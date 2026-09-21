@@ -499,6 +499,185 @@ export async function migrateToV12(): Promise<MigrationStats> {
   return stats;
 }
 
+const LEGACY_CARGO_SALE_PREFIXES = [
+  String.fromCodePoint(
+    0x645, 0x646, 0x20, 0x645, 0x644, 0x641, 0x20, 0x62a, 0x643, 0x644,
+    0x641, 0x629, 0x20, 0x627, 0x644, 0x62d, 0x645, 0x648, 0x644, 0x629
+  ),
+  "From cargo cost file",
+  "Yük maliyet dosyasından",
+] as const;
+
+function legacyCargoSaleSource(notes: string): string | null {
+  const normalized = notes.trim();
+  const prefix = LEGACY_CARGO_SALE_PREFIXES.find(candidate =>
+    normalized.startsWith(candidate)
+  );
+  return prefix ? normalized.slice(prefix.length).trim() : null;
+}
+
+/**
+ * يصلح مخرجات النسخ القديمة التي خزنت سعر البيع الناتج من الحمولة داخل
+ * مستويات أسعار المورد. يحفظ السعر أولاً في قائمة بيع مستقلة ثم يعيد مستوى
+ * المورد إلى آخر قيمة يدوية موثقة (أو يفرغه إن لم توجد)، ويحذف سجل البيع
+ * المضلل. الترحيل آمن التكرار لأن معرّفات القوائم حتمية والسجلات المعيبة تحذف.
+ */
+export async function migrateLegacyCargoSalePrices(): Promise<{
+  listsCreated: number;
+  supplierLevelsRepaired: number;
+  historyRowsRemoved: number;
+}> {
+  const history = await getAll<PriceHistoryRow>(TABLES.priceHistory);
+  const generated = history.filter(row => legacyCargoSaleSource(row.notes) !== null);
+  if (generated.length === 0) {
+    return { listsCreated: 0, supplierLevelsRepaired: 0, historyRowsRemoved: 0 };
+  }
+
+  const [supplierRows, items, cargoRuns, cargoItems, existingLists] =
+    await Promise.all([
+      getAll<ItemPriceRow>(TABLES.itemPrices),
+      getAll<ItemRow>(TABLES.items),
+      getAll<CargoCostRunRow>(TABLES.cargoCostRuns),
+      getAll<CargoCostItemRow>(TABLES.cargoCostItems),
+      getAll<PriceListRow>(TABLES.priceLists),
+    ]);
+  const existingListIds = new Set(existingLists.map(row => row.id));
+  const itemById = new Map(items.map(row => [row.id, row]));
+  const groups = new Map<string, PriceHistoryRow[]>();
+  for (const row of generated) {
+    const key = `${row.notes}\u0000${row.createdAt}`;
+    groups.set(key, [...(groups.get(key) ?? []), row]);
+  }
+
+  let listsCreated = 0;
+  for (const rows of Array.from(groups.values())) {
+    const ordered = [...rows].sort((a, b) => a.id.localeCompare(b.id));
+    const first = ordered[0];
+    const source =
+      legacyCargoSaleSource(first.notes) ||
+      String.fromCodePoint(
+        0x642, 0x627, 0x626, 0x645, 0x629, 0x20, 0x623, 0x633, 0x639,
+        0x627, 0x631, 0x20, 0x628, 0x64a, 0x639, 0x20, 0x645, 0x633, 0x62a,
+        0x639, 0x627, 0x62f, 0x629
+      );
+    const run = cargoRuns
+      .filter(candidate => candidate.id === source || candidate.name === source)
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
+    const listId = `legacy_sale_${first.id}`;
+    const currency = run?.currency || first.currency;
+    if (!existingListIds.has(listId)) {
+      await put<PriceListRow>(TABLES.priceLists, {
+        id: listId,
+        title: run?.name || source,
+        clientName: "",
+        priceLevel: 1,
+        currency,
+        notes: `[migrated-cargo-sale] ${first.id}`,
+        createdAt: first.createdAt,
+        updatedAt: first.createdAt,
+      });
+      existingListIds.add(listId);
+      listsCreated += 1;
+    }
+
+    const runItems = run
+      ? cargoItems.filter(candidate => candidate.runId === run.id)
+      : [];
+    await Promise.all(
+      ordered.map((row, sortOrder) => {
+        const cargoItem = runItems.find(candidate => candidate.itemId === row.itemId);
+        const catalogItem = itemById.get(row.itemId);
+        return put<PriceListItemRow>(TABLES.priceListItems, {
+          id: `legacy_sale_item_${row.id}`,
+          priceListId: listId,
+          itemId: row.itemId,
+          itemName: cargoItem?.itemName || catalogItem?.name || row.itemId,
+          specSummary: "",
+          price:
+            cargoItem && Number.isFinite(cargoItem.suggestedPrice)
+              ? cargoItem.suggestedPrice
+              : row.price,
+          currency: run?.currency || row.currency,
+          sortOrder,
+          createdAt: row.createdAt,
+          updatedAt: row.createdAt,
+        });
+      })
+    );
+  }
+
+  let supplierLevelsRepaired = 0;
+  for (const supplierRow of supplierRows) {
+    const next = { ...supplierRow };
+    let changed = false;
+    for (const level of [1, 2, 3, 4] as const) {
+      const generatedForLevel = generated
+        .filter(row => row.itemId === supplierRow.itemId && row.priceLevel === level)
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+      const latestGenerated = generatedForLevel[0];
+      if (!latestGenerated) continue;
+      const fallback = history
+        .filter(
+          row =>
+            row.itemId === supplierRow.itemId &&
+            row.priceLevel === level &&
+            legacyCargoSaleSource(row.notes) === null &&
+            row.createdAt < latestGenerated.createdAt
+        )
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+      const expectedDate = latestGenerated.effectiveDate;
+      const replacementPrice = fallback?.price ?? null;
+      const replacementDate = fallback?.effectiveDate ?? "";
+      if (
+        level === 1 &&
+        next.price1 === latestGenerated.price &&
+        next.price1Date === expectedDate
+      ) {
+        next.price1 = replacementPrice;
+        next.price1Date = replacementDate;
+        changed = true;
+      } else if (
+        level === 2 &&
+        next.price2 === latestGenerated.price &&
+        next.price2Date === expectedDate
+      ) {
+        next.price2 = replacementPrice;
+        next.price2Date = replacementDate;
+        changed = true;
+      } else if (
+        level === 3 &&
+        next.price3 === latestGenerated.price &&
+        next.price3Date === expectedDate
+      ) {
+        next.price3 = replacementPrice;
+        next.price3Date = replacementDate;
+        changed = true;
+      } else if (
+        level === 4 &&
+        next.price4 === latestGenerated.price &&
+        next.price4Date === expectedDate
+      ) {
+        next.price4 = replacementPrice;
+        next.price4Date = replacementDate;
+        changed = true;
+      }
+    }
+    if (changed) {
+      if (legacyCargoSaleSource(next.notes) !== null) next.notes = "";
+      next.updatedAt = nowIso();
+      await put(TABLES.itemPrices, next);
+      supplierLevelsRepaired += 1;
+    }
+  }
+
+  await Promise.all(generated.map(row => remove(TABLES.priceHistory, row.id)));
+  return {
+    listsCreated,
+    supplierLevelsRepaired,
+    historyRowsRemoved: generated.length,
+  };
+}
+
 export const indexedDbRepository: Repository = {
   async init() {
     await openDb();
@@ -623,6 +802,10 @@ export const indexedDbRepository: Repository = {
           })
         ),
     ]);
+    const legacySaleStats = await migrateLegacyCargoSalePrices();
+    if (legacySaleStats.historyRowsRemoved > 0) {
+      console.warn("[pricing] legacy cargo sale cleanup:", legacySaleStats);
+    }
   },
 
   listEntities: () => getAll<EntityRow>(TABLES.entities),
@@ -1111,6 +1294,10 @@ export const indexedDbRepository: Repository = {
       await Promise.all(jobs);
       const restoreStats = await migrateToV12();
       console.warn("[S5] post-restore migration:", restoreStats);
+      const legacySaleStats = await migrateLegacyCargoSalePrices();
+      if (legacySaleStats.historyRowsRemoved > 0) {
+        console.warn("[pricing] post-restore cargo sale cleanup:", legacySaleStats);
+      }
       if (!t.spec_templates?.length) {
         const existingTemplates = await getAll<SpecTemplateRow>(
           TABLES.specTemplates

@@ -23,6 +23,8 @@ import {
   type ItemPriceRow,
   type ItemRow,
   type ItemSpecRow,
+  type PriceListItemRow,
+  type PriceListRow,
   type PriceLevel,
   type PricingRunRow,
   type SpecTemplateRow,
@@ -32,6 +34,7 @@ import { formatDate, formatNumber } from "@/lib/pricing";
 import { AlertTriangle, FileDown, Printer } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { latestSaleListPrices } from "./exportSalePrices";
 
 const LEVELS: PriceLevel[] = [1, 2, 3, 4];
 type ExportPriceMode = "supplier" | "cost" | "sale" | "all" | "manual";
@@ -59,6 +62,8 @@ export default function ExportLists() {
   const [items, setItems] = useState<ItemRow[]>([]);
   const [prices, setPrices] = useState<ItemPriceRow[]>([]);
   const [runs, setRuns] = useState<PricingRunRow[]>([]);
+  const [savedPriceLists, setSavedPriceLists] = useState<PriceListRow[]>([]);
+  const [savedPriceListItems, setSavedPriceListItems] = useState<PriceListItemRow[]>([]);
   const [specTemplates, setSpecTemplates] = useState<SpecTemplateRow[]>([]);
   const [specs, setSpecs] = useState<Record<string, ItemSpecRow[]>>({});
   const [selected, setSelected] = useState<Record<string, boolean>>({});
@@ -72,12 +77,16 @@ export default function ExportLists() {
     let cancelled = false;
     (async () => {
       await db.init();
-      const [itemList, priceList, runList, templateList] = await Promise.all([
+      const [itemList, priceList, runList, templateList, savedLists] = await Promise.all([
         db.listItems(),
         db.listPrices(),
         db.listPricingRuns(),
         db.listSpecTemplates(),
+        db.listPriceLists(),
       ]);
+      const savedListItems = (
+        await Promise.all(savedLists.map(list => db.listPriceListItems(list.id)))
+      ).flat();
       if (cancelled) return;
       const sorted = [...itemList].sort((a, b) =>
         a.name.localeCompare(b.name, "ar")
@@ -85,6 +94,8 @@ export default function ExportLists() {
       setItems(sorted);
       setPrices(priceList);
       setRuns(runList);
+      setSavedPriceLists(savedLists);
+      setSavedPriceListItems(savedListItems);
       setSpecTemplates(templateList);
       const settings = await db.getSettings();
       if (!cancelled) setCompanyName(settings.companyName);
@@ -96,6 +107,11 @@ export default function ExportLists() {
       cancelled = true;
     };
   }, []);
+
+  const savedSalePrices = useMemo(
+    () => latestSaleListPrices(savedPriceLists, savedPriceListItems),
+    [savedPriceLists, savedPriceListItems]
+  );
 
   const rows = useMemo(() => {
     const templateFor = (label: string, category: string) =>
@@ -112,6 +128,7 @@ export default function ExportLists() {
         const latest = runs
           .filter(run => run.itemId === i.id)
           .sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+        const savedSale = savedSalePrices[i.id];
         const exportSpecs = [...(specs[i.id] ?? [])]
           .filter(
             spec => templateFor(spec.label, i.category)?.showInExport !== 0
@@ -133,8 +150,8 @@ export default function ExportLists() {
           manualPrice: priceAtLevel(itemPrice, level),
           supplierPrice: itemPrice?.price1 ?? null,
           unitCost: latest?.unitCost ?? null,
-          suggestedPrice: latest?.suggestedPrice ?? null,
-          calculatedCurrency: latest?.currency ?? i.currency,
+          suggestedPrice: savedSale?.price ?? latest?.suggestedPrice ?? null,
+          calculatedCurrency: savedSale?.currency ?? latest?.currency ?? i.currency,
           exportSpecs,
           specSummary: (() => {
             // المواصفات المميزة أو التي عُينت للمقارنة في القالب تظهر أولاً.
@@ -144,7 +161,7 @@ export default function ExportLists() {
           })(),
         };
       });
-  }, [items, prices, runs, specs, specTemplates, selected, level]);
+  }, [items, prices, runs, savedSalePrices, specs, specTemplates, selected, level]);
 
   const matchingItems = items.filter(item =>
     [item.name, item.code, item.category]

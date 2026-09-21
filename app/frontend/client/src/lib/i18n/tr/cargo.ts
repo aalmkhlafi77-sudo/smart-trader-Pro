@@ -180,7 +180,7 @@ const dict: Record<string, string> = {
   "cargo.selectItemToSaveSellingPrice": "Satış fiyatını kaydetmek için en az bir ürün seçin",
   "cargo.selectLocationIfNeeded": "Gerekirse konum seçin",
   "cargo.selectRouteTemplateFirst": "Önce güzergâh şablonu seçin",
-  "cargo.sellingPricesSaved": "Seçilen satış fiyatları tarihli kayıtlar olarak kaydedildi",
+  "cargo.sellingPricesSaved": "Seçilen satış fiyatları ayrı bir fiyat listesine kaydedildi",
   "cargo.servicePricesNote": "Hizmet fiyatları güzergâh şablonundan uygulanabilir veya elle girilebilir.",
   "cargo.shareWord": "Oran",
   "cargo.shipmentCostBreakdown": "Gönderi maliyet dökümü",
