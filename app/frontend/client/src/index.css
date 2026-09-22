@@ -853,7 +853,25 @@ html[data-activity="custom"] {
   }
 }
 
-/* Port Ledger: انتقال قصير يوضح استبدال شاشة العمليات النشطة. */
+/* Port Ledger: نبض بصمة المصمم وانتقال قصير لشاشة العمليات النشطة. */
+@keyframes designer-credit-dot-pulse {
+  0%,
+  100% {
+    opacity: 0.8;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.22);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .designer-credit__dot--pulse {
+    animation: designer-credit-dot-pulse 1.8s ease-in-out infinite;
+  }
+}
+
 @keyframes calculator-screen-in {
   from {
     opacity: 0.3;

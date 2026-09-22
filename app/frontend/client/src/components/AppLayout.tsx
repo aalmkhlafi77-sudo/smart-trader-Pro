@@ -39,12 +39,20 @@ export default function AppLayout({
         </main>
         <footer className="px-4 pt-2 pb-24 lg:px-8 lg:pb-6">
           <div className="flex items-center justify-center gap-2 border-t border-border pt-4">
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--port-green)]" />
-            <p className="text-[11px] tracking-wide text-muted-foreground">
-              {t("app.design")}{" "}
-              <span className="font-semibold text-[var(--ink)]" dir="ltr">
-                Abdullah Almkhlafi
-              </span>{" "}
+            <span
+              aria-hidden="true"
+              className="designer-credit__dot designer-credit__dot--pulse h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--port-green)]"
+            />
+            <p className="flex max-w-full flex-wrap items-center justify-center gap-x-1 text-center text-[11px] tracking-wide text-muted-foreground">
+              <a
+                href="https://almkhlafi.carpetbazar.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-8 max-w-full flex-wrap items-center justify-center gap-x-1 rounded-sm px-1 py-1 font-semibold text-[var(--ink)] transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--port-green)]"
+              >
+                {t("app.design")}{" "}
+                <span dir="ltr">Abdullah Almkhlafi</span>
+              </a>{" "}
               <span dir="ltr">2026</span>
             </p>
           </div>
