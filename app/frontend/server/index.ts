@@ -2,6 +2,7 @@ import { createServer } from "http";
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import { initializePrivateStorage, registerPrivateStorageRoutes } from "./privateStorage";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,6 +10,10 @@ const __dirname = path.dirname(__filename);
 async function startServer() {
   const app = express();
   const server = createServer(app);
+
+  app.use(express.json({ limit: "35mb" }));
+  await initializePrivateStorage();
+  registerPrivateStorageRoutes(app);
 
   // Serve static files from dist/public in production
   const staticPath =
