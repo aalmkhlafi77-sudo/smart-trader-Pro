@@ -165,10 +165,10 @@ export default function FloatingCalculator() {
       const onMove = (moveEvent: PointerEvent) => {
         const dx = moveEvent.clientX - start.x;
         const dy = moveEvent.clientY - start.y;
-        const minWidth = 380;
-        const minHeight = 320;
-        const maxWidth = Math.max(minWidth, window.innerWidth - 32);
-        const maxHeight = Math.max(minHeight, window.innerHeight - 96);
+        const minWidth = Math.min(320, Math.max(240, window.innerWidth - 24));
+        const minHeight = Math.min(280, Math.max(220, window.innerHeight - 96));
+        const maxWidth = Math.max(minWidth, window.innerWidth - 16);
+        const maxHeight = Math.max(minHeight, window.innerHeight - 72);
         let width = start.width;
         let height = start.height;
         let left = start.left;
@@ -220,7 +220,7 @@ export default function FloatingCalculator() {
     };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
-    if (open || event.button !== 0) return;
+    if (event.button !== 0) return;
     const rect = wrapperRef.current?.getBoundingClientRect();
     if (!rect) return;
     dragRef.current = {
@@ -316,7 +316,22 @@ export default function FloatingCalculator() {
           }
           aria-label={t("multiCalc.title")}
         >
-          <div className="calculator-window-toolbar sticky top-0 z-10 flex justify-end px-1.5 pt-1.5 backdrop-blur">
+          <div className="calculator-window-toolbar sticky top-0 z-10 flex items-center justify-between gap-2 px-1.5 pt-1.5 backdrop-blur">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 touch-none select-none gap-1.5 px-2 text-[11px] cursor-move active:cursor-grabbing"
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              aria-label={t("multiCalc.dragWindow")}
+              title={t("multiCalc.dragWindow")}
+            >
+              <GripVertical className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{t("multiCalc.dragWindow")}</span>
+            </Button>
             <div className="flex items-center gap-1">
               <Button
                 type="button"
@@ -367,7 +382,7 @@ export default function FloatingCalculator() {
             onResultChange={updateLastResult}
           />
           <div
-            className="pointer-events-none absolute inset-0 hidden lg:block"
+            className="pointer-events-none absolute inset-0"
             aria-hidden="true"
           >
             {(
@@ -376,7 +391,7 @@ export default function FloatingCalculator() {
               <button
                 key={direction}
                 type="button"
-                className={`pointer-events-auto absolute ${direction === "n" ? "-top-1 left-4 right-4 h-2 cursor-ns-resize" : direction === "s" ? "-bottom-1 left-4 right-4 h-2 cursor-ns-resize" : direction === "e" ? "-right-1 bottom-4 top-4 w-2 cursor-ew-resize" : direction === "w" ? "-left-1 bottom-4 top-4 w-2 cursor-ew-resize" : direction === "ne" ? "-right-1 -top-1 h-4 w-4 cursor-ne-resize" : direction === "nw" ? "-left-1 -top-1 h-4 w-4 cursor-nw-resize" : direction === "se" ? "-bottom-1 -right-1 h-4 w-4 cursor-se-resize" : "-bottom-1 -left-1 h-4 w-4 cursor-sw-resize"}`}
+                className={`pointer-events-auto absolute touch-none select-none ${direction === "n" ? "-top-2 left-6 right-6 h-4 cursor-ns-resize" : direction === "s" ? "-bottom-2 left-6 right-6 h-4 cursor-ns-resize" : direction === "e" ? "-right-2 bottom-6 top-6 w-4 cursor-ew-resize" : direction === "w" ? "-left-2 bottom-6 top-6 w-4 cursor-ew-resize" : direction === "ne" ? "-right-2 -top-2 h-7 w-7 cursor-ne-resize" : direction === "nw" ? "-left-2 -top-2 h-7 w-7 cursor-nw-resize" : direction === "se" ? "-bottom-2 -right-2 h-7 w-7 cursor-se-resize" : "-bottom-2 -left-2 h-7 w-7 cursor-sw-resize"}`}
                 onPointerDown={beginResize(direction)}
                 aria-label={direction}
               />

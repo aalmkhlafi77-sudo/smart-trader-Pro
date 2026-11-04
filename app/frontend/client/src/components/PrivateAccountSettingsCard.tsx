@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { KeyRound, ShieldCheck, UserRound } from "lucide-react";
+import { Eye, EyeOff, KeyRound, ShieldCheck, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import SectionCard from "@/components/SectionCard";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ export default function PrivateAccountSettingsCard() {
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [saving, setSaving] = useState(false);
+  const [visiblePassword, setVisiblePassword] = useState<"current" | "new" | "confirm" | null>(null);
 
   if (!privateStorage.authenticated) return null;
 
@@ -93,37 +94,67 @@ export default function PrivateAccountSettingsCard() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="private-current-password">{t("access.privateCurrentPassword")}</Label>
-            <Input
-              id="private-current-password"
-              className="field-input"
-              type="password"
-              value={currentPassword}
-              onChange={event => setCurrentPassword(event.target.value)}
-              autoComplete="current-password"
-            />
+<div className="relative">
+              <Input
+                id="private-current-password"
+                className="field-input pe-10"
+                type={visiblePassword === "current" ? "text" : "password"}
+                value={currentPassword}
+                onChange={event => setCurrentPassword(event.target.value)}
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                className="absolute end-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+                onClick={() => setVisiblePassword(value => value === "current" ? null : "current")}
+                aria-label={visiblePassword === "current" ? t("access.hidePassword") : t("access.showPassword")}
+              >
+                {visiblePassword === "current" ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="private-new-password">{t("access.privateNewPassword")}</Label>
-            <Input
-              id="private-new-password"
-              className="field-input"
-              type="password"
-              value={password}
-              onChange={event => setPassword(event.target.value)}
-              autoComplete="new-password"
+<div className="relative">
+              <Input
+                id="private-new-password"
+                className="field-input pe-10"
+                type={visiblePassword === "new" ? "text" : "password"}
+                value={password}
+                onChange={event => setPassword(event.target.value)}
+                autoComplete="new-password"
               placeholder={t("access.privateKeepPassword")}
-            />
+              />
+              <button
+                type="button"
+                className="absolute end-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+                onClick={() => setVisiblePassword(value => value === "new" ? null : "new")}
+                aria-label={visiblePassword === "new" ? t("access.hidePassword") : t("access.showPassword")}
+              >
+                {visiblePassword === "new" ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="private-confirm-password">{t("access.privateConfirmPassword")}</Label>
-            <Input
-              id="private-confirm-password"
-              className="field-input"
-              type="password"
-              value={confirmation}
-              onChange={event => setConfirmation(event.target.value)}
-              autoComplete="new-password"
-            />
+<div className="relative">
+              <Input
+                id="private-confirm-password"
+                className="field-input pe-10"
+                type={visiblePassword === "confirm" ? "text" : "password"}
+                value={confirmation}
+                onChange={event => setConfirmation(event.target.value)}
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="absolute end-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+                onClick={() => setVisiblePassword(value => value === "confirm" ? null : "confirm")}
+                aria-label={visiblePassword === "confirm" ? t("access.hidePassword") : t("access.showPassword")}
+              >
+                {visiblePassword === "confirm" ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
         </div>
 

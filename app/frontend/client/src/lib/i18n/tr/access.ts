@@ -67,6 +67,8 @@ const dict: Record<string, string> = {
   "access.privateCurrentIncorrect": "Mevcut parola yanlış",
   "access.privateUsernameExists": "Bu kullanıcı adı zaten kullanılıyor",
   "access.privateCredentialsFailed": "Giriş bilgileri güncellenemedi",
+  "access.showPassword": "Parolayı göster",
+  "access.hidePassword": "Parolayı gizle",
 };
 
 export default dict;

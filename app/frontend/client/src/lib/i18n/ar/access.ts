@@ -67,6 +67,8 @@ const dict: Record<string, string> = {
   "access.privateCurrentIncorrect": "كلمة المرور الحالية غير صحيحة",
   "access.privateUsernameExists": "اسم المستخدم مستخدم بالفعل",
   "access.privateCredentialsFailed": "تعذر تحديث بيانات الدخول",
+  "access.showPassword": "إظهار كلمة المرور",
+  "access.hidePassword": "إخفاء كلمة المرور",
 };
 
 export default dict;
