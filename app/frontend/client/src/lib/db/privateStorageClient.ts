@@ -172,7 +172,11 @@ export async function loginPrivateStorage(username: string, password: string) {
 }
 
 export async function logoutPrivateStorage() {
-  await flushPrivateStorageSync();
+  try {
+    await flushPrivateStorageSync();
+  } catch {
+    // Logout must remain available even if a final sync cannot complete.
+  }
   try {
     await request<{ ok: true }>("/api/private/logout", {
       method: "POST",
