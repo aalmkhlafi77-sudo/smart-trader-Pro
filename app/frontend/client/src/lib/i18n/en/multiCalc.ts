@@ -24,7 +24,7 @@ const dict: Record<string, string> = {
   "multiCalc.minimize": "Minimize calculator",
   "multiCalc.newOperation": "New operation",
   "multiCalc.noHistory": "No saved operations yet",
-  "multiCalc.open": "Quick calculator",
+  "multiCalc.open": "Calculator",
   "multiCalc.paste": "Paste",
   "multiCalc.pasteNumber": "Only numbers and calculation operators can be pasted",
   "multiCalc.pasted": "Value pasted into the active screen",
@@ -39,13 +39,14 @@ const dict: Record<string, string> = {
   "multiCalc.selected": "selected",
   "multiCalc.shortcuts": "0–9 · Enter = · Tab for screens · Ctrl+C / Ctrl+V · Esc",
   "multiCalc.shrinkWindow": "Shrink calculator window",
-  "multiCalc.title": "Multi-screen calculation assistant",
+  "multiCalc.title": "Calculator",
   "multiCalc.total": "Enabled screens total",
   "multiCalc.visibilityHidden": "Calculator button is hidden",
   "multiCalc.visibilityHint": "Drag the calculator icon anywhere, or hide it when it is not needed.",
   "multiCalc.visibilityLabel": "Show floating calculator button",
   "multiCalc.visibilityShown": "Calculator button is visible",
   "multiCalc.visibilityTitle": "Floating calculator",
+  "multiCalc.dragWindow": "Drag and move",
 };
 
 export default dict;
