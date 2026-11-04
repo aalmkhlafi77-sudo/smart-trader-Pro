@@ -77,7 +77,7 @@ export default function QuickCalculator() {
       setExchangeRate(String(settings.defaultExchangeRate || 1));
       setCustomsRate(String((settings.defaultCustomsRate || 0) * 100));
       setMarginRate(String((settings.defaultMarginRate || 0) * 100));
-      setSavedRows(nextSaved);
+      setSavedRows(nextSaved.filter(row => row.mode !== "multi"));
     });
   }, []);
 
