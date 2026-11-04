@@ -19,6 +19,7 @@ const dict: Record<string, string> = {
   "multiQuick.results": "Sevkiyat sonuçları",
   "multiQuick.goodsCost": "Mal maliyeti",
   "multiQuick.allocatedCost": "Dağıtılan giderler",
+  "multiQuick.totalAllocatedCost": "Toplam dağıtılan giderler",
   "multiQuick.savedOperations": "Kayıtlı işlemler",
   "multiQuick.savedHint": "Ürün, tedarikçi, işlem adı veya referansa göre arayın; ardından incelemek veya düzenlemek için kaydı açın.",
   "multiQuick.searchPlaceholder": "Ürün, tedarikçi, işlem veya referans ara...",
