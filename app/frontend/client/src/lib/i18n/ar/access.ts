@@ -32,6 +32,15 @@ const dict: Record<string, string> = {
   "access.setupText": "أنشئ رمزاً من ستة أرقام. يبقى هذا الرمز على الجهاز ولا يُرسل إلى أي خادم.",
   "access.setupTitle": "ضع رمز دخول لدفترك",
   "access.sixDigits": "أدخل رمزاً صحيحاً من 6 أرقام",
+  "access.privateTitle": "الدخول الخاص",
+  "access.privateHint": "يحفظ بياناتك في قاعدة MySQL الخاصة ويعزلها عن بيانات هذا الجهاز العامة.",
+  "access.privateUsername": "اسم المستخدم",
+  "access.privatePassword": "كلمة المرور",
+  "access.privateOpen": "فتح الحساب الخاص",
+  "access.privateInvalid": "أدخل اسم المستخدم وكلمة مرور صحيحة",
+  "access.privateOpened": "تم فتح الحساب الخاص",
+  "access.privateIncorrect": "بيانات الدخول الخاصة غير صحيحة",
+  "access.privateRateLimited": "محاولات كثيرة. أعد المحاولة لاحقاً",
 };
 
 export default dict;
