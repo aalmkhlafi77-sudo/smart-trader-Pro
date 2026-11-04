@@ -6,12 +6,15 @@ import {
   ShieldCheck,
   Eye,
   ArrowRight,
+  Cloud,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAccess } from "@/contexts/AccessContext";
 import { useLoginBackground } from "@/contexts/LoginBackgroundContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePrivateStorage } from "@/contexts/PrivateStorageContext";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { PinSlots } from "@/components/PinSlots";
 
@@ -19,17 +22,41 @@ export default function AccessGate({ children }: { children: ReactNode }) {
   const { configured, createPin, hint, ready, unlock, unlocked } = useAccess();
   const { backgroundUrl } = useLoginBackground();
   const { direction, t } = useLanguage();
+  const privateStorage = usePrivateStorage();
   const [pin, setPin] = useState("");
+  const [privateUsername, setPrivateUsername] = useState("");
+  const [privatePassword, setPrivatePassword] = useState("");
+  const [privateSubmitting, setPrivateSubmitting] = useState(false);
   const [confirmation, setConfirmation] = useState("");
   const [showHint, setShowHint] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [wrongCode, setWrongCode] = useState(false);
   const [shakeVersion, setShakeVersion] = useState(0);
 
-  if (!ready) return <div className="min-h-screen bg-[var(--paper)]" />;
-  if (unlocked) return <>{children}</>;
+  if (!ready || !privateStorage.ready) return <div className="min-h-screen bg-[var(--paper)]" />;
+  if (unlocked || privateStorage.authenticated) return <>{children}</>;
 
   const setup = !configured;
+  const submitPrivate = async () => {
+    if (!privateUsername.trim() || privatePassword.length < 8) {
+      toast.error(t("access.privateInvalid"));
+      return;
+    }
+    setPrivateSubmitting(true);
+    try {
+      await privateStorage.login(privateUsername.trim(), privatePassword);
+      toast.success(t("access.privateOpened"));
+    } catch (error) {
+      toast.error(
+        error instanceof Error && error.message === "TOO_MANY_ATTEMPTS"
+          ? t("access.privateRateLimited")
+          : t("access.privateIncorrect")
+      );
+    } finally {
+      setPrivateSubmitting(false);
+    }
+  };
+
   const submit = async () => {
     if (pin.length !== 6 || (setup && confirmation.length !== 6)) {
       toast.error(t("access.sixDigits"));
@@ -244,6 +271,43 @@ export default function AccessGate({ children }: { children: ReactNode }) {
                   {t(setup ? "access.saveCode" : "access.open")}
                   <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                 </Button>
+                {privateStorage.databaseReady ? (
+                  <div className="mt-6 space-y-3 border-t border-border pt-5">
+                    <div className="flex items-center gap-2">
+                      <Cloud className="h-4 w-4 text-[var(--port-green)]" />
+                      <div>
+                        <p className="text-sm font-bold text-[var(--ink-deep)]">{t("access.privateTitle")}</p>
+                        <p className="text-[11px] text-muted-foreground">{t("access.privateHint")}</p>
+                      </div>
+                    </div>
+                    <Input
+                      value={privateUsername}
+                      onChange={event => setPrivateUsername(event.target.value)}
+                      placeholder={t("access.privateUsername")}
+                      autoComplete="username"
+                    />
+                    <Input
+                      type="password"
+                      value={privatePassword}
+                      onChange={event => setPrivatePassword(event.target.value)}
+                      placeholder={t("access.privatePassword")}
+                      autoComplete="current-password"
+                      onKeyDown={event => {
+                        if (event.key === "Enter") void submitPrivate();
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full"
+                      disabled={privateSubmitting}
+                      onClick={() => void submitPrivate()}
+                    >
+                      <Cloud className="h-4 w-4" />
+                      {t("access.privateOpen")}
+                    </Button>
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>
