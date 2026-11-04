@@ -41,6 +41,16 @@ const dict: Record<string, string> = {
   "access.privateOpened": "تم فتح الحساب الخاص",
   "access.privateIncorrect": "بيانات الدخول الخاصة غير صحيحة",
   "access.privateRateLimited": "محاولات كثيرة. أعد المحاولة لاحقاً",
+  "access.storageModeTitle": "وضع حفظ البيانات",
+  "access.privateStorageDescription": "بيانات هذا الحساب تحفظ في MySQL وتستخدم قاعدة متصفح خاصة منفصلة كذاكرة مؤقتة.",
+  "access.publicStorageDescription": "بيانات هذا الوضع تحفظ على هذا الجهاز فقط داخل IndexedDB ولا ترفع إلى الخادم.",
+  "access.privateMode": "خاص · MySQL",
+  "access.publicMode": "عام · محلي",
+  "access.publicDeviceOnly": "محفوظ على هذا الجهاز فقط",
+  "access.privateReload": "إعادة تحميل من الخادم",
+  "access.privateReloaded": "تم تحديث البيانات من الخادم",
+  "access.privateReloadFailed": "تعذر تحديث البيانات من الخادم",
+  "access.privateLogout": "تسجيل خروج من الحساب الخاص",
 };
 
 export default dict;
