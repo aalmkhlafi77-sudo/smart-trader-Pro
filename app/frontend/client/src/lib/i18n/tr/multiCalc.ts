@@ -24,7 +24,7 @@ const dict: Record<string, string> = {
   "multiCalc.minimize": "Hesaplayıcıyı küçült",
   "multiCalc.newOperation": "Yeni işlem",
   "multiCalc.noHistory": "Henüz kaydedilmiş işlem yok",
-  "multiCalc.open": "Hızlı hesaplayıcı",
+  "multiCalc.open": "Hesap makinesi",
   "multiCalc.paste": "Yapıştır",
   "multiCalc.pasteNumber": "Yalnızca sayılar ve işlem işaretleri yapıştırılabilir",
   "multiCalc.pasted": "Değer etkin ekrana yapıştırıldı",
@@ -39,13 +39,14 @@ const dict: Record<string, string> = {
   "multiCalc.selected": "seçili",
   "multiCalc.shortcuts": "0–9 · Enter = · Tab ekranlar · Ctrl+C / Ctrl+V · Esc",
   "multiCalc.shrinkWindow": "Hesaplayıcı penceresini küçült",
-  "multiCalc.title": "Çok ekranlı işlem yardımcısı",
+  "multiCalc.title": "Hesap makinesi",
   "multiCalc.total": "Etkin ekranlar toplamı",
   "multiCalc.visibilityHidden": "Hesaplayıcı düğmesi gizli",
   "multiCalc.visibilityHint": "Hesaplayıcı simgesini istediğiniz yere sürükleyin veya gerekmediğinde gizleyin.",
   "multiCalc.visibilityLabel": "Yüzen hesaplayıcı düğmesini göster",
   "multiCalc.visibilityShown": "Hesaplayıcı düğmesi görünür",
   "multiCalc.visibilityTitle": "Yüzen hesaplayıcı",
+  "multiCalc.dragWindow": "Sürükle ve taşı",
 };
 
 export default dict;
