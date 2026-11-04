@@ -320,6 +320,20 @@ export default function MultiQuickCalculator() {
     toast.success(t("multiQuick.deleted"));
   };
 
+  const expenseTotals = useMemo(() => {
+    const representativeRate = parseNumber(items[0]?.exchangeRate || defaultExchangeRate);
+    return {
+      external: externalExpenses.reduce(
+        (sum, expense) => sum + localExpenseAmount(expense, representativeRate),
+        0
+      ),
+      internal: internalExpenses.reduce(
+        (sum, expense) => sum + localExpenseAmount(expense, representativeRate),
+        0
+      ),
+    };
+  }, [items, defaultExchangeRate, externalExpenses, internalExpenses]);
+
   const filteredRows = useMemo(() => {
     const q = search.trim().toLocaleLowerCase();
     if (!q) return savedRows;
@@ -390,10 +404,12 @@ export default function MultiQuickCalculator() {
           <SectionCard title={t("multiQuick.results")} tone="result">
             {calculation.result ? (
               <div className="space-y-3">
-                <div className="grid gap-2 sm:grid-cols-3">
+                <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
                   <Result label={t("quick.goodsValue")} value={calculation.result.invoiceValue} currency={localCurrency} />
+                  <Result label={t("quick.externalTotal")} value={expenseTotals.external} currency={localCurrency} />
                   <Result label={t("quick.customsAmount")} value={calculation.result.customsAmount} currency={localCurrency} />
-                  <Result label={t("quick.totalCost")} value={calculation.result.totalCost} currency={localCurrency} />
+                  <Result label={t("quick.internalTotal")} value={expenseTotals.internal} currency={localCurrency} />
+                  <Result label={t("multiQuick.goodsCost")} value={calculation.result.totalCost} currency={localCurrency} />
                 </div>
                 <div className="overflow-x-auto rounded border border-border">
                   <table className="w-full text-xs">

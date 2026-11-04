@@ -17,6 +17,7 @@ const dict: Record<string, string> = {
   "multiQuick.item": "الصنف",
   "multiQuick.addItem": "إضافة صنف",
   "multiQuick.results": "نتائج الحمولة",
+  "multiQuick.goodsCost": "تكلفة البضاعة",
   "multiQuick.allocatedCost": "المصاريف الموزعة",
   "multiQuick.savedOperations": "العمليات المحفوظة",
   "multiQuick.savedHint": "ابحث باسم الصنف أو المورد أو اسم العملية أو المرجع، ثم افتح السجل للمعاينة أو التعديل.",
