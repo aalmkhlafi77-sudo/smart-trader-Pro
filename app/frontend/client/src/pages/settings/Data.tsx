@@ -167,7 +167,7 @@ export default function SettingsData() {
 
         <SectionCard
           className="mt-5"
-          title={t("settings.lastBackup")
+          title={t("settings.lastBackup")}
           description={t("settings.dataDesc")}
           stamp={t("nav.backup")}
           footer={
