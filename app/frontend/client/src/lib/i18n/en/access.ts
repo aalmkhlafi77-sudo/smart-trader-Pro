@@ -32,6 +32,15 @@ const dict: Record<string, string> = {
   "access.setupText": "Create a six-digit passcode. It stays on this device and is not sent to any server.",
   "access.setupTitle": "Set a passcode for your ledger",
   "access.sixDigits": "Enter a valid six-digit passcode",
+  "access.privateTitle": "Private sign-in",
+  "access.privateHint": "Stores your data in your private MySQL database and separates it from public device data.",
+  "access.privateUsername": "Username",
+  "access.privatePassword": "Password",
+  "access.privateOpen": "Open private account",
+  "access.privateInvalid": "Enter a valid username and password",
+  "access.privateOpened": "Private account opened",
+  "access.privateIncorrect": "Private sign-in details are incorrect",
+  "access.privateRateLimited": "Too many attempts. Try again later",
 };
 
 export default dict;
