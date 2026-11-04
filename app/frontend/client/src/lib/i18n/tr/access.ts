@@ -51,6 +51,22 @@ const dict: Record<string, string> = {
   "access.privateReloaded": "Veriler sunucudan yenilendi",
   "access.privateReloadFailed": "Veriler sunucudan yenilenemedi",
   "access.privateLogout": "Özel hesaptan çıkış yap",
+  "access.privateAccountSettings": "Özel hesap ayarları",
+  "access.privateAccountSettingsHint": "MySQL tabanlı özel hesabın kullanıcı adını veya parolasını değiştirin.",
+  "access.privateCredentialsNote": "Mevcut parolanız gereklidir. Kaydetme tüm oturumları kapatır ve yeni bilgilerle yeniden giriş ister.",
+  "access.privateCurrentPassword": "Mevcut parola",
+  "access.privateNewPassword": "Yeni parola",
+  "access.privateConfirmPassword": "Yeni parolayı onayla",
+  "access.privateKeepPassword": "Mevcut parolayı korumak için boş bırakın",
+  "access.privateSaveCredentials": "Yeni giriş bilgilerini kaydet",
+  "access.privateCurrentRequired": "Mevcut parolanızı girin",
+  "access.privateNothingToChange": "Kaydedilecek değişiklik yok",
+  "access.privatePasswordMin": "Yeni parola en az 8 karakter olmalıdır",
+  "access.privatePasswordMismatch": "Yeni parola onayı eşleşmiyor",
+  "access.privateCredentialsChanged": "Giriş bilgileri güncellendi. Yeniden giriş yapın.",
+  "access.privateCurrentIncorrect": "Mevcut parola yanlış",
+  "access.privateUsernameExists": "Bu kullanıcı adı zaten kullanılıyor",
+  "access.privateCredentialsFailed": "Giriş bilgileri güncellenemedi",
 };
 
 export default dict;

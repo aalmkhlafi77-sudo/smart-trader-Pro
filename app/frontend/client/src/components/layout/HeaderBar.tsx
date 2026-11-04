@@ -1,6 +1,9 @@
 /** ترويسة الصفحة: مسار تنقّل المجموعة النشطة + عنوان/وصف/إجراءات + مبدّل اللغة. */
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useOptionalPrivateStorage } from "@/contexts/PrivateStorageContext";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { findActiveGroup } from "./navGroups";
 
@@ -16,6 +19,8 @@ export default function HeaderBar({
   location: string;
 }) {
   const { t } = useLanguage();
+  const privateStorage = useOptionalPrivateStorage();
+  const [loggingOut, setLoggingOut] = useState(false);
   const activeGroup = findActiveGroup(location);
   const activeItem = activeGroup?.items.find(item => item.href === location);
 
@@ -45,6 +50,26 @@ export default function HeaderBar({
           ) : null}
         </div>
         {action}
+        {privateStorage?.authenticated ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={loggingOut}
+            className="border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white lg:border-border lg:bg-card lg:text-foreground lg:hover:bg-secondary"
+            onClick={() => {
+              setLoggingOut(true);
+              void privateStorage
+                .logout()
+                .finally(() => {
+                  window.location.reload();
+                });
+            }}
+          >
+            <LogOut className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("access.privateLogout")}</span>
+          </Button>
+        ) : null}
         <LanguageSwitcher tone="dark" className="lg:hidden" />
         <LanguageSwitcher tone="light" className="hidden lg:flex" />
       </div>

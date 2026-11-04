@@ -172,7 +172,11 @@ export async function loginPrivateStorage(username: string, password: string) {
 }
 
 export async function logoutPrivateStorage() {
-  await flushPrivateStorageSync();
+  try {
+    await flushPrivateStorageSync();
+  } catch {
+    // Logout must remain available even if a final sync cannot complete.
+  }
   try {
     await request<{ ok: true }>("/api/private/logout", {
       method: "POST",
@@ -182,6 +186,20 @@ export async function logoutPrivateStorage() {
     setIndexedDbNamespace("public");
     emit({ ...initialState, ready: true, databaseReady: state.databaseReady });
   }
+}
+
+export async function updatePrivateAccount(input: {
+  currentPassword: string;
+  username?: string;
+  password?: string;
+}) {
+  await request<{ ok: true; username: string }>("/api/private/account", {
+    method: "POST",
+    headers: { "x-csrf-token": state.csrfToken },
+    body: JSON.stringify(input),
+  });
+  setIndexedDbNamespace("public");
+  emit({ ...initialState, ready: true, databaseReady: state.databaseReady });
 }
 
 async function syncSnapshotNow() {

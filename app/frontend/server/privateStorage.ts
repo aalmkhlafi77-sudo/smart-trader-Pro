@@ -361,6 +361,84 @@ export function registerPrivateStorageRoutes(app: Express) {
     res.json({ ok: true });
   });
 
+  app.post("/api/private/account", async (req, res) => {
+    const session = await sessionFromRequest(req);
+    if (!session || !pool) {
+      res.status(401).json({ error: "UNAUTHORIZED" });
+      return;
+    }
+    if (req.get("x-csrf-token") !== session.csrfToken) {
+      res.status(403).json({ error: "CSRF" });
+      return;
+    }
+
+    const currentPassword = String(req.body?.currentPassword || "");
+    const nextUsername = String(req.body?.username || "").trim();
+    const nextPassword = String(req.body?.password || "");
+
+    if (!currentPassword || (!nextUsername && !nextPassword)) {
+      res.status(400).json({ error: "INVALID_ACCOUNT_UPDATE" });
+      return;
+    }
+    if (nextUsername && nextUsername.length > 120) {
+      res.status(400).json({ error: "INVALID_USERNAME" });
+      return;
+    }
+    if (nextPassword && (nextPassword.length < 8 || nextPassword.length > 256)) {
+      res.status(400).json({ error: "INVALID_PASSWORD" });
+      return;
+    }
+
+    const [rows] = await pool.execute<RowDataPacket[]>(
+      "SELECT username, password_salt, password_hash FROM smart_trader_private_users WHERE id = ? LIMIT 1",
+      [session.userId]
+    );
+    const user = rows[0];
+    if (!user) {
+      res.status(404).json({ error: "ACCOUNT_NOT_FOUND" });
+      return;
+    }
+
+    const currentHash = await hashPassword(currentPassword, String(user.password_salt));
+    if (!safeEqualHex(currentHash, String(user.password_hash))) {
+      res.status(401).json({ error: "CURRENT_PASSWORD_INCORRECT" });
+      return;
+    }
+
+    let username = String(user.username);
+    let salt = String(user.password_salt);
+    let passwordHash = String(user.password_hash);
+
+    if (nextUsername) username = nextUsername;
+    if (nextPassword) {
+      salt = randomBytes(32).toString("hex");
+      passwordHash = await hashPassword(nextPassword, salt);
+    }
+
+    try {
+      await pool.execute(
+        `UPDATE smart_trader_private_users
+            SET username = ?, password_salt = ?, password_hash = ?, updated_at = ?
+          WHERE id = ?`,
+        [username, salt, passwordHash, new Date(), session.userId]
+      );
+    } catch (error) {
+      const code = String((error as { code?: string })?.code || "");
+      if (code === "ER_DUP_ENTRY") {
+        res.status(409).json({ error: "USERNAME_EXISTS" });
+        return;
+      }
+      throw error;
+    }
+
+    await pool.execute(
+      "DELETE FROM smart_trader_private_sessions WHERE user_id = ?",
+      [session.userId]
+    );
+    clearSessionCookie(res);
+    res.json({ ok: true, username });
+  });
+
   app.get("/api/private/snapshot", async (req, res) => {
     const session = await sessionFromRequest(req);
     if (!session || !pool) {

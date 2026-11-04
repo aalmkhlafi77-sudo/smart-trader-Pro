@@ -1,14 +1,17 @@
 import { Lock } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import AccessSettingsCard from "@/components/AccessSettingsCard";
+import PrivateAccountSettingsCard from "@/components/PrivateAccountSettingsCard";
 import { PageShell, SectionCard, StatusPill } from "@/components/patterns";
 import { Button } from "@/components/ui/button";
 import { useAccess } from "@/contexts/AccessContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePrivateStorage } from "@/contexts/PrivateStorageContext";
 
 export default function SettingsSecurity() {
   const { t } = useLanguage();
   const { configured, lock, unlocked } = useAccess();
+  const privateStorage = usePrivateStorage();
 
   return (
     <AppLayout title={t("settings.securityTitle")} subtitle={t("settings.securityHint")}>
@@ -22,13 +25,13 @@ export default function SettingsSecurity() {
         ]}
       >
         <div className="grid gap-5 lg:grid-cols-2 items-start">
-          <AccessSettingsCard />
+          {privateStorage.authenticated ? <PrivateAccountSettingsCard /> : <AccessSettingsCard />}
           <SectionCard
             title={t("settings.groupLedgerProtection")}
             description={t("settings.autoLockNote")}
             stamp={t("access.record")}
             footer={
-              configured ? (
+              !privateStorage.authenticated && configured ? (
                 <Button
                   type="button"
                   variant="outline"
@@ -45,8 +48,12 @@ export default function SettingsSecurity() {
               <span className="text-xs font-semibold text-[var(--ink)]">
                 {t("settings.groupLedgerProtection")}
               </span>
-              <StatusPill tone={unlocked ? "success" : "neutral"}>
-                {unlocked ? t("access.opened") : t("access.lockedTitle")}
+              <StatusPill tone={privateStorage.authenticated || unlocked ? "success" : "neutral"}>
+                {privateStorage.authenticated
+                  ? t("access.privateMode")
+                  : unlocked
+                    ? t("access.opened")
+                    : t("access.lockedTitle")}
               </StatusPill>
             </div>
           </SectionCard>

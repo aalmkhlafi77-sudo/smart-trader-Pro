@@ -51,6 +51,22 @@ const dict: Record<string, string> = {
   "access.privateReloaded": "تم تحديث البيانات من الخادم",
   "access.privateReloadFailed": "تعذر تحديث البيانات من الخادم",
   "access.privateLogout": "تسجيل خروج من الحساب الخاص",
+  "access.privateAccountSettings": "إدارة الحساب الخاص",
+  "access.privateAccountSettingsHint": "تغيير اسم المستخدم أو كلمة المرور للحساب المحفوظ في MySQL.",
+  "access.privateCredentialsNote": "يلزم إدخال كلمة المرور الحالية. بعد الحفظ سيتم تسجيل الخروج من جميع الجلسات ويجب الدخول بالبيانات الجديدة.",
+  "access.privateCurrentPassword": "كلمة المرور الحالية",
+  "access.privateNewPassword": "كلمة المرور الجديدة",
+  "access.privateConfirmPassword": "تأكيد كلمة المرور الجديدة",
+  "access.privateKeepPassword": "اتركها فارغة إذا لم ترغب بتغييرها",
+  "access.privateSaveCredentials": "حفظ بيانات الدخول الجديدة",
+  "access.privateCurrentRequired": "أدخل كلمة المرور الحالية",
+  "access.privateNothingToChange": "لا توجد تغييرات لحفظها",
+  "access.privatePasswordMin": "كلمة المرور الجديدة يجب ألا تقل عن 8 أحرف",
+  "access.privatePasswordMismatch": "تأكيد كلمة المرور الجديدة غير متطابق",
+  "access.privateCredentialsChanged": "تم تحديث بيانات الدخول. سجل الدخول من جديد.",
+  "access.privateCurrentIncorrect": "كلمة المرور الحالية غير صحيحة",
+  "access.privateUsernameExists": "اسم المستخدم مستخدم بالفعل",
+  "access.privateCredentialsFailed": "تعذر تحديث بيانات الدخول",
 };
 
 export default dict;

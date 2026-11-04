@@ -13,6 +13,7 @@ import {
   logoutPrivateStorage,
   reloadPrivateStorageFromServer,
   subscribePrivateStorage,
+  updatePrivateAccount,
   type PrivateStorageState,
 } from "@/lib/db/privateStorageClient";
 
@@ -20,6 +21,7 @@ type PrivateStorageContextValue = PrivateStorageState & {
   login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   reloadFromServer: () => Promise<void>;
+  updateAccount: (input: { currentPassword: string; username?: string; password?: string }) => Promise<void>;
 };
 
 const PrivateStorageContext = createContext<PrivateStorageContextValue | null>(null);
@@ -39,6 +41,7 @@ export function PrivateStorageProvider({ children }: { children: ReactNode }) {
       login: loginPrivateStorage,
       logout: logoutPrivateStorage,
       reloadFromServer: reloadPrivateStorageFromServer,
+      updateAccount: updatePrivateAccount,
     }),
     [state]
   );
@@ -56,4 +59,8 @@ export function usePrivateStorage() {
     throw new Error("usePrivateStorage must be used inside PrivateStorageProvider");
   }
   return context;
+}
+
+export function useOptionalPrivateStorage() {
+  return useContext(PrivateStorageContext);
 }
