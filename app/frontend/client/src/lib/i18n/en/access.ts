@@ -41,6 +41,16 @@ const dict: Record<string, string> = {
   "access.privateOpened": "Private account opened",
   "access.privateIncorrect": "Private sign-in details are incorrect",
   "access.privateRateLimited": "Too many attempts. Try again later",
+  "access.storageModeTitle": "Data storage mode",
+  "access.privateStorageDescription": "This account is stored in MySQL and uses a separate private browser cache.",
+  "access.publicStorageDescription": "This mode is stored only on this device in IndexedDB and is not uploaded to the server.",
+  "access.privateMode": "Private · MySQL",
+  "access.publicMode": "Public · Local",
+  "access.publicDeviceOnly": "Saved on this device only",
+  "access.privateReload": "Reload from server",
+  "access.privateReloaded": "Data refreshed from server",
+  "access.privateReloadFailed": "Could not refresh data from server",
+  "access.privateLogout": "Sign out of private account",
 };
 
 export default dict;
