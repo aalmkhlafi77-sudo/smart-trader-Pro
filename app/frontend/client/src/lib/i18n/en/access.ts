@@ -51,6 +51,22 @@ const dict: Record<string, string> = {
   "access.privateReloaded": "Data refreshed from server",
   "access.privateReloadFailed": "Could not refresh data from server",
   "access.privateLogout": "Sign out of private account",
+  "access.privateAccountSettings": "Private account settings",
+  "access.privateAccountSettingsHint": "Change the username or password for the MySQL-backed private account.",
+  "access.privateCredentialsNote": "Your current password is required. Saving signs out all sessions and requires signing in again with the new credentials.",
+  "access.privateCurrentPassword": "Current password",
+  "access.privateNewPassword": "New password",
+  "access.privateConfirmPassword": "Confirm new password",
+  "access.privateKeepPassword": "Leave blank to keep the current password",
+  "access.privateSaveCredentials": "Save new sign-in details",
+  "access.privateCurrentRequired": "Enter your current password",
+  "access.privateNothingToChange": "There are no changes to save",
+  "access.privatePasswordMin": "The new password must be at least 8 characters",
+  "access.privatePasswordMismatch": "The new password confirmation does not match",
+  "access.privateCredentialsChanged": "Sign-in details updated. Sign in again.",
+  "access.privateCurrentIncorrect": "The current password is incorrect",
+  "access.privateUsernameExists": "That username is already in use",
+  "access.privateCredentialsFailed": "Could not update sign-in details",
 };
 
 export default dict;
