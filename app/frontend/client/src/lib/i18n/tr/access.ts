@@ -41,6 +41,16 @@ const dict: Record<string, string> = {
   "access.privateOpened": "Özel hesap açıldı",
   "access.privateIncorrect": "Özel giriş bilgileri yanlış",
   "access.privateRateLimited": "Çok fazla deneme. Daha sonra tekrar deneyin",
+  "access.storageModeTitle": "Veri saklama modu",
+  "access.privateStorageDescription": "Bu hesap MySQL'de saklanır ve ayrı bir özel tarayıcı önbelleği kullanır.",
+  "access.publicStorageDescription": "Bu mod yalnızca bu cihazdaki IndexedDB'de saklanır ve sunucuya yüklenmez.",
+  "access.privateMode": "Özel · MySQL",
+  "access.publicMode": "Genel · Yerel",
+  "access.publicDeviceOnly": "Yalnızca bu cihazda kayıtlı",
+  "access.privateReload": "Sunucudan yeniden yükle",
+  "access.privateReloaded": "Veriler sunucudan yenilendi",
+  "access.privateReloadFailed": "Veriler sunucudan yenilenemedi",
+  "access.privateLogout": "Özel hesaptan çıkış yap",
 };
 
 export default dict;
