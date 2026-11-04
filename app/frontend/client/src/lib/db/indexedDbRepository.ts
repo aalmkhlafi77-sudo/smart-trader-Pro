@@ -52,13 +52,27 @@ const KEY_PATHS: Record<TableName, "id" | "code"> = Object.fromEntries(
 
 let cachedDb: IDBDatabase | null = null;
 let openingDb: Promise<IDBDatabase> | null = null;
+let activeDbName = DB_NAME;
+
+export type IndexedDbNamespace = "public" | "private";
+
+export function setIndexedDbNamespace(namespace: IndexedDbNamespace): void {
+  const nextName = namespace === "private" ? `${DB_NAME}_private_cache` : DB_NAME;
+  if (nextName === activeDbName) return;
+  closeIndexedDbConnection();
+  activeDbName = nextName;
+}
+
+export function getIndexedDbNamespace(): IndexedDbNamespace {
+  return activeDbName === DB_NAME ? "public" : "private";
+}
 
 function openDb(): Promise<IDBDatabase> {
   if (cachedDb) return Promise.resolve(cachedDb);
   if (openingDb) return openingDb;
 
   openingDb = new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, SCHEMA_VERSION);
+    const request = indexedDB.open(activeDbName, SCHEMA_VERSION);
     request.onupgradeneeded = () => {
       const db = request.result;
       if (db.objectStoreNames.contains(TABLES.currencies)) {

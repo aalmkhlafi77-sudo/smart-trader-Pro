@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
-import { AlertTriangle, Database, Download, FileSearch, Upload } from "lucide-react";
+import { AlertTriangle, Cloud, Database, Download, FileSearch, LogOut, RefreshCw, Upload } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import { PageShell, SectionCard } from "@/components/patterns";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePrivateStorage } from "@/contexts/PrivateStorageContext";
 import { db } from "@/lib/db";
 import { formatDateTime } from "@/lib/pricing";
 import {
@@ -18,10 +20,14 @@ import { toast } from "sonner";
 
 export default function SettingsData() {
   const { t } = useLanguage();
+  const privateStorage = usePrivateStorage();
   const [lastBackupAt, setLastBackupAt] = useState<string | null>(null);
   const [preview, setPreview] = useState<{ fileName: string; plan: ExcelImportPlan } | null>(null);
   const [duplicateMode, setDuplicateMode] = useState<ExcelDuplicateMode>("update");
   const [isImporting, setIsImporting] = useState(false);
+  const [privateUsername, setPrivateUsername] = useState("");
+  const [privatePassword, setPrivatePassword] = useState("");
+  const [privateSubmitting, setPrivateSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -96,6 +102,106 @@ export default function SettingsData() {
         ]}
       >
         <SectionCard
+          title={t("access.storageModeTitle")}
+          description={
+            privateStorage.authenticated
+              ? t("access.privateStorageDescription")
+              : t("access.publicStorageDescription")
+          }
+          stamp={
+            privateStorage.authenticated
+              ? t("access.privateMode")
+              : t("access.publicMode")
+          }
+        >
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-3 rounded-md border px-3 py-2.5">
+              <div className="flex items-center gap-2">
+                {privateStorage.authenticated ? (
+                  <Cloud className="h-4 w-4 text-[var(--port-green)]" />
+                ) : (
+                  <Database className="h-4 w-4 text-muted-foreground" />
+                )}
+                <div>
+                  <p className="text-xs font-semibold text-[var(--ink)]">
+                    {privateStorage.authenticated
+                      ? t("access.privateMode")
+                      : t("access.publicMode")}
+                  </p>
+                  <p className="mt-0.5 text-[10px] text-muted-foreground">
+                    {privateStorage.authenticated
+                      ? privateStorage.username
+                      : t("access.publicDeviceOnly")}
+                  </p>
+                </div>
+              </div>
+              <span className="text-[10px] text-muted-foreground" dir="ltr">
+                {privateStorage.authenticated
+                  ? `REV ${privateStorage.revision} · ${privateStorage.syncState.toUpperCase()}`
+                  : "INDEXEDDB"}
+              </span>
+            </div>
+            {!privateStorage.authenticated && privateStorage.databaseReady ? (
+              <div className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+                <Input
+                  value={privateUsername}
+                  onChange={event => setPrivateUsername(event.target.value)}
+                  placeholder={t("access.privateUsername")}
+                  autoComplete="username"
+                />
+                <Input
+                  type="password"
+                  value={privatePassword}
+                  onChange={event => setPrivatePassword(event.target.value)}
+                  placeholder={t("access.privatePassword")}
+                  autoComplete="current-password"
+                />
+                <Button
+                  disabled={privateSubmitting}
+                  onClick={() => {
+                    setPrivateSubmitting(true);
+                    void privateStorage
+                      .login(privateUsername.trim(), privatePassword)
+                      .then(() => window.location.reload())
+                      .catch(() => toast.error(t("access.privateIncorrect")))
+                      .finally(() => setPrivateSubmitting(false));
+                  }}
+                >
+                  <Cloud className="h-4 w-4" />
+                  {t("access.privateOpen")}
+                </Button>
+              </div>
+            ) : null}
+            {privateStorage.authenticated ? (
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    void privateStorage
+                      .reloadFromServer()
+                      .then(() => toast.success(t("access.privateReloaded")))
+                      .catch(() => toast.error(t("access.privateReloadFailed")))
+                  }
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  {t("access.privateReload")}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    void privateStorage.logout().then(() => window.location.reload())
+                  }
+                >
+                  <LogOut className="h-4 w-4" />
+                  {t("access.privateLogout")}
+                </Button>
+              </div>
+            ) : null}
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          className="mt-5"
           title={t("settings.lastBackup")}
           description={t("settings.dataDesc")}
           stamp={t("nav.backup")}
