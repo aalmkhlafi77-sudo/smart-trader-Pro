@@ -415,6 +415,14 @@ export default function MultiQuickCalculator() {
                   <table className="w-full text-xs">
                     <thead className="bg-secondary/60"><tr><th className="p-2 text-start">{t("quick.item")}</th><th className="p-2">{t("multiQuick.allocatedCost")}</th><th className="p-2">{t("quick.unitCost")}</th><th className="p-2">{t("quick.suggestedPrice")}</th></tr></thead>
                     <tbody>{calculation.result.items.map((row, index) => <tr key={row.itemId} className="border-t border-border"><td className="p-2 font-semibold">{items[index]?.itemName || t("quick.manualItem")}</td><td className="p-2 text-center">{formatMoney(row.allocatedCost, localCurrency)}</td><td className="p-2 text-center">{formatMoney(row.unitCost, localCurrency)}</td><td className="p-2 text-center font-bold">{formatMoney(row.suggestedPrice, localCurrency)}</td></tr>)}</tbody>
+                    <tfoot>
+                      <tr className="border-t border-border bg-secondary/40 font-semibold">
+                        <td className="p-2 text-start">{t("multiQuick.totalAllocatedCost")}</td>
+                        <td className="p-2 text-center">{formatMoney(calculation.result.items.reduce((sum, row) => sum + row.allocatedCost, 0), localCurrency)}</td>
+                        <td className="p-2" />
+                        <td className="p-2" />
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
               </div>
