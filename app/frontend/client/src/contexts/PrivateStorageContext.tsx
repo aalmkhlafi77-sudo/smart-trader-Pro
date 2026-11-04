@@ -60,3 +60,7 @@ export function usePrivateStorage() {
   }
   return context;
 }
+
+export function useOptionalPrivateStorage() {
+  return useContext(PrivateStorageContext);
+}
