@@ -1,8 +1,7 @@
 /** ترويسة الصفحة: مسار تنقّل المجموعة النشطة + عنوان/وصف/إجراءات + مبدّل اللغة. */
 import { useState, type ReactNode } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { usePrivateStorage } from "@/contexts/PrivateStorageContext";
-import { useAccess } from "@/contexts/AccessContext";
+import { useOptionalPrivateStorage } from "@/contexts/PrivateStorageContext";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -20,8 +19,7 @@ export default function HeaderBar({
   location: string;
 }) {
   const { t } = useLanguage();
-  const privateStorage = usePrivateStorage();
-  const { lock } = useAccess();
+  const privateStorage = useOptionalPrivateStorage();
   const [loggingOut, setLoggingOut] = useState(false);
   const activeGroup = findActiveGroup(location);
   const activeItem = activeGroup?.items.find(item => item.href === location);
@@ -52,7 +50,7 @@ export default function HeaderBar({
           ) : null}
         </div>
         {action}
-        {privateStorage.authenticated ? (
+        {privateStorage?.authenticated ? (
           <Button
             type="button"
             variant="outline"
@@ -64,7 +62,6 @@ export default function HeaderBar({
               void privateStorage
                 .logout()
                 .finally(() => {
-                  lock();
                   window.location.reload();
                 });
             }}
