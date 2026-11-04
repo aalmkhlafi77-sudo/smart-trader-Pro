@@ -24,7 +24,7 @@ const dict: Record<string, string> = {
   "multiCalc.minimize": "تصغير الحاسبة",
   "multiCalc.newOperation": "عملية جديدة",
   "multiCalc.noHistory": "لا توجد عمليات محفوظة بعد",
-  "multiCalc.open": "الحاسبة السريعة",
+  "multiCalc.open": "آلة حاسبة",
   "multiCalc.paste": "لصق",
   "multiCalc.pasteNumber": "يمكن لصق الأرقام والعمليات الحسابية فقط",
   "multiCalc.pasted": "تم لصق القيمة في الشاشة النشطة",
@@ -39,13 +39,14 @@ const dict: Record<string, string> = {
   "multiCalc.selected": "محدد",
   "multiCalc.shortcuts": "0–9 · Enter = · Tab للشاشات · Ctrl+C / Ctrl+V · Esc",
   "multiCalc.shrinkWindow": "تصغير نافذة الحاسبة",
-  "multiCalc.title": "مساعد العمليات متعدد الشاشات",
+  "multiCalc.title": "آلة حاسبة",
   "multiCalc.total": "إجمالي الشاشات المفعلة",
   "multiCalc.visibilityHidden": "زر الحاسبة مخفي",
   "multiCalc.visibilityHint": "اسحب أيقونة الحاسبة إلى أي موضع، أو أخفها عند عدم الحاجة إليها.",
   "multiCalc.visibilityLabel": "إظهار زر الحاسبة العائم",
   "multiCalc.visibilityShown": "زر الحاسبة ظاهر",
   "multiCalc.visibilityTitle": "الحاسبة العائمة",
+  "multiCalc.dragWindow": "سحب وتحريك",
 };
 
 export default dict;
