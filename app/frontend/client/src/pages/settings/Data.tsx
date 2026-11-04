@@ -4,6 +4,7 @@ import { AlertTriangle, Cloud, Database, Download, FileSearch, LogOut, RefreshCw
 import AppLayout from "@/components/AppLayout";
 import { PageShell, SectionCard } from "@/components/patterns";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { usePrivateStorage } from "@/contexts/PrivateStorageContext";
 import { db } from "@/lib/db";
@@ -24,6 +25,9 @@ export default function SettingsData() {
   const [preview, setPreview] = useState<{ fileName: string; plan: ExcelImportPlan } | null>(null);
   const [duplicateMode, setDuplicateMode] = useState<ExcelDuplicateMode>("update");
   const [isImporting, setIsImporting] = useState(false);
+  const [privateUsername, setPrivateUsername] = useState("");
+  const [privatePassword, setPrivatePassword] = useState("");
+  const [privateSubmitting, setPrivateSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -137,6 +141,37 @@ export default function SettingsData() {
                   : "INDEXEDDB"}
               </span>
             </div>
+            {!privateStorage.authenticated && privateStorage.databaseReady ? (
+              <div className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+                <Input
+                  value={privateUsername}
+                  onChange={event => setPrivateUsername(event.target.value)}
+                  placeholder={t("access.privateUsername")}
+                  autoComplete="username"
+                />
+                <Input
+                  type="password"
+                  value={privatePassword}
+                  onChange={event => setPrivatePassword(event.target.value)}
+                  placeholder={t("access.privatePassword")}
+                  autoComplete="current-password"
+                />
+                <Button
+                  disabled={privateSubmitting}
+                  onClick={() => {
+                    setPrivateSubmitting(true);
+                    void privateStorage
+                      .login(privateUsername.trim(), privatePassword)
+                      .then(() => window.location.reload())
+                      .catch(() => toast.error(t("access.privateIncorrect")))
+                      .finally(() => setPrivateSubmitting(false));
+                  }}
+                >
+                  <Cloud className="h-4 w-4" />
+                  {t("access.privateOpen")}
+                </Button>
+              </div>
+            ) : null}
             {privateStorage.authenticated ? (
               <div className="flex flex-wrap gap-2">
                 <Button
