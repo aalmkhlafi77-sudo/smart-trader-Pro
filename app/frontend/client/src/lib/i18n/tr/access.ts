@@ -32,6 +32,15 @@ const dict: Record<string, string> = {
   "access.setupText": "Altı haneli bir giriş kodu oluşturun. Kod bu cihazda kalır ve hiçbir sunucuya gönderilmez.",
   "access.setupTitle": "Defteriniz için bir giriş kodu belirleyin",
   "access.sixDigits": "Geçerli altı haneli bir kod girin",
+  "access.privateTitle": "Özel giriş",
+  "access.privateHint": "Verilerinizi özel MySQL veritabanında saklar ve genel cihaz verilerinden ayırır.",
+  "access.privateUsername": "Kullanıcı adı",
+  "access.privatePassword": "Parola",
+  "access.privateOpen": "Özel hesabı aç",
+  "access.privateInvalid": "Geçerli kullanıcı adı ve parola girin",
+  "access.privateOpened": "Özel hesap açıldı",
+  "access.privateIncorrect": "Özel giriş bilgileri yanlış",
+  "access.privateRateLimited": "Çok fazla deneme. Daha sonra tekrar deneyin",
 };
 
 export default dict;
