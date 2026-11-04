@@ -5,6 +5,7 @@ import {
   LockKeyhole,
   ShieldCheck,
   Eye,
+  EyeOff,
   ArrowRight,
   Cloud,
 } from "lucide-react";
@@ -27,6 +28,7 @@ export default function AccessGate({ children }: { children: ReactNode }) {
   const [privateUsername, setPrivateUsername] = useState("");
   const [privatePassword, setPrivatePassword] = useState("");
   const [privateSubmitting, setPrivateSubmitting] = useState(false);
+  const [showPrivatePassword, setShowPrivatePassword] = useState(false);
   const [confirmation, setConfirmation] = useState("");
   const [showHint, setShowHint] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -286,16 +288,27 @@ export default function AccessGate({ children }: { children: ReactNode }) {
                       placeholder={t("access.privateUsername")}
                       autoComplete="username"
                     />
-                    <Input
-                      type="password"
-                      value={privatePassword}
-                      onChange={event => setPrivatePassword(event.target.value)}
-                      placeholder={t("access.privatePassword")}
-                      autoComplete="current-password"
-                      onKeyDown={event => {
-                        if (event.key === "Enter") void submitPrivate();
-                      }}
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showPrivatePassword ? "text" : "password"}
+                        className="pe-10"
+                        value={privatePassword}
+                        onChange={event => setPrivatePassword(event.target.value)}
+                        placeholder={t("access.privatePassword")}
+                        autoComplete="current-password"
+                        onKeyDown={event => {
+                          if (event.key === "Enter") void submitPrivate();
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="absolute end-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+                        onClick={() => setShowPrivatePassword(value => !value)}
+                        aria-label={showPrivatePassword ? t("access.hidePassword") : t("access.showPassword")}
+                      >
+                        {showPrivatePassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
                     <Button
                       type="button"
                       variant="outline"
