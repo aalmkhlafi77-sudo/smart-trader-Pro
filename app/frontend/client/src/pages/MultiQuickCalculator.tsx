@@ -25,20 +25,20 @@ type MultiItemDraft = {
   customsRate: string;
 };
 
-const defaultExternal: QuickExpense[] = [
-  { id: "insurance", name: "تأمين", amount: 0, currency: "foreign", includeInCustomsBase: true },
-  { id: "external-shipping", name: "شحن خارجي", amount: 0, currency: "foreign", includeInCustomsBase: false },
-  { id: "external-other", name: "مصروف خارجي آخر", amount: 0, currency: "foreign", includeInCustomsBase: true },
+const makeDefaultExternal = (t: (key: string) => string): QuickExpense[] => [
+  { id: "insurance", name: t("quick.insurance"), amount: 0, currency: "foreign", includeInCustomsBase: true },
+  { id: "external-shipping", name: t("quick.externalShipping"), amount: 0, currency: "foreign", includeInCustomsBase: false },
+  { id: "external-other", name: t("quick.externalOther"), amount: 0, currency: "foreign", includeInCustomsBase: true },
 ];
 
-const defaultInternal: QuickExpense[] = [
-  { id: "clearance", name: "تخليص", amount: 0, currency: "local", includeInCustomsBase: false },
-  { id: "shipping-agent", name: "وكيل شحن", amount: 0, currency: "local", includeInCustomsBase: false },
-  { id: "fines", name: "غرامات", amount: 0, currency: "local", includeInCustomsBase: false },
-  { id: "clearance-office", name: "أتعاب مكتب التخليص", amount: 0, currency: "local", includeInCustomsBase: false },
-  { id: "internal-transport", name: "نقل داخلي", amount: 0, currency: "local", includeInCustomsBase: false },
-  { id: "handling", name: "تحميل وتفريغ", amount: 0, currency: "local", includeInCustomsBase: false },
-  { id: "internal-other", name: "مصروف داخلي آخر", amount: 0, currency: "local", includeInCustomsBase: false },
+const makeDefaultInternal = (t: (key: string) => string): QuickExpense[] => [
+  { id: "clearance", name: t("quick.clearance"), amount: 0, currency: "local", includeInCustomsBase: false },
+  { id: "shipping-agent", name: t("quick.shippingAgent"), amount: 0, currency: "local", includeInCustomsBase: false },
+  { id: "fines", name: t("quick.fines"), amount: 0, currency: "local", includeInCustomsBase: false },
+  { id: "clearance-office", name: t("quick.clearanceOffice"), amount: 0, currency: "local", includeInCustomsBase: false },
+  { id: "internal-transport", name: t("quick.internalTransport"), amount: 0, currency: "local", includeInCustomsBase: false },
+  { id: "handling", name: t("quick.handling"), amount: 0, currency: "local", includeInCustomsBase: false },
+  { id: "internal-other", name: t("quick.internalOther"), amount: 0, currency: "local", includeInCustomsBase: false },
 ];
 
 const cloneExpenses = (rows: QuickExpense[]) => rows.map(row => ({ ...row }));
@@ -71,8 +71,8 @@ export default function MultiQuickCalculator() {
   const [marginRate, setMarginRate] = useState("20");
   const [allocationBasis, setAllocationBasis] = useState<AllocationBasis>("value");
   const [items, setItems] = useState<MultiItemDraft[]>([makeDraft()]);
-  const [externalExpenses, setExternalExpenses] = useState(() => cloneExpenses(defaultExternal));
-  const [internalExpenses, setInternalExpenses] = useState(() => cloneExpenses(defaultInternal));
+  const [externalExpenses, setExternalExpenses] = useState(() => cloneExpenses(makeDefaultExternal(t)));
+  const [internalExpenses, setInternalExpenses] = useState(() => cloneExpenses(makeDefaultInternal(t)));
   const [savedRows, setSavedRows] = useState<QuickCalculationRow[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -172,7 +172,7 @@ export default function MultiQuickCalculator() {
       costLines.push({
         id: "multi-customs",
         runId: "multi-quick-preview",
-        name: "الجمارك",
+        name: t("quick.customsAmount"),
         stage: "customs",
         status: "entered",
         method: "fixed",
@@ -238,8 +238,8 @@ export default function MultiQuickCalculator() {
     setSupplierName("");
     setAllocationBasis("value");
     setItems([makeDraft(defaultCurrency, defaultExchangeRate, defaultCustomsRate)]);
-    setExternalExpenses(cloneExpenses(defaultExternal));
-    setInternalExpenses(cloneExpenses(defaultInternal));
+    setExternalExpenses(cloneExpenses(makeDefaultExternal(t)));
+    setInternalExpenses(cloneExpenses(makeDefaultInternal(t)));
   };
 
   const save = async () => {
@@ -304,8 +304,8 @@ export default function MultiQuickCalculator() {
       setAllocationBasis(row.allocationBasis || "value");
       setMarginRate(String((row.marginRate || 0) * 100));
       setItems(restoredItems.length ? restoredItems : [makeDraft(defaultCurrency, defaultExchangeRate, defaultCustomsRate)]);
-      setExternalExpenses(restoredExternal.length ? restoredExternal : cloneExpenses(defaultExternal));
-      setInternalExpenses(restoredInternal.length ? restoredInternal : cloneExpenses(defaultInternal));
+      setExternalExpenses(restoredExternal.length ? restoredExternal : cloneExpenses(makeDefaultExternal(t)));
+      setInternalExpenses(restoredInternal.length ? restoredInternal : cloneExpenses(makeDefaultInternal(t)));
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
       toast.error(t("multiQuick.openFailed"));
