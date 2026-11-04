@@ -14,6 +14,7 @@ const dict: Record<string, string> = {
   "nav.prices": "الأسعار",
   "nav.pricing": "حاسبة التكلفة",
   "nav.quickCalculator": "الحاسبة السريعة",
+  "nav.multiQuickCalculator": "الحاسبة السريعة المتعددة",
   "nav.reports": "التقارير الذكية",
   "nav.settings": "الإعدادات",
 };
