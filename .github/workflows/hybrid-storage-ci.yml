@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/hybrid-private-public-storage
+      - fix/private-account-controls
   pull_request:
     branches:
       - main
