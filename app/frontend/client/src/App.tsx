@@ -8,6 +8,7 @@ import FloatingCalculator from "./components/FloatingCalculator";
 import { AccessProvider } from "./contexts/AccessContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { LoginBackgroundProvider } from "./contexts/LoginBackgroundContext";
+import { PrivateStorageProvider } from "./contexts/PrivateStorageContext";
 import { WorkspacePreferencesProvider } from "./contexts/WorkspacePreferencesContext";
 import { ActivityThemeProvider } from "./contexts/ActivityThemeContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -72,7 +73,8 @@ function App() {
           <ActivityThemeProvider>
             <WorkspacePreferencesProvider>
               <LoginBackgroundProvider>
-                <AccessProvider>
+                <PrivateStorageProvider>
+                  <AccessProvider>
                   <TooltipProvider>
                     <Toaster />
                     <AccessGate>
@@ -80,7 +82,8 @@ function App() {
                       <FloatingCalculator />
                     </AccessGate>
                   </TooltipProvider>
-                </AccessProvider>
+                  </AccessProvider>
+                </PrivateStorageProvider>
               </LoginBackgroundProvider>
             </WorkspacePreferencesProvider>
           </ActivityThemeProvider>
