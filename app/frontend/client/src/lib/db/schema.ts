@@ -203,6 +203,13 @@ export interface PricingRunRow {
 /** مسودة حاسبة سريعة؛ مستقلة عن ملفات الحمولات وأسعار البيع. */
 export interface QuickCalculationRow {
   id: string;
+  /** نوع السجل: غياب القيمة يعني الحاسبة السريعة القديمة، وmulti للحاسبة متعددة الأصناف. */
+  mode?: "single" | "multi";
+  /** حقول الحاسبة المتعددة محفوظة كـ JSON لتبقى متوافقة مع مخطط الحاسبة الحالي والنسخ الاحتياطية. */
+  title?: string;
+  reference?: string;
+  allocationBasis?: "value" | "quantity";
+  itemsJson?: string;
   supplierName: string;
   itemId: string | null;
   itemName: string;
