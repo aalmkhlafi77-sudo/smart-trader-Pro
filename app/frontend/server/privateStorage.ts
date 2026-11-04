@@ -1,7 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { createHash, pbkdf2, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import mysql, { type Pool, type RowDataPacket } from "mysql2/promise";
+import { createPool, type Pool, type RowDataPacket } from "mysql2/promise";
 
 const pbkdf2Async = promisify(pbkdf2);
 const SESSION_COOKIE = "smart_trader_private";
@@ -190,7 +190,7 @@ export async function initializePrivateStorage() {
     return;
   }
   try {
-    pool = mysql.createPool({
+    pool = createPool({
       ...config,
       waitForConnections: true,
       connectionLimit: 5,
