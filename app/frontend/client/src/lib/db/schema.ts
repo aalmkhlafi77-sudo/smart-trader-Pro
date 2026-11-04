@@ -646,7 +646,8 @@ CREATE TABLE IF NOT EXISTS pricing_runs (
   createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS quick_calculations (
-  id TEXT PRIMARY KEY, supplierName TEXT, itemId TEXT, itemName TEXT,
+  id TEXT PRIMARY KEY, mode TEXT, title TEXT, reference TEXT, allocationBasis TEXT, itemsJson TEXT,
+  supplierName TEXT, itemId TEXT, itemName TEXT,
   quantity REAL, unitPrice REAL, currency TEXT, exchangeRate REAL,
   customsRate REAL, marginRate REAL, externalExpensesJson TEXT,
   internalExpensesJson TEXT, goodsValue REAL, externalExpenses REAL,
