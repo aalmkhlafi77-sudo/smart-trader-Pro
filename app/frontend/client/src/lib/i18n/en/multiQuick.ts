@@ -17,6 +17,7 @@ const dict: Record<string, string> = {
   "multiQuick.item": "Item",
   "multiQuick.addItem": "Add item",
   "multiQuick.results": "Shipment results",
+  "multiQuick.goodsCost": "Goods cost",
   "multiQuick.allocatedCost": "Allocated costs",
   "multiQuick.savedOperations": "Saved operations",
   "multiQuick.savedHint": "Search by item, supplier, operation name or reference, then open a record to review or edit it.",
