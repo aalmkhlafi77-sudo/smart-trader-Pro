@@ -203,6 +203,13 @@ export interface PricingRunRow {
 /** مسودة حاسبة سريعة؛ مستقلة عن ملفات الحمولات وأسعار البيع. */
 export interface QuickCalculationRow {
   id: string;
+  /** نوع السجل: غياب القيمة يعني الحاسبة السريعة القديمة، وmulti للحاسبة متعددة الأصناف. */
+  mode?: "single" | "multi";
+  /** حقول الحاسبة المتعددة محفوظة كـ JSON لتبقى متوافقة مع مخطط الحاسبة الحالي والنسخ الاحتياطية. */
+  title?: string;
+  reference?: string;
+  allocationBasis?: "value" | "quantity";
+  itemsJson?: string;
   supplierName: string;
   itemId: string | null;
   itemName: string;
@@ -639,7 +646,8 @@ CREATE TABLE IF NOT EXISTS pricing_runs (
   createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS quick_calculations (
-  id TEXT PRIMARY KEY, supplierName TEXT, itemId TEXT, itemName TEXT,
+  id TEXT PRIMARY KEY, mode TEXT, title TEXT, reference TEXT, allocationBasis TEXT, itemsJson TEXT,
+  supplierName TEXT, itemId TEXT, itemName TEXT,
   quantity REAL, unitPrice REAL, currency TEXT, exchangeRate REAL,
   customsRate REAL, marginRate REAL, externalExpensesJson TEXT,
   internalExpensesJson TEXT, goodsValue REAL, externalExpenses REAL,

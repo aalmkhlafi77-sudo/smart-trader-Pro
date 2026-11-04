@@ -37,6 +37,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/cargo", labelKey: "nav.cargo", icon: Calculator },
       { href: "/quick-calculator", labelKey: "nav.quickCalculator", icon: Calculator },
+      { href: "/multi-quick-calculator", labelKey: "nav.multiQuickCalculator", icon: Calculator },
     ],
   },
   {
