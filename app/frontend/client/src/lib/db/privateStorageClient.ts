@@ -67,7 +67,9 @@ export function subscribePrivateStorage(
   listener: (next: PrivateStorageState) => void
 ) {
   listeners.add(listener);
-  return () => listeners.delete(listener);
+  return () => {
+    listeners.delete(listener);
+  };
 }
 
 async function hydratePrivateCache() {
