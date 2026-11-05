@@ -17,6 +17,7 @@ import dict_reports from "./reports";
 import dict_settings from "./settings";
 import dict_ui from "./ui";
 import dict_quick from "./quick";
+import dict_quickEntry from "./quickEntry";
 import dict_validation from "./validation";
 
 const merged: Record<string, string> = {
@@ -39,6 +40,7 @@ const merged: Record<string, string> = {
   ...dict_settings,
   ...dict_ui,
   ...dict_quick,
+  ...dict_quickEntry,
   ...dict_validation,
 };
 
