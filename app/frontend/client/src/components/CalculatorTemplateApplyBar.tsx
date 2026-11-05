@@ -18,7 +18,8 @@ export default function CalculatorTemplateApplyBar({
   const [selectedId, setSelectedId] = useState("");
 
   useEffect(() => {
-    void db.listCalculatorTemplates().then(setRows);
+    if (typeof indexedDB === "undefined") return;
+    void db.listCalculatorTemplates().then(setRows).catch(() => setRows([]));
   }, []);
 
   const compatible = useMemo(
