@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Field, FormGrid, NumberField, PageShell, SectionCard } from "@/components/patterns";
+import { DecimalAmountField, Field, FormGrid, NumberField, PageShell, SectionCard } from "@/components/patterns";
 import { db, type CalculatorTemplateRow } from "@/lib/db";
 import { newId, nowIso } from "@/lib/id";
 import { parseNumber } from "@/lib/pricing";
