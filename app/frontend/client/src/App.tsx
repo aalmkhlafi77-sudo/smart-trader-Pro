@@ -5,6 +5,7 @@ import { Redirect, Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import AccessGate from "./components/AccessGate";
 import FloatingCalculator from "./components/FloatingCalculator";
+import TaskAlertEngine from "./components/TaskAlertEngine";
 import { AccessProvider } from "./contexts/AccessContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { LoginBackgroundProvider } from "./contexts/LoginBackgroundContext";
@@ -84,6 +85,7 @@ function App() {
                     <AccessGate>
                       <Router />
                       <FloatingCalculator />
+                      <TaskAlertEngine />
                     </AccessGate>
                   </TooltipProvider>
                   </AccessProvider>
