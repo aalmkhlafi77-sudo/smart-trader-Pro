@@ -98,7 +98,11 @@ export function formatDateTime(value?: string | number | Date | null): string {
 }
 
 export function parseNumber(value: string): number {
-  const cleaned = value.replace(/[^\d.-]/g, "");
+  const normalized = value
+    .replace(/[٠-٩]/g, char => String("٠١٢٣٤٥٦٧٨٩".indexOf(char)))
+    .replace(/[۰-۹]/g, char => String("۰۱۲۳۴۵۶۷۸۹".indexOf(char)))
+    .replace(/[٫,]/g, ".");
+  const cleaned = normalized.replace(/[^\d.-]/g, "");
   const n = Number.parseFloat(cleaned);
   return Number.isFinite(n) ? n : 0;
 }
