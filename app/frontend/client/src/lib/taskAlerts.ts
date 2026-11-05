@@ -62,7 +62,7 @@ export function markTaskAlerted(key: string) {
   } catch {
     values = [];
   }
-  const next = [...new Set([...values.slice(-300), key])];
+  const next = Array.from(new Set(values.slice(-300).concat(key)));
   localStorage.setItem(ALERTED_KEY, JSON.stringify(next));
 }
 
