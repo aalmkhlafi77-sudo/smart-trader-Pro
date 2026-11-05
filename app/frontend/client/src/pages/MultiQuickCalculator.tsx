@@ -5,7 +5,7 @@ import AppLayout from "@/components/AppLayout";
 import CalculatorTemplateApplyBar from "@/components/CalculatorTemplateApplyBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Field, FormGrid, NumberField, PageShell, SectionCard } from "@/components/patterns";
+import { DecimalAmountField, Field, FormGrid, NumberField, PageShell, SectionCard } from "@/components/patterns";
 import { db, type CalculatorTemplateRow, type CargoCostItemRow, type CargoCostLineRow, type EntityRow, type ItemRow, type QuickCalculationRow } from "@/lib/db";
 import { newId, nowIso } from "@/lib/id";
 import { formatMoney, parseNumber } from "@/lib/pricing";
