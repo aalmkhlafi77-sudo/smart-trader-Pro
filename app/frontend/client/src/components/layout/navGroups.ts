@@ -4,6 +4,7 @@ import {
   Calculator,
   ChartNoAxesCombined,
   ClipboardList,
+  FilePenLine,
   Database,
   FileDown,
   LayoutDashboard,
@@ -38,6 +39,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/cargo", labelKey: "nav.cargo", icon: Calculator },
       { href: "/quick-calculator", labelKey: "nav.quickCalculator", icon: Calculator },
       { href: "/multi-quick-calculator", labelKey: "nav.multiQuickCalculator", icon: Calculator },
+      { href: "/quick-entry-drafts", labelKey: "nav.quickEntryDrafts", icon: FilePenLine },
     ],
   },
   {

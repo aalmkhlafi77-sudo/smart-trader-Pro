@@ -28,6 +28,7 @@ import type {
   PricingRunRow,
   PriceHistoryRow,
   QuickCalculationRow,
+  QuickEntryDraftRow,
   SettingsRow,
   SpecTemplateRow,
   NoteRow,
@@ -55,6 +56,7 @@ export interface BackupPayload {
     pricing_runs: PricingRunRow[];
     quick_calculations: QuickCalculationRow[];
     calculator_templates?: CalculatorTemplateRow[];
+    quick_entry_drafts?: QuickEntryDraftRow[];
     cargo_cost_runs: CargoCostRunRow[];
     cargo_cost_items: CargoCostItemRow[];
     cargo_cost_lines: CargoCostLineRow[];
@@ -141,6 +143,10 @@ export interface Repository {
   listCalculatorTemplates(): Promise<CalculatorTemplateRow[]>;
   saveCalculatorTemplate(row: CalculatorTemplateRow): Promise<void>;
   deleteCalculatorTemplate(id: string): Promise<void>;
+
+  listQuickEntryDrafts(): Promise<QuickEntryDraftRow[]>;
+  saveQuickEntryDraft(row: QuickEntryDraftRow): Promise<void>;
+  deleteQuickEntryDraft(id: string): Promise<void>;
 
   importExcel(plan: ExcelImportPlan): Promise<void>;
 

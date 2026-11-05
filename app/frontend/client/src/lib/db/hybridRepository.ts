@@ -17,6 +17,7 @@ const MUTATING_METHODS = new Set<keyof Repository>([
   "savePricingRun", "deletePricingRun",
   "saveQuickCalculation", "deleteQuickCalculation",
   "saveCalculatorTemplate", "deleteCalculatorTemplate",
+  "saveQuickEntryDraft", "deleteQuickEntryDraft",
   "importExcel",
   "saveCargoCostRun", "deleteCargoCostRun",
   "saveCargoCostItem", "deleteCargoCostItems",

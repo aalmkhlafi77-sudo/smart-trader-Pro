@@ -4,7 +4,7 @@
  * لا كائنات متداخلة، المفاتيح نصية، التواريخ ISO، القيم المالية أرقام.
  */
 
-export const SCHEMA_VERSION = 14;
+export const SCHEMA_VERSION = 15;
 export const DB_NAME = "smart_trader_db";
 
 export type EntityKind = "supplier" | "customer" | "factory" | "other";
@@ -251,6 +251,19 @@ export interface CalculatorTemplateRow {
   internalExpensesJson: string;
   notes: string;
   active: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type QuickEntryTransferPolicy = "block" | "warn" | "allow";
+
+/** مسودة إدخال تفاوضي سريع؛ الصفوف محفوظة JSON لأنها مؤقتة وقابلة للتوسع قبل الترحيل. */
+export interface QuickEntryDraftRow {
+  id: string;
+  name: string;
+  transferPolicy: QuickEntryTransferPolicy;
+  rowsJson: string;
+  notes: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -579,6 +592,7 @@ export const TABLES = {
   pricingRuns: "pricing_runs",
   quickCalculations: "quick_calculations",
   calculatorTemplates: "calculator_templates",
+  quickEntryDrafts: "quick_entry_drafts",
   cargoCostRuns: "cargo_cost_runs",
   cargoCostItems: "cargo_cost_items",
   cargoCostLines: "cargo_cost_lines",
@@ -681,6 +695,10 @@ CREATE TABLE IF NOT EXISTS calculator_templates (
   id TEXT PRIMARY KEY, name TEXT NOT NULL, scope TEXT, origin TEXT, unloading TEXT, destination TEXT,
   currency TEXT, exchangeRate REAL, customsRate REAL, marginRate REAL, allocationBasis TEXT,
   externalExpensesJson TEXT, internalExpensesJson TEXT, notes TEXT, active INTEGER DEFAULT 1,
+  createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS quick_entry_drafts (
+  id TEXT PRIMARY KEY, name TEXT NOT NULL, transferPolicy TEXT, rowsJson TEXT, notes TEXT,
   createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS cargo_cost_runs (

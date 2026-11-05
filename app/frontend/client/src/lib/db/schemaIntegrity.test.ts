@@ -25,6 +25,7 @@ const EXPECTED_KEY_PATHS: Record<string, "id" | "code"> = {
   [TABLES.pricingRuns]: "id",
   [TABLES.quickCalculations]: "id",
   [TABLES.calculatorTemplates]: "id",
+  [TABLES.quickEntryDrafts]: "id",
   [TABLES.cargoCostRuns]: "id",
   [TABLES.cargoCostItems]: "id",
   [TABLES.cargoCostLines]: "id",

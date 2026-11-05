@@ -39,6 +39,7 @@ import {
   type PricingRunRow,
   type PriceHistoryRow,
   type QuickCalculationRow,
+  type QuickEntryDraftRow,
   type SettingsRow,
   type SpecTemplateRow,
   type NoteRow,
@@ -279,6 +280,10 @@ function normalizeBackupPayload(payload: BackupPayload): BackupPayload {
       calculator_templates: rows<CalculatorTemplateRow>(
         "calculator_templates",
         "calculatorTemplates"
+      ),
+      quick_entry_drafts: rows<QuickEntryDraftRow>(
+        "quick_entry_drafts",
+        "quickEntryDrafts"
       ),
       cargo_cost_runs: rows<CargoCostRunRow>(
         "cargo_cost_runs",
@@ -1024,6 +1029,13 @@ export const indexedDbRepository: Repository = {
   saveCalculatorTemplate: row => put(TABLES.calculatorTemplates, row),
   deleteCalculatorTemplate: id => remove(TABLES.calculatorTemplates, id),
 
+  async listQuickEntryDrafts() {
+    const rows = await getAll<QuickEntryDraftRow>(TABLES.quickEntryDrafts);
+    return rows.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  },
+  saveQuickEntryDraft: row => put(TABLES.quickEntryDrafts, row),
+  deleteQuickEntryDraft: id => remove(TABLES.quickEntryDrafts, id),
+
   importExcel: importExcelAtomic,
 
   async listCargoCostRuns() {
@@ -1210,6 +1222,7 @@ export const indexedDbRepository: Repository = {
       pricing_runs,
       quick_calculations,
       calculator_templates,
+      quick_entry_drafts,
       cargo_cost_runs,
       cargo_cost_items,
       cargo_cost_lines,
@@ -1239,6 +1252,7 @@ export const indexedDbRepository: Repository = {
       getAll<PricingRunRow>(TABLES.pricingRuns),
       getAll<QuickCalculationRow>(TABLES.quickCalculations),
       getAll<CalculatorTemplateRow>(TABLES.calculatorTemplates),
+      getAll<QuickEntryDraftRow>(TABLES.quickEntryDrafts),
       getAll<CargoCostRunRow>(TABLES.cargoCostRuns),
       getAll<CargoCostItemRow>(TABLES.cargoCostItems),
       getAll<CargoCostLineRow>(TABLES.cargoCostLines),
@@ -1273,6 +1287,7 @@ export const indexedDbRepository: Repository = {
         pricing_runs,
         quick_calculations,
         calculator_templates,
+        quick_entry_drafts,
         cargo_cost_runs,
         cargo_cost_items,
         cargo_cost_lines,
@@ -1334,6 +1349,7 @@ export const indexedDbRepository: Repository = {
             TABLES.pricingRuns,
             TABLES.quickCalculations,
             TABLES.calculatorTemplates,
+            TABLES.quickEntryDrafts,
             TABLES.cargoCostRuns,
             TABLES.cargoCostItems,
             TABLES.cargoCostLines,
@@ -1368,6 +1384,9 @@ export const indexedDbRepository: Repository = {
       );
       t.calculator_templates?.forEach(r =>
         jobs.push(put(TABLES.calculatorTemplates, r))
+      );
+      t.quick_entry_drafts?.forEach(r =>
+        jobs.push(put(TABLES.quickEntryDrafts, r))
       );
       t.cargo_cost_runs?.forEach(r => jobs.push(put(TABLES.cargoCostRuns, r)));
       t.cargo_cost_items?.forEach(r =>
@@ -1453,6 +1472,7 @@ export const indexedDbRepository: Repository = {
           TABLES.pricingRuns,
           TABLES.quickCalculations,
           TABLES.calculatorTemplates,
+          TABLES.quickEntryDrafts,
           TABLES.cargoCostRuns,
           TABLES.cargoCostItems,
           TABLES.cargoCostLines,
