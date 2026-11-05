@@ -79,7 +79,7 @@ export default function SidebarNav() {
                 <div className="mx-2 mb-3 border-t border-sidebar-border/70" />
               ) : null
             ) : (
-              <p className="mb-1 px-2 text-[9px] font-extrabold tracking-wider text-sidebar-foreground/45 uppercase">
+              <p className="mb-1.5 mt-1 px-2 text-[9px] font-semibold tracking-wider text-[#7DB7D9] uppercase">
                 {t(group.groupKey)}
               </p>
             )}
@@ -92,14 +92,22 @@ export default function SidebarNav() {
                     href={href}
                     title={t(labelKey)}
                     className={cn(
-                      "flex items-center gap-3 rounded px-3 py-2 text-sm transition-colors duration-150",
+                      "group flex items-center gap-3 rounded px-3 py-2 text-sm transition-all duration-200",
                       sidebarCollapsed && "justify-center px-0",
                       active
-                        ? "border-e-2 border-e-[var(--port-green)] bg-sidebar-accent font-semibold text-sidebar-accent-foreground"
-                        : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60"
+                        ? "border-e-2 border-e-[#2E9FE6] bg-[rgba(79,139,181,0.32)] font-bold text-white shadow-[inset_-10px_0_20px_-18px_rgba(98,197,255,0.95)]"
+                        : "text-[#EAF1F6] hover:bg-[rgba(79,139,181,0.18)] hover:text-white"
                     )}
                   >
-                    <Icon className="h-4 w-4 shrink-0" />
+                    <Icon
+                      strokeWidth={active ? 2.35 : 2}
+                      className={cn(
+                        "h-4 w-4 shrink-0 transition-colors duration-200",
+                        active
+                          ? "text-[#62C5FF] drop-shadow-[0_0_6px_rgba(98,197,255,0.45)]"
+                          : "text-[#9ED8F4] group-hover:text-[#D6F1FF]"
+                      )}
+                    />
                     {sidebarCollapsed ? null : t(labelKey)}
                   </Link>
                 );
