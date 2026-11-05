@@ -19,6 +19,7 @@ import dict_ui from "./ui";
 import dict_quick from "./quick";
 import dict_quickEntry from "./quickEntry";
 import dict_validation from "./validation";
+import dict_taskAlerts from "./taskAlerts";
 
 const merged: Record<string, string> = {
   ...dict_access,
@@ -42,6 +43,7 @@ const merged: Record<string, string> = {
   ...dict_quick,
   ...dict_quickEntry,
   ...dict_validation,
+  ...dict_taskAlerts,
 };
 
 export default merged;

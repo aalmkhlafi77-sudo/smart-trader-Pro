@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 import FloatingCalculatorSettingsCard from "@/components/FloatingCalculatorSettingsCard";
 import LoginBackgroundSettingsCard from "@/components/LoginBackgroundSettingsCard";
+import TaskAlertSettingsCard from "@/components/TaskAlertSettingsCard";
 import WorkspaceCustomizationCard from "@/components/WorkspaceCustomizationCard";
 import { Field, PageShell, SectionCard } from "@/components/patterns";
 import { Button } from "@/components/ui/button";
@@ -91,6 +92,7 @@ export default function SettingsWorkspace() {
             </SectionCard>
 
             <FloatingCalculatorSettingsCard />
+            <TaskAlertSettingsCard />
           </div>
           <div className="space-y-5">
             <WorkspaceCustomizationCard />
