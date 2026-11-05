@@ -5,7 +5,7 @@ import AppLayout from "@/components/AppLayout";
 import CalculatorTemplateApplyBar from "@/components/CalculatorTemplateApplyBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Field, FormGrid, NumberField, PageShell, SectionCard } from "@/components/patterns";
+import { DecimalAmountField, Field, FormGrid, NumberField, PageShell, SectionCard } from "@/components/patterns";
 import { db, type CalculatorTemplateRow, type CargoCostItemRow, type CargoCostLineRow, type EntityRow, type ItemRow, type QuickCalculationRow } from "@/lib/db";
 import { newId, nowIso } from "@/lib/id";
 import { formatMoney, parseNumber } from "@/lib/pricing";
@@ -472,5 +472,5 @@ function Result({ label, value, currency }: { label: string; value: number; curr
 }
 
 function ExpenseEditor({ expense, onChange, t }: { expense: QuickExpense; onChange: (patch: Partial<QuickExpense>) => void; t: (key: string) => string }) {
-  return <div className="grid gap-2 rounded border border-border bg-card p-2 sm:grid-cols-[minmax(0,1fr)_120px_105px_auto] sm:items-center"><Input className="field-input" value={expense.name} onChange={e => onChange({ name: e.target.value })} /><NumberField value={String(expense.amount)} onChange={e => onChange({ amount: parseNumber(e.target.value) })} /><select className="field-input" value={expense.currency} onChange={e => onChange({ currency: e.target.value as QuickExpense["currency"] })}><option value="foreign">{t("quick.foreign")}</option><option value="local">{t("quick.local")}</option></select><label className="flex items-center gap-1.5 text-[10px]"><input type="checkbox" checked={expense.includeInCustomsBase} onChange={e => onChange({ includeInCustomsBase: e.target.checked })} />{t("quick.taxable")}</label></div>;
+  return <div className="grid gap-2 rounded border border-border bg-card p-2 sm:grid-cols-[minmax(0,1fr)_120px_105px_auto] sm:items-center"><Input className="field-input" value={expense.name} onChange={e => onChange({ name: e.target.value })} /><DecimalAmountField value={expense.amount} onValueChange={amount => onChange({ amount })} /><select className="field-input" value={expense.currency} onChange={e => onChange({ currency: e.target.value as QuickExpense["currency"] })}><option value="foreign">{t("quick.foreign")}</option><option value="local">{t("quick.local")}</option></select><label className="flex items-center gap-1.5 text-[10px]"><input type="checkbox" checked={expense.includeInCustomsBase} onChange={e => onChange({ includeInCustomsBase: e.target.checked })} />{t("quick.taxable")}</label></div>;
 }

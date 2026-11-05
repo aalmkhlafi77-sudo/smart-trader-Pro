@@ -3,7 +3,7 @@
  * نسبة (RateField)، تاريخ (DateField عبر EnglishDatePicker)، وقيمة موروثة/محسوبة (InheritedValue).
  * قاعدة «دفتر الميناء»: حقل إدخال بسطح كهرماني-رمادي، نتيجة محسوبة بسطح أخضر — لا يجوز الخلط.
  */
-import type { ComponentProps, ReactNode } from "react";
+import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from "react";
 import { Input } from "@/components/ui/input";
 import EnglishDatePicker from "@/components/EnglishDatePicker";
 import { cn } from "@/lib/utils";
@@ -62,6 +62,55 @@ export function NumberField({
       inputMode="decimal"
       {...rest}
       className={cn("field-input font-medium tabular-nums", className)}
+    />
+  );
+}
+
+export function DecimalAmountField({
+  value,
+  onValueChange,
+  className,
+  ...rest
+}: Omit<ComponentProps<typeof Input>, "value" | "onChange"> & {
+  value: number;
+  onValueChange: (value: number) => void;
+}) {
+  const [draft, setDraft] = useState(() => String(value));
+  const focused = useRef(false);
+
+  useEffect(() => {
+    if (!focused.current) setDraft(String(value));
+  }, [value]);
+
+  const normalize = (raw: string) =>
+    raw
+      .replace(/[\u0660-\u0669]/g, char => String(char.charCodeAt(0) - 0x0660))
+      .replace(/[\u06F0-\u06F9]/g, char => String(char.charCodeAt(0) - 0x06f0))
+      .replace(/[\u066B,]/g, ".");
+
+  return (
+    <NumberField
+      {...rest}
+      value={draft}
+      className={className}
+      onFocus={event => {
+        focused.current = true;
+        rest.onFocus?.(event);
+      }}
+      onChange={event => {
+        const next = normalize(event.target.value);
+        setDraft(next);
+        const parsed = Number.parseFloat(next);
+        if (Number.isFinite(parsed)) onValueChange(parsed);
+      }}
+      onBlur={event => {
+        focused.current = false;
+        const parsed = Number.parseFloat(normalize(draft));
+        const nextValue = Number.isFinite(parsed) ? parsed : 0;
+        setDraft(String(nextValue));
+        onValueChange(nextValue);
+        rest.onBlur?.(event);
+      }}
     />
   );
 }
