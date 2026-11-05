@@ -363,21 +363,18 @@ export default function QuickEntryDrafts() {
     }
     setBusy(true);
     let count = 0;
-    const successful = new Set<string>();
+    const successful = new Map<string, { itemId: string; note: string }>();
     try {
       for (const id of targetIds) {
         const row = rows.find(item => item.id === id);
         if (!row) continue;
         try {
           const result = await transferOne(row);
-          successful.add(id);
-          count += 1;
-          updateRow(id, {
-            status: "transferred",
-            transferredItemId: result.itemId,
-            transferNote: result.merged ? t("quickEntry.mergedExisting") : t("quickEntry.createdNew"),
-            selected: false,
+          successful.set(id, {
+            itemId: result.itemId,
+            note: result.merged ? t("quickEntry.mergedExisting") : t("quickEntry.createdNew"),
           });
+          count += 1;
         } catch (error) {
           if (error instanceof Error && error.message === "CANCELLED") continue;
           toast.error(error instanceof Error ? error.message : t("quickEntry.blockedMissing"));
@@ -386,15 +383,18 @@ export default function QuickEntryDrafts() {
       if (count > 0) {
         const nextRows = deleteTransferredRows
           ? rows.filter(row => !successful.has(row.id))
-          : rows.map(row =>
-              successful.has(row.id)
+          : rows.map(row => {
+              const result = successful.get(row.id);
+              return result
                 ? {
                     ...row,
                     selected: false,
                     status: "transferred" as const,
+                    transferredItemId: result.itemId,
+                    transferNote: result.note,
                   }
-                : row
-            );
+                : row;
+            });
         setRows(nextRows.length ? nextRows : [makeLine(defaultCurrency)]);
         if (editingId) {
           const currentDraft = drafts.find(row => row.id === editingId);
