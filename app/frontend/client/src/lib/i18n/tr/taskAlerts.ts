@@ -1,0 +1,25 @@
+const dict: Record<string,string> = {
+  "taskAlerts.title":"Görev sesli uyarıları",
+  "taskAlerts.hint":"Görev zamanı yaklaşınca ses ve isteğe bağlı tarayıcı bildirimi ver",
+  "taskAlerts.stamp":"Görev uyarıları",
+  "taskAlerts.enable":"Sesli uyarıları aç",
+  "taskAlerts.enableHint":"Smart Trader tarayıcıda açık kaldığı sürece uyarılar çalışır",
+  "taskAlerts.leadTime":"Görevden önce uyar",
+  "taskAlerts.atTime":"Görev zamanında",
+  "taskAlerts.before5":"5 dakika önce",
+  "taskAlerts.before15":"15 dakika önce",
+  "taskAlerts.before60":"1 saat önce",
+  "taskAlerts.beforeDay":"1 gün önce",
+  "taskAlerts.volume":"Ses seviyesi",
+  "taskAlerts.browserNotifications":"Tarayıcı bildirimleri",
+  "taskAlerts.browserNotificationsHint":"Sesli uyarıyla birlikte görev adını ve zamanını göster",
+  "taskAlerts.notificationsUnsupported":"Bu tarayıcı sistem bildirimlerini desteklemiyor",
+  "taskAlerts.notificationsDenied":"Tarayıcı bildirimlerine izin verilmedi",
+  "taskAlerts.testSound":"Uyarı sesini dene",
+  "taskAlerts.testPlayed":"Test sesi çalındı",
+  "taskAlerts.save":"Uyarı ayarlarını kaydet",
+  "taskAlerts.saved":"Görev uyarı ayarları kaydedildi",
+  "taskAlerts.browserLimit":"Tarayıcı ilk kullanıcı etkileşiminden önce ses veya bildirimi engelleyebilir. Planlı uyarılar uygulama tarayıcıda açıkken çalışır.",
+  "taskAlerts.due":"Zaman"
+};
+export default dict;
