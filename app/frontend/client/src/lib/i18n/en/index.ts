@@ -1,6 +1,7 @@
 import dict_access from "./access";
 import dict_backup from "./backup";
 import dict_cargo from "./cargo";
+import dict_calcTemplates from "./calcTemplates";
 import dict_common_1 from "./common-1";
 import dict_common_2 from "./common-2";
 import dict_entities from "./entities";
@@ -22,6 +23,7 @@ const merged: Record<string, string> = {
   ...dict_access,
   ...dict_backup,
   ...dict_cargo,
+  ...dict_calcTemplates,
   ...dict_common_1,
   ...dict_common_2,
   ...dict_entities,
