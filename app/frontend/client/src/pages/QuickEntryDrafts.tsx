@@ -5,7 +5,7 @@ import AppLayout from "@/components/AppLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DecimalAmountField, Field, FormGrid, PageShell, SectionCard } from "@/components/patterns";
+import { Field, FormGrid, NumberField, PageShell, SectionCard } from "@/components/patterns";
 import {
   db,
   type CategoryRow,
@@ -20,6 +20,7 @@ import {
   type SpecTemplateRow,
 } from "@/lib/db";
 import { newId, nowIso } from "@/lib/id";
+import { parseNumber } from "@/lib/pricing";
 
 type DraftRowStatus = "draft" | "incomplete" | "ready" | "transferred";
 
@@ -681,11 +682,10 @@ function DesktopRow({
       <td className="p-1.5"><Input className="field-input min-w-[90px]" value={row.weight} onChange={event => onChange({ weight: event.target.value })} /></td>
       <td className="p-1.5"><Input className="field-input min-w-[90px]" value={row.thickness} onChange={event => onChange({ thickness: event.target.value })} /></td>
       <td className="p-1.5">
-        <DecimalAmountField
+        <NumberField
           className="min-w-[100px]"
-          value={row.price}
-          onValueChange={price => onChange({ price, priceDraft: String(price) })}
-          onChange={undefined}
+          value={row.priceDraft}
+          onChange={event => onChange({ priceDraft: event.target.value, price: parseNumber(event.target.value) })}
         />
       </td>
       <td className="p-2 text-center">
@@ -737,7 +737,7 @@ function MobileRow({
         <Field label={t("quickEntry.material")} control={<Input className="field-input" value={row.material} onChange={event => onChange({ material: event.target.value })} />} />
         <Field label={t("quickEntry.weight")} control={<Input className="field-input" value={row.weight} onChange={event => onChange({ weight: event.target.value })} />} />
         <Field label={t("quickEntry.thickness")} control={<Input className="field-input" value={row.thickness} onChange={event => onChange({ thickness: event.target.value })} />} />
-        <Field label={t("quickEntry.price")} control={<DecimalAmountField value={row.price} onValueChange={price => onChange({ price, priceDraft: String(price) })} />} />
+        <Field label={t("quickEntry.price")} control={<NumberField value={row.priceDraft} onChange={event => onChange({ priceDraft: event.target.value, price: parseNumber(event.target.value) })} />} />
       </FormGrid>
       {assessment.missing.length ? (
         <p className="mt-2 text-[10px] text-amber-700">
