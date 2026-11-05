@@ -1,0 +1,25 @@
+const dict: Record<string,string> = {
+  "taskAlerts.title":"Task audio alerts",
+  "taskAlerts.hint":"Play an alert sound and optional browser notification near a task deadline",
+  "taskAlerts.stamp":"Task alerts",
+  "taskAlerts.enable":"Enable audio alerts",
+  "taskAlerts.enableHint":"Alerts run while Smart Trader remains open in the browser",
+  "taskAlerts.leadTime":"Alert before due time",
+  "taskAlerts.atTime":"At due time",
+  "taskAlerts.before5":"5 minutes before",
+  "taskAlerts.before15":"15 minutes before",
+  "taskAlerts.before60":"1 hour before",
+  "taskAlerts.beforeDay":"1 day before",
+  "taskAlerts.volume":"Volume",
+  "taskAlerts.browserNotifications":"Browser notifications",
+  "taskAlerts.browserNotificationsHint":"Show the task name and due time with the audio alert",
+  "taskAlerts.notificationsUnsupported":"This browser does not support system notifications",
+  "taskAlerts.notificationsDenied":"Browser notifications were not allowed",
+  "taskAlerts.testSound":"Test alert sound",
+  "taskAlerts.testPlayed":"Test sound played",
+  "taskAlerts.save":"Save alert settings",
+  "taskAlerts.saved":"Task alert settings saved",
+  "taskAlerts.browserLimit":"Browsers may block audio or notifications before the first user interaction. Scheduled alerts work while the app remains open in the browser.",
+  "taskAlerts.due":"Due"
+};
+export default dict;
