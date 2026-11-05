@@ -4,7 +4,7 @@
  * لا كائنات متداخلة، المفاتيح نصية، التواريخ ISO، القيم المالية أرقام.
  */
 
-export const SCHEMA_VERSION = 13;
+export const SCHEMA_VERSION = 14;
 export const DB_NAME = "smart_trader_db";
 
 export type EntityKind = "supplier" | "customer" | "factory" | "other";
@@ -230,6 +230,27 @@ export interface QuickCalculationRow {
   totalCost: number;
   unitCost: number;
   suggestedPrice: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** قالب جاهز لتعبئة الحاسبة السريعة العادية أو المتعددة دون ربط حي بالعملية. */
+export interface CalculatorTemplateRow {
+  id: string;
+  name: string;
+  scope: "both" | "single" | "multi";
+  origin: string;
+  unloading: string;
+  destination: string;
+  currency: string;
+  exchangeRate: number;
+  customsRate: number;
+  marginRate: number;
+  allocationBasis: "value" | "quantity";
+  externalExpensesJson: string;
+  internalExpensesJson: string;
+  notes: string;
+  active: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -557,6 +578,7 @@ export const TABLES = {
   backupLogs: "backup_logs",
   pricingRuns: "pricing_runs",
   quickCalculations: "quick_calculations",
+  calculatorTemplates: "calculator_templates",
   cargoCostRuns: "cargo_cost_runs",
   cargoCostItems: "cargo_cost_items",
   cargoCostLines: "cargo_cost_lines",
@@ -653,6 +675,12 @@ CREATE TABLE IF NOT EXISTS quick_calculations (
   internalExpensesJson TEXT, goodsValue REAL, externalExpenses REAL,
   internalExpenses REAL, customsBaseExtra REAL, customsBase REAL,
   customsAmount REAL, totalCost REAL, unitCost REAL, suggestedPrice REAL,
+  createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS calculator_templates (
+  id TEXT PRIMARY KEY, name TEXT NOT NULL, scope TEXT, origin TEXT, unloading TEXT, destination TEXT,
+  currency TEXT, exchangeRate REAL, customsRate REAL, marginRate REAL, allocationBasis TEXT,
+  externalExpensesJson TEXT, internalExpensesJson TEXT, notes TEXT, active INTEGER DEFAULT 1,
   createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS cargo_cost_runs (
