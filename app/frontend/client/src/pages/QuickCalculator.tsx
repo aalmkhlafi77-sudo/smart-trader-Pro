@@ -3,6 +3,7 @@ import { Download, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import AppLayout from "@/components/AppLayout";
+import CalculatorTemplateApplyBar from "@/components/CalculatorTemplateApplyBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,6 +15,7 @@ import {
 } from "@/components/patterns";
 import {
   db,
+  type CalculatorTemplateRow,
   type EntityRow,
   type ItemRow,
   type QuickCalculationRow,
@@ -113,6 +115,22 @@ export default function QuickCalculator() {
     if (item.customsRate != null) setCustomsRate(String(item.customsRate * 100));
   };
 
+  const applyTemplate = (template: CalculatorTemplateRow) => {
+    setCurrency(template.currency || currency);
+    setExchangeRate(String(template.exchangeRate || 1));
+    setCustomsRate(String((template.customsRate || 0) * 100));
+    setMarginRate(String((template.marginRate || 0) * 100));
+    try {
+      const external = JSON.parse(template.externalExpensesJson || "[]") as QuickExpense[];
+      const internal = JSON.parse(template.internalExpensesJson || "[]") as QuickExpense[];
+      setExternalExpenses(external.length ? cloneExpenses(external) : cloneExpenses(defaultExternal));
+      setInternalExpenses(internal.length ? cloneExpenses(internal) : cloneExpenses(defaultInternal));
+    } catch {
+      setExternalExpenses(cloneExpenses(defaultExternal));
+      setInternalExpenses(cloneExpenses(defaultInternal));
+    }
+  };
+
   const updateExpense = (
     group: "external" | "internal",
     id: string,
@@ -180,6 +198,7 @@ export default function QuickCalculator() {
       >
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(300px,0.8fr)]">
           <div className="space-y-5">
+            <CalculatorTemplateApplyBar mode="single" onApply={applyTemplate} />
             <SectionCard title={t("quick.purchaseData")} description={t("quick.purchaseHint")} tone="input">
               <FormGrid cols={2}>
                 <Field label={t("quick.supplier")} control={<select className="field-input" value={supplierName} onChange={e => setSupplierName(e.target.value)}><option value="">{t("quick.manualEntry")}</option>{entities.filter(e => e.kind === "supplier" || e.kind === "factory").map(entity => <option key={entity.id} value={entity.name}>{entity.name}</option>)}</select>} />
