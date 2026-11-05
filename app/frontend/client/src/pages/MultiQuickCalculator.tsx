@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Plus, Save, Search, Trash2, Pencil, X } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
+import CalculatorTemplateApplyBar from "@/components/CalculatorTemplateApplyBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FormGrid, NumberField, PageShell, SectionCard } from "@/components/patterns";
-import { db, type CargoCostItemRow, type CargoCostLineRow, type EntityRow, type ItemRow, type QuickCalculationRow } from "@/lib/db";
+import { db, type CalculatorTemplateRow, type CargoCostItemRow, type CargoCostLineRow, type EntityRow, type ItemRow, type QuickCalculationRow } from "@/lib/db";
 import { newId, nowIso } from "@/lib/id";
 import { formatMoney, parseNumber } from "@/lib/pricing";
 import { calculateCargoPricing } from "@/lib/cargoPricing";
@@ -208,6 +209,29 @@ export default function MultiQuickCalculator() {
     }
   }, [items, externalExpenses, internalExpenses, allocationBasis, marginRate, t]);
 
+  const applyTemplate = (template: CalculatorTemplateRow) => {
+    setAllocationBasis(template.allocationBasis || "value");
+    setMarginRate(String((template.marginRate || 0) * 100));
+    setDefaultCurrency(template.currency || defaultCurrency);
+    setDefaultExchangeRate(String(template.exchangeRate || 1));
+    setDefaultCustomsRate(String((template.customsRate || 0) * 100));
+    setItems(current => current.map(item => ({
+      ...item,
+      currency: template.currency || item.currency,
+      exchangeRate: String(template.exchangeRate || parseNumber(item.exchangeRate) || 1),
+      customsRate: String((template.customsRate || 0) * 100),
+    })));
+    try {
+      const external = JSON.parse(template.externalExpensesJson || "[]") as QuickExpense[];
+      const internal = JSON.parse(template.internalExpensesJson || "[]") as QuickExpense[];
+      setExternalExpenses(external.length ? cloneExpenses(external) : makeDefaultExternal(t));
+      setInternalExpenses(internal.length ? cloneExpenses(internal) : makeDefaultInternal(t));
+    } catch {
+      setExternalExpenses(makeDefaultExternal(t));
+      setInternalExpenses(makeDefaultInternal(t));
+    }
+  };
+
   const updateItem = (rowId: string, patch: Partial<MultiItemDraft>) =>
     setItems(rows => rows.map(row => row.rowId === rowId ? { ...row, ...patch } : row));
 
@@ -355,6 +379,7 @@ export default function MultiQuickCalculator() {
         </div>}
       >
         <div className="space-y-5">
+          <CalculatorTemplateApplyBar mode="multi" onApply={applyTemplate} />
           <SectionCard title={t("multiQuick.operationData")} tone="input">
             <FormGrid cols={2}>
               <Field label={t("multiQuick.operationName")} control={<Input className="field-input" value={title} onChange={e => setTitle(e.target.value)} />} />
