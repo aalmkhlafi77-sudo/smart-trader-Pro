@@ -65,7 +65,6 @@ export default function TaskAlertEngine() {
               body,
               icon: "/assets/port-ledger-mark.webp",
               tag: `task-${task.id}`,
-              renotify: false,
             });
           }
 
