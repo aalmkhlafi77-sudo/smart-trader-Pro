@@ -84,9 +84,9 @@ export function DecimalAmountField({
 
   const normalize = (raw: string) =>
     raw
-      .replace(/[٠-٩]/g, char => String("٠١٢٣٤٥٦٧٨٩".indexOf(char)))
-      .replace(/[۰-۹]/g, char => String("۰۱۲۳۴۵۶۷۸۹".indexOf(char)))
-      .replace(/[٫,]/g, ".");
+      .replace(/[\u0660-\u0669]/g, char => String(char.charCodeAt(0) - 0x0660))
+      .replace(/[\u06F0-\u06F9]/g, char => String(char.charCodeAt(0) - 0x06f0))
+      .replace(/[\u066B,]/g, ".");
 
   return (
     <NumberField
