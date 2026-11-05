@@ -54,7 +54,7 @@ export interface BackupPayload {
     backup_logs: BackupLogRow[];
     pricing_runs: PricingRunRow[];
     quick_calculations: QuickCalculationRow[];
-    calculator_templates: CalculatorTemplateRow[];
+    calculator_templates?: CalculatorTemplateRow[];
     cargo_cost_runs: CargoCostRunRow[];
     cargo_cost_items: CargoCostItemRow[];
     cargo_cost_lines: CargoCostLineRow[];
