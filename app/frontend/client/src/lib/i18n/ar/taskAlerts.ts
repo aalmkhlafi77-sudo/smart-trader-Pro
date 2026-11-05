@@ -1,0 +1,25 @@
+const dict: Record<string,string> = {
+  "taskAlerts.title":"تنبيهات المهام الصوتية",
+  "taskAlerts.hint":"تنبيه صوتي وإشعار متصفح عند اقتراب موعد المهمة",
+  "taskAlerts.stamp":"تنبيهات المهام",
+  "taskAlerts.enable":"تشغيل التنبيهات الصوتية",
+  "taskAlerts.enableHint":"يعمل التنبيه أثناء بقاء Smart Trader مفتوحًا في المتصفح",
+  "taskAlerts.leadTime":"وقت التنبيه قبل الموعد",
+  "taskAlerts.atTime":"عند موعد المهمة",
+  "taskAlerts.before5":"قبل 5 دقائق",
+  "taskAlerts.before15":"قبل 15 دقيقة",
+  "taskAlerts.before60":"قبل ساعة",
+  "taskAlerts.beforeDay":"قبل يوم",
+  "taskAlerts.volume":"مستوى الصوت",
+  "taskAlerts.browserNotifications":"إشعارات المتصفح",
+  "taskAlerts.browserNotificationsHint":"إظهار اسم المهمة وموعدها مع التنبيه الصوتي",
+  "taskAlerts.notificationsUnsupported":"هذا المتصفح لا يدعم إشعارات النظام",
+  "taskAlerts.notificationsDenied":"لم يتم السماح بإشعارات المتصفح",
+  "taskAlerts.testSound":"تجربة صوت التنبيه",
+  "taskAlerts.testPlayed":"تم تشغيل صوت التجربة",
+  "taskAlerts.save":"حفظ إعدادات التنبيه",
+  "taskAlerts.saved":"تم حفظ إعدادات تنبيهات المهام",
+  "taskAlerts.browserLimit":"قد يمنع المتصفح تشغيل الصوت أو الإشعارات قبل أول تفاعل من المستخدم. التنبيه المجدول يعمل طالما التطبيق مفتوح في المتصفح.",
+  "taskAlerts.due":"الموعد"
+};
+export default dict;
