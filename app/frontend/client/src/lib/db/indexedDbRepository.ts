@@ -18,6 +18,7 @@ import {
   type TableName,
   type AttachmentRow,
   type BackupLogRow,
+  type CalculatorTemplateRow,
   type CargoCostAllocationRow,
   type CargoCostItemRow,
   type CargoCostLineRow,
@@ -274,6 +275,10 @@ function normalizeBackupPayload(payload: BackupPayload): BackupPayload {
       quick_calculations: rows<QuickCalculationRow>(
         "quick_calculations",
         "quickCalculations"
+      ),
+      calculator_templates: rows<CalculatorTemplateRow>(
+        "calculator_templates",
+        "calculatorTemplates"
       ),
       cargo_cost_runs: rows<CargoCostRunRow>(
         "cargo_cost_runs",
@@ -1009,6 +1014,16 @@ export const indexedDbRepository: Repository = {
   },
   saveQuickCalculation: row => put(TABLES.quickCalculations, row),
   deleteQuickCalculation: id => remove(TABLES.quickCalculations, id),
+
+  async listCalculatorTemplates() {
+    const rows = await getAll<CalculatorTemplateRow>(TABLES.calculatorTemplates);
+    return rows
+      .filter(row => row.active !== 0)
+      .sort((a, b) => a.name.localeCompare(b.name, "ar"));
+  },
+  saveCalculatorTemplate: row => put(TABLES.calculatorTemplates, row),
+  deleteCalculatorTemplate: id => remove(TABLES.calculatorTemplates, id),
+
   importExcel: importExcelAtomic,
 
   async listCargoCostRuns() {
@@ -1194,6 +1209,7 @@ export const indexedDbRepository: Repository = {
       backup_logs,
       pricing_runs,
       quick_calculations,
+      calculator_templates,
       cargo_cost_runs,
       cargo_cost_items,
       cargo_cost_lines,
@@ -1222,6 +1238,7 @@ export const indexedDbRepository: Repository = {
       getAll<BackupLogRow>(TABLES.backupLogs),
       getAll<PricingRunRow>(TABLES.pricingRuns),
       getAll<QuickCalculationRow>(TABLES.quickCalculations),
+      getAll<CalculatorTemplateRow>(TABLES.calculatorTemplates),
       getAll<CargoCostRunRow>(TABLES.cargoCostRuns),
       getAll<CargoCostItemRow>(TABLES.cargoCostItems),
       getAll<CargoCostLineRow>(TABLES.cargoCostLines),
@@ -1255,6 +1272,7 @@ export const indexedDbRepository: Repository = {
         backup_logs,
         pricing_runs,
         quick_calculations,
+        calculator_templates,
         cargo_cost_runs,
         cargo_cost_items,
         cargo_cost_lines,
@@ -1315,6 +1333,7 @@ export const indexedDbRepository: Repository = {
             TABLES.backupLogs,
             TABLES.pricingRuns,
             TABLES.quickCalculations,
+            TABLES.calculatorTemplates,
             TABLES.cargoCostRuns,
             TABLES.cargoCostItems,
             TABLES.cargoCostLines,
@@ -1346,6 +1365,9 @@ export const indexedDbRepository: Repository = {
       t.pricing_runs?.forEach(r => jobs.push(put(TABLES.pricingRuns, r)));
       t.quick_calculations?.forEach(r =>
         jobs.push(put(TABLES.quickCalculations, r))
+      );
+      t.calculator_templates?.forEach(r =>
+        jobs.push(put(TABLES.calculatorTemplates, r))
       );
       t.cargo_cost_runs?.forEach(r => jobs.push(put(TABLES.cargoCostRuns, r)));
       t.cargo_cost_items?.forEach(r =>
@@ -1430,6 +1452,7 @@ export const indexedDbRepository: Repository = {
           TABLES.backupLogs,
           TABLES.pricingRuns,
           TABLES.quickCalculations,
+          TABLES.calculatorTemplates,
           TABLES.cargoCostRuns,
           TABLES.cargoCostItems,
           TABLES.cargoCostLines,

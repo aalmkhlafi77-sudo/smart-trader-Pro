@@ -28,6 +28,7 @@ import SettingsLogistics from "./pages/settings/Logistics";
 import SettingsWorkspace from "./pages/settings/Workspace";
 import SettingsSecurity from "./pages/settings/Security";
 import SettingsData from "./pages/settings/Data";
+import SettingsCalculatorTemplates from "./pages/settings/CalculatorTemplates";
 import Reports from "./pages/Reports";
 import FollowUp from "./pages/FollowUp";
 import QuickCalculator from "./pages/QuickCalculator";
@@ -59,6 +60,7 @@ function Router() {
       <Route path="/settings/workspace" component={SettingsWorkspace} />
       <Route path="/settings/security" component={SettingsSecurity} />
       <Route path="/settings/data" component={SettingsData} />
+      <Route path="/settings/calculator-templates" component={SettingsCalculatorTemplates} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

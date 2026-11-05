@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import {
   Building2,
+  Calculator,
   Database,
   LayoutDashboard,
   Search,
@@ -40,6 +41,12 @@ const GROUPS = [
     icon: Truck,
     titleKey: "settings.logisticsTemplates",
     descKey: "settings.groupLogisticsLibraryHint",
+  },
+  {
+    href: "/settings/calculator-templates",
+    icon: Calculator,
+    titleKey: "calcTemplates.title",
+    descKey: "calcTemplates.subtitle",
   },
   {
     href: "/settings/workspace",

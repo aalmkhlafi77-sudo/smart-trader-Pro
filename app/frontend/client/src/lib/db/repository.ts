@@ -7,6 +7,7 @@
 import type {
   AttachmentRow,
   BackupLogRow,
+  CalculatorTemplateRow,
   CargoCostAllocationRow,
   CargoCostItemRow,
   CargoCostLineRow,
@@ -53,6 +54,7 @@ export interface BackupPayload {
     backup_logs: BackupLogRow[];
     pricing_runs: PricingRunRow[];
     quick_calculations: QuickCalculationRow[];
+    calculator_templates?: CalculatorTemplateRow[];
     cargo_cost_runs: CargoCostRunRow[];
     cargo_cost_items: CargoCostItemRow[];
     cargo_cost_lines: CargoCostLineRow[];
@@ -135,6 +137,10 @@ export interface Repository {
   listQuickCalculations(): Promise<QuickCalculationRow[]>;
   saveQuickCalculation(row: QuickCalculationRow): Promise<void>;
   deleteQuickCalculation(id: string): Promise<void>;
+
+  listCalculatorTemplates(): Promise<CalculatorTemplateRow[]>;
+  saveCalculatorTemplate(row: CalculatorTemplateRow): Promise<void>;
+  deleteCalculatorTemplate(id: string): Promise<void>;
 
   importExcel(plan: ExcelImportPlan): Promise<void>;
 
