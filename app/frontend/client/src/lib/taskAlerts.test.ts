@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   DEFAULT_TASK_ALERT_PREFERENCES,
