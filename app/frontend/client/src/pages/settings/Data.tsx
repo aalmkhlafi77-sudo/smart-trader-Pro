@@ -15,6 +15,7 @@ import {
   parseExcelWorkbook,
   type ExcelDuplicateMode,
   type ExcelImportPlan,
+  type ExcelWorkbookData,
 } from "@/lib/excelImport";
 import { toast } from "sonner";
 
@@ -22,7 +23,11 @@ export default function SettingsData() {
   const { t } = useLanguage();
   const privateStorage = usePrivateStorage();
   const [lastBackupAt, setLastBackupAt] = useState<string | null>(null);
-  const [preview, setPreview] = useState<{ fileName: string; plan: ExcelImportPlan } | null>(null);
+  const [preview, setPreview] = useState<{
+    fileName: string;
+    workbook: ExcelWorkbookData;
+    plan: ExcelImportPlan;
+  } | null>(null);
   const [duplicateMode, setDuplicateMode] = useState<ExcelDuplicateMode>("update");
   const [isImporting, setIsImporting] = useState(false);
   const [privateUsername, setPrivateUsername] = useState("");
@@ -46,20 +51,42 @@ export default function SettingsData() {
     };
   }, []);
 
+  const buildImportPreview = async (
+    workbook: ExcelWorkbookData,
+    mode: ExcelDuplicateMode
+  ) => {
+    const [entities, items, prices, priceHistory, cargoRuns] = await Promise.all([
+      db.listEntities(),
+      db.listItems(),
+      db.listPrices(),
+      db.listPriceHistory(),
+      db.listCargoCostRuns(),
+    ]);
+    return buildExcelImportPlan(
+      workbook,
+      { entities, items, prices, priceHistory, cargoRuns },
+      { duplicateMode: mode }
+    );
+  };
+
   const inspectExcel = async (file: File) => {
     try {
-      const [entities, items, prices, cargoRuns] = await Promise.all([
-        db.listEntities(),
-        db.listItems(),
-        db.listPrices(),
-        db.listCargoCostRuns(),
-      ]);
-      const plan = buildExcelImportPlan(
-        parseExcelWorkbook(await file.arrayBuffer()),
-        { entities, items, prices, cargoRuns },
-        { duplicateMode }
+      const workbook = parseExcelWorkbook(await file.arrayBuffer());
+      const plan = await buildImportPreview(workbook, duplicateMode);
+      setPreview({ fileName: file.name, workbook, plan });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("settings.excelReadFailed"));
+    }
+  };
+
+  const changeDuplicateMode = async (mode: ExcelDuplicateMode) => {
+    setDuplicateMode(mode);
+    if (!preview) return;
+    try {
+      const plan = await buildImportPreview(preview.workbook, mode);
+      setPreview(current =>
+        current ? { ...current, plan } : current
       );
-      setPreview({ fileName: file.name, plan });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("settings.excelReadFailed"));
     }
@@ -251,7 +278,11 @@ export default function SettingsData() {
               </Button>
               <label className="flex items-center gap-2 rounded border border-border px-3 text-xs">
                 <span>{t("settings.duplicatePolicy")}</span>
-                <select className="bg-transparent py-1.5" value={duplicateMode} onChange={event => setDuplicateMode(event.target.value as ExcelDuplicateMode)}>
+                <select
+                  className="bg-transparent py-1.5"
+                  value={duplicateMode}
+                  onChange={event => void changeDuplicateMode(event.target.value as ExcelDuplicateMode)}
+                >
                   <option value="update">{t("settings.updateMatching")}</option>
                   <option value="skip">{t("settings.skipMatching")}</option>
                   <option value="add">{t("settings.addNew")}</option>
