@@ -126,7 +126,37 @@ function findItem(reference: string, items: ItemRow[]) {
 }
 
 function findEntity(reference: string, entities: EntityRow[]) {
-  return entities.find(entity => entity.id === reference || entity.name === reference);
+  const normalizedReference = normalize(reference);
+  return entities.find(
+    entity =>
+      entity.id === reference ||
+      normalize(entity.name) === normalizedReference
+  );
+}
+
+function upsertPlanRow<T extends { id: string }>(rows: T[], row: T) {
+  const index = rows.findIndex(current => current.id === row.id);
+  if (index >= 0) rows[index] = row;
+  else rows.push(row);
+}
+
+function nonEmptyText(raw: Record<string, unknown>, keys: string[], fallback = "") {
+  const value = text(raw, ...keys);
+  return value || fallback;
+}
+
+function hasSamePriceHistory(
+  rows: PriceHistoryRow[],
+  candidate: Omit<PriceHistoryRow, "id" | "createdAt">
+) {
+  return rows.some(
+    row =>
+      row.itemId === candidate.itemId &&
+      row.priceLevel === candidate.priceLevel &&
+      row.price === candidate.price &&
+      row.effectiveDate === candidate.effectiveDate &&
+      row.currency === candidate.currency
+  );
 }
 
 function findCargo(reference: string, cargoRuns: CargoCostRunRow[]) {
@@ -145,6 +175,8 @@ export function buildExcelImportPlan(
   };
   const entities = [...context.entities];
   const items = [...context.items];
+  const prices = [...context.prices];
+  const priceHistory = [...(context.priceHistory ?? [])];
   const rows = (sheet: string) => workbook.sheets[sheet] ?? [];
   const duplicate = (sheet: string, row: number, message: string) => plan.warnings.push(`${sheet} صف ${row}: ${message}`);
   const error = (sheet: string, row: number, message: string) => plan.errors.push({ sheet, row, message });
@@ -152,66 +184,142 @@ export function buildExcelImportPlan(
   rows("الجهات").forEach((raw, index) => {
     const row = index + 2;
     const id = text(raw, "id", "المعرف", "معرف");
-    const existing = id ? entities.find(entity => entity.id === id) : undefined;
+    const incomingName = text(raw, "name", "الاسم");
+    const incomingKindText = text(raw, "kind", "النوع");
+    const incomingKind = incomingKindText ? entityKind(incomingKindText) : undefined;
+    const nameMatches = incomingName
+      ? entities.filter(entity => normalize(entity.name) === normalize(incomingName))
+      : [];
+    const existing =
+      (id ? entities.find(entity => entity.id === id) : undefined) ??
+      (incomingName
+        ? nameMatches.find(entity => !incomingKind || entity.kind === incomingKind) ??
+          (!incomingKind && nameMatches.length === 1 ? nameMatches[0] : undefined)
+        : undefined);
+
     if (existing && options.duplicateMode === "skip") {
       duplicate("الجهات", row, "تم تخطي سجل موجود");
       return;
     }
     if (existing && options.duplicateMode === "add") {
-      error("الجهات", row, "سجل بالمعرف نفسه موجود؛ استخدم معرفاً فريداً للإضافة");
+      error("الجهات", row, "الجهة موجودة بالفعل؛ استخدم التحديث أو غيّر الاسم/المعرف");
       return;
     }
+
     const timestamp = existing?.createdAt ?? now;
     const entity: EntityRow = {
       ...(existing ?? { id: id || newId("entity"), createdAt: timestamp }),
-      name: text(raw, "name", "الاسم") || existing?.name || "",
-      kind: entityKind(text(raw, "kind", "النوع")),
-      country: text(raw, "country", "الدولة"), city: text(raw, "city", "المدينة"),
-      phone: text(raw, "phone", "الهاتف"), email: text(raw, "email", "البريد"),
-      contactPerson: text(raw, "contactPerson", "جهة الاتصال"), notes: text(raw, "notes", "ملاحظات"),
-      defaultCurrency: text(raw, "defaultCurrency", "العملة") || existing?.defaultCurrency || "USD",
-      defaultExchangeRate: number(raw, "defaultExchangeRate", "سعر الصرف") ?? existing?.defaultExchangeRate ?? 1,
+      name: incomingName || existing?.name || "",
+      kind: incomingKind ?? existing?.kind ?? "other",
+      country: nonEmptyText(raw, ["country", "الدولة"], existing?.country ?? ""),
+      city: nonEmptyText(raw, ["city", "المدينة"], existing?.city ?? ""),
+      phone: nonEmptyText(raw, ["phone", "الهاتف"], existing?.phone ?? ""),
+      email: nonEmptyText(raw, ["email", "البريد"], existing?.email ?? ""),
+      contactPerson: nonEmptyText(raw, ["contactPerson", "جهة الاتصال"], existing?.contactPerson ?? ""),
+      notes: nonEmptyText(raw, ["notes", "ملاحظات"], existing?.notes ?? ""),
+      defaultCurrency:
+        text(raw, "defaultCurrency", "العملة") || existing?.defaultCurrency || "USD",
+      defaultExchangeRate:
+        number(raw, "defaultExchangeRate", "سعر الصرف") ??
+        existing?.defaultExchangeRate ??
+        1,
       updatedAt: now,
     };
-    if (!entity.name) error("الجهات", row, "اسم الجهة مطلوب");
-    plan.entities.push(entity);
-    entities.push(entity);
+
+    if (!entity.name) {
+      error("الجهات", row, "اسم الجهة مطلوب");
+      return;
+    }
+
+    upsertPlanRow(plan.entities, entity);
+    const entityIndex = entities.findIndex(current => current.id === entity.id);
+    if (entityIndex >= 0) entities[entityIndex] = entity;
+    else entities.push(entity);
   });
 
   rows("الأصناف").forEach((raw, index) => {
     const row = index + 2;
     const id = text(raw, "id", "المعرف", "معرف");
     const code = text(raw, "code", "الكود", "رمز الصنف");
-    const existing = items.find(item => (id && item.id === id) || (code && item.code === code));
-    if (!id && !code) duplicate("الأصناف", row, "لا يوجد معرف أو كود ثابت؛ سيُضاف كسجل جديد دون مطابقة بالاسم");
+    const incomingName = text(raw, "name", "الاسم");
+    const entityReference = text(
+      raw,
+      "entityId",
+      "entityCode",
+      "معرف الجهة",
+      "كود الجهة",
+      "اسم الجهة",
+      "الجهة"
+    );
+    const linkedEntity = entityReference ? findEntity(entityReference, entities) : undefined;
+    if (entityReference && !linkedEntity) {
+      error("الأصناف", row, `الجهة غير معروفة: ${entityReference}`);
+      return;
+    }
+
+    const stableMatch = items.find(
+      item => (id && item.id === id) || (code && item.code === code)
+    );
+    const nameMatches = incomingName
+      ? items.filter(item => normalize(item.name) === normalize(incomingName))
+      : [];
+    const nameMatch = linkedEntity
+      ? nameMatches.find(item => (item.entityId ?? null) === linkedEntity.id)
+      : nameMatches.length === 1
+        ? nameMatches[0]
+        : undefined;
+    const existing = stableMatch ?? (!id && !code ? nameMatch : undefined);
+
+    if (!id && !code && !existing && nameMatches.length > 1 && !linkedEntity) {
+      error(
+        "الأصناف",
+        row,
+        "يوجد أكثر من صنف بالاسم نفسه؛ أضف كود الصنف أو مرجع الجهة لتحديد المطابق"
+      );
+      return;
+    }
+    if (!id && !code && existing) {
+      duplicate("الأصناف", row, "تمت المطابقة بالاسم والجهة لعدم وجود معرف أو كود");
+    }
     if (existing && options.duplicateMode === "skip") {
       duplicate("الأصناف", row, "تم تخطي سجل موجود");
       return;
     }
     if (existing && options.duplicateMode === "add") {
-      error("الأصناف", row, "سجل بالمعرف أو الكود نفسه موجود؛ استخدم مفتاحاً فريداً للإضافة");
+      error("الأصناف", row, "الصنف موجود بالفعل؛ استخدم التحديث أو غيّر الكود/الاسم");
       return;
     }
-    const entityReference = text(raw, "entityId", "entityCode", "معرف الجهة", "كود الجهة");
-    const linkedEntity = entityReference ? findEntity(entityReference, entities) : undefined;
-    if (entityReference && !linkedEntity) error("الأصناف", row, `الجهة غير معروفة: ${entityReference}`);
+
     const timestamp = existing?.createdAt ?? now;
     const item: ItemRow = {
       ...(existing ?? { id: id || newId("item"), createdAt: timestamp }),
-      name: text(raw, "name", "الاسم") || existing?.name || "",
+      name: incomingName || existing?.name || "",
       code: code || existing?.code || "",
-      category: text(raw, "category", "التصنيف"),
+      category: nonEmptyText(raw, ["category", "التصنيف"], existing?.category ?? ""),
       entityId: linkedEntity?.id ?? existing?.entityId ?? null,
-      unit: text(raw, "unit", "الوحدة"),
+      unit: nonEmptyText(raw, ["unit", "الوحدة"], existing?.unit ?? ""),
       currency: text(raw, "currency", "العملة") || existing?.currency || "USD",
-      defaultExchangeRate: number(raw, "defaultExchangeRate", "سعر الصرف") ?? existing?.defaultExchangeRate ?? 1,
-      customsRate: rate(raw, "customsRate", "نسبة الجمارك") ?? existing?.customsRate ?? null,
-      notes: text(raw, "notes", "ملاحظات"),
+      defaultExchangeRate:
+        number(raw, "defaultExchangeRate", "سعر الصرف") ??
+        existing?.defaultExchangeRate ??
+        1,
+      customsRate:
+        rate(raw, "customsRate", "نسبة الجمارك") ??
+        existing?.customsRate ??
+        null,
+      notes: nonEmptyText(raw, ["notes", "ملاحظات"], existing?.notes ?? ""),
       updatedAt: now,
     };
-    if (!item.name) error("الأصناف", row, "اسم الصنف مطلوب");
-    plan.items.push(item);
-    items.push(item);
+
+    if (!item.name) {
+      error("الأصناف", row, "اسم الصنف مطلوب");
+      return;
+    }
+
+    upsertPlanRow(plan.items, item);
+    const itemIndex = items.findIndex(current => current.id === item.id);
+    if (itemIndex >= 0) items[itemIndex] = item;
+    else items.push(item);
   });
 
   rows("أسعار الموردين").forEach((raw, index) => {
@@ -222,7 +330,7 @@ export function buildExcelImportPlan(
       error("أسعار الموردين", row, `الصنف غير معروف: ${reference || "بدون كود"}`);
       return;
     }
-    const existing = context.prices.find(price => price.itemId === item.id);
+    const existing = prices.find(price => price.itemId === item.id);
     if (existing && options.duplicateMode === "skip") {
       duplicate("أسعار الموردين", row, "تم تخطي أسعار موجودة");
       return;
@@ -243,13 +351,29 @@ export function buildExcelImportPlan(
       currency: text(raw, "currency", "العملة") || item.currency,
       notes: text(raw, "notes", "ملاحظات"), updatedAt: now,
     };
-    plan.itemPrices.push(price);
+    upsertPlanRow(plan.itemPrices, price);
+    const priceIndex = prices.findIndex(current => current.itemId === item.id);
+    if (priceIndex >= 0) prices[priceIndex] = price;
+    else prices.push(price);
+
     values.forEach((value, level) => {
       if (value == null) return;
-      plan.priceHistory.push({
-        id: newId("price-history"), itemId: item.id, priceLevel: (level + 1) as 1 | 2 | 3 | 4,
-        price: value, effectiveDate: dates[level], currency: price.currency, notes: price.notes, createdAt: now,
-      });
+      const candidate = {
+        itemId: item.id,
+        priceLevel: (level + 1) as 1 | 2 | 3 | 4,
+        price: value,
+        effectiveDate: dates[level],
+        currency: price.currency,
+        notes: price.notes,
+      };
+      if (hasSamePriceHistory(priceHistory, candidate)) return;
+      const historyRow: PriceHistoryRow = {
+        id: newId("price-history"),
+        ...candidate,
+        createdAt: now,
+      };
+      plan.priceHistory.push(historyRow);
+      priceHistory.push(historyRow);
     });
   });
 

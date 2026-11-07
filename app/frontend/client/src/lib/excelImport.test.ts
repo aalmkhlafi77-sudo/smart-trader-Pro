@@ -125,15 +125,83 @@ describe("excel import", () => {
     expect(plan.canApply).toBe(false);
   });
 
-  it("does not match an existing item by name when no stable code is supplied", () => {
+  it("matches an existing item by normalized name when it is unambiguous", () => {
     const workbook = parseExcelWorkbook(workbookBuffer());
-    workbook.sheets["الأصناف"] = [{ الاسم: "بوليود", الوحدة: "قطعة" }];
+    workbook.sheets["الأصناف"] = [{ الاسم: "  بوليود  ", الوحدة: "" }];
 
     const plan = buildExcelImportPlan(workbook, context, { duplicateMode: "update" });
 
-    expect(plan.warnings.some(warning => warning.includes("معرف") || warning.includes("كود"))).toBe(true);
+    expect(plan.errors).toEqual([]);
     expect(plan.items).toHaveLength(1);
-    expect(plan.items[0].id).not.toBe(item.id);
+    expect(plan.items[0].id).toBe(item.id);
+    expect(plan.items[0].unit).toBe("قطعة");
+  });
+
+  it("deduplicates repeated entity rows by normalized name and kind", () => {
+    const workbook = parseExcelWorkbook(workbookBuffer());
+    workbook.sheets["الجهات"] = [
+      { الاسم: "شركة ألف", النوع: "مورد", الدولة: "تركيا" },
+      { الاسم: " شركة ألف ", النوع: "مورد", المدينة: "اسطنبول" },
+      { الاسم: "شركة ألف", النوع: "مورد", الهاتف: "123" },
+      { الاسم: "شركة ألف", النوع: "مورد", البريد: "a@example.com" },
+    ];
+
+    const plan = buildExcelImportPlan(workbook, context, { duplicateMode: "update" });
+
+    expect(plan.errors).toEqual([]);
+    expect(plan.entities).toHaveLength(1);
+    expect(plan.entities[0].name).toBe("شركة ألف");
+    expect(plan.entities[0].country).toBe("تركيا");
+    expect(plan.entities[0].city).toBe("اسطنبول");
+    expect(plan.entities[0].phone).toBe("123");
+    expect(plan.entities[0].email).toBe("a@example.com");
+  });
+
+  it("matches item name within its linked entity and preserves non-imported fields", () => {
+    const workbook = parseExcelWorkbook(workbookBuffer());
+    workbook.sheets["الجهات"] = [
+      { المعرف: entity.id, الاسم: entity.name, النوع: "مورد" },
+    ];
+    workbook.sheets["الأصناف"] = [
+      { الاسم: "بوليود", "معرف الجهة": entity.id, التصنيف: "" },
+    ];
+
+    const plan = buildExcelImportPlan(workbook, context, { duplicateMode: "update" });
+
+    expect(plan.errors).toEqual([]);
+    expect(plan.items).toHaveLength(1);
+    expect(plan.items[0].id).toBe(item.id);
+    expect(plan.items[0].category).toBe("خشب");
+    expect(plan.items[0].unit).toBe("قطعة");
+  });
+
+  it("coalesces repeated supplier price rows and avoids duplicate history entries", () => {
+    const workbook = parseExcelWorkbook(workbookBuffer());
+    workbook.sheets["أسعار الموردين"] = [
+      { itemCode: "PLY-001", price1: 5.85, price1Date: "2026-02-01", currency: "USD" },
+      { itemCode: "PLY-001", price1: 5.85, price1Date: "2026-02-01", currency: "USD" },
+    ];
+    const priceContext: ExcelImportContext = {
+      ...context,
+      priceHistory: [
+        {
+          id: "history-existing",
+          itemId: item.id,
+          priceLevel: 1,
+          price: 5.85,
+          effectiveDate: "2026-02-01",
+          currency: "USD",
+          notes: "",
+          createdAt: "2026-02-01T00:00:00.000Z",
+        },
+      ],
+    };
+
+    const plan = buildExcelImportPlan(workbook, priceContext, { duplicateMode: "update" });
+
+    expect(plan.errors).toEqual([]);
+    expect(plan.itemPrices).toHaveLength(1);
+    expect(plan.priceHistory).toHaveLength(0);
   });
 
   it("rejects add mode when a stable item key already exists", () => {
