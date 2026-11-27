@@ -59,6 +59,7 @@ export function NumberField({
   return (
     <Input
       dir="ltr"
+      lang="en-US"
       inputMode="decimal"
       {...rest}
       className={cn("field-input font-medium tabular-nums", className)}
