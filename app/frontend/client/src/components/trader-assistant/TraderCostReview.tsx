@@ -14,7 +14,7 @@ type Props = {
 export function TraderCostReview({ draft, preview, busy, onChange, onPreview, onSave }: Props) {
   const { t } = useLanguage();
   const label = (key: string) => t("assistant." + key);
-  const money = (value: number) => new Intl.NumberFormat(undefined, {
+  const money = (value: number) => new Intl.NumberFormat("en-US-u-nu-latn", {
     style: "currency", currency: draft.currency, maximumFractionDigits: 4,
   }).format(value);
   const field = (key: string, value: string, change: (value: string) => void, max = 180) =>
