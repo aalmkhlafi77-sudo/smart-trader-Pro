@@ -99,7 +99,7 @@ export function salesTemplateSheets(data?:SalesPricingData):Sheet[]{
  const d=data;
  return [
  {name:names.regions,headers:headers.regions,rows:d?.regions.map(r=>[r.name])??[]},
- {name:names.branches,headers:headers.branches,rows:d?.branches.map(b=>[b.number,b.name,d.regions.find(r=>r.id===b.regionId)?.name??"",b.active?"نشط":"موقوف"])??[]},
+ {name:names.branches,headers:headers.branches,rows:d?.branches.map(b=>[b.number,b.name,d.regions.find(r=>r.id===b.regionId)?.name??"",b.active?a("sales.active"):a("sales.inactive")])??[]},
  {name:names.products,headers:headers.products,money:[4],rows:d?.products.map(p=>[p.code,p.name,p.category,p.unit,p.costMinor===null?"":p.costMinor/100,p.branchIds.map(id=>d.branches.find(b=>b.id===id)?.number??"").join("|"),p.notes])??[]},
  {name:names.types,headers:headers.types,rows:d?.types.map(t=>[t.code,t.name])??[]},
  {name:names.prices,headers:headers.prices,money:[4],rows:d?.prices.map(p=>[d.products.find(x=>x.id===p.productId)?.code??"",d.branches.find(x=>x.id===p.branchId)?.number??"",d.types.find(x=>x.id===p.typeId)?.code??"",p.effectiveDate,p.amountMinor/100,p.notes])??[]}
