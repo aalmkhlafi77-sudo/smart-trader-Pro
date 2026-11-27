@@ -1,5 +1,5 @@
 /* عامل الخدمة — يمكّن العمل دون اتصال والتثبيت على الجهاز */
-const CACHE = "smart-trader-v3";
+const CACHE = "smart-trader-v4";
 const CORE = ["/", "/index.html", "/manifest.webmanifest"];
 
 /** مسارات تخص أدوات التطوير يجب ألا تُخزَّن مؤقتاً إطلاقاً */
@@ -32,6 +32,7 @@ self.addEventListener("fetch", (event) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname === "/api" || url.pathname.startsWith("/api/")) return;
   if (isDevAsset(url.pathname)) return;
 
   if (req.mode === "navigate") {

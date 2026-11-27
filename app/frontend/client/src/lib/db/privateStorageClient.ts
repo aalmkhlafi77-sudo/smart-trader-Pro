@@ -33,6 +33,8 @@ const initialState: PrivateStorageState = {
 let state: PrivateStorageState = { ...initialState };
 let syncSuspended = 0;
 let syncQueue: Promise<void> = Promise.resolve();
+let privateMutations = 0;
+let assistantCommit = false;
 const listeners = new Set<(next: PrivateStorageState) => void>();
 
 function emit(patch: Partial<PrivateStorageState>) {
@@ -74,16 +76,13 @@ export function subscribePrivateStorage(
 
 async function hydratePrivateCache() {
   if (!state.authenticated) return;
+  const token = state.csrfToken;
   const snapshot = await request<{
     revision: number;
     payload: BackupPayload | null;
     updatedAt: string | null;
   }>("/api/private/snapshot");
-  emit({
-    revision: snapshot.revision,
-    hasSnapshot: Boolean(snapshot.payload),
-    updatedAt: snapshot.updatedAt,
-  });
+  if (state.csrfToken !== token) return;
 
   syncSuspended += 1;
   try {
@@ -97,6 +96,11 @@ async function hydratePrivateCache() {
   } finally {
     syncSuspended -= 1;
   }
+  if (state.csrfToken === token) emit({
+    revision: snapshot.revision,
+    hasSnapshot: Boolean(snapshot.payload),
+    updatedAt: snapshot.updatedAt,
+  });
 }
 
 export async function initializePrivateStorageClient() {
@@ -241,6 +245,50 @@ export function queuePrivateStorageSync() {
     .catch(() => undefined)
     .then(syncSnapshotNow)
     .catch(() => undefined);
+}
+
+export async function runRepositoryMutation<T>(mutation: () => Promise<T>) {
+  const privateMode = state.authenticated;
+  const token = state.csrfToken;
+  if (privateMode && assistantCommit) throw new Error("انتظر اكتمال حفظ المساعد.");
+  if (privateMode) privateMutations++;
+  try {
+    const result = await mutation();
+    if (privateMode && state.csrfToken === token) queuePrivateStorageSync();
+    return result;
+  } finally {
+    if (privateMode) privateMutations--;
+  }
+}
+
+export async function preparePrivateAssistant() {
+  if (!state.authenticated || !state.ready) throw new Error("تسجيل دخول المالك مطلوب.");
+  await syncQueue;
+  if (!state.hasSnapshot && state.syncState === "idle") await flushPrivateStorageSync();
+  if (!state.authenticated || !state.hasSnapshot || state.syncState !== "idle" || privateMutations) {
+    throw new Error("أكمل مزامنة مساحة العمل الخاصة قبل المتابعة.");
+  }
+  return state.csrfToken;
+}
+
+export async function commitPrivateAssistant<T>(body: unknown) {
+  if (assistantCommit || privateMutations) throw new Error("انتظر اكتمال الحفظ الجاري.");
+  assistantCommit = true;
+  try {
+    const csrf = await preparePrivateAssistant();
+    const result = await request<T>("/api/private/assistant/commit", {
+      method: "POST", headers: { "x-csrf-token": csrf }, body: JSON.stringify(body),
+    });
+    try {
+      await hydratePrivateCache();
+      return { result, cacheUpdated: state.csrfToken === csrf };
+    } catch {
+      if (state.csrfToken === csrf) emit({ syncState: "conflict", lastError: "ASSISTANT_CACHE_REFRESH_FAILED" });
+      return { result, cacheUpdated: false };
+    }
+  } finally {
+    assistantCommit = false;
+  }
 }
 
 export async function flushPrivateStorageSync() {

@@ -73,6 +73,11 @@ export default function Prices() {
 
   useEffect(() => {
     void load();
+    const id = new URLSearchParams(window.location.search).get("record");
+    if (!id) return;
+    let active = true;
+    void db.getItem(id).then(row => { if (active && row) setSelectedId(id); });
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
