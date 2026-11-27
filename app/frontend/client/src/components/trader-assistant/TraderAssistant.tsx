@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useSearch } from "wouter";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { usePrivateStorage } from "@/contexts/PrivateStorageContext";
 import { commitPrivateAssistant, preparePrivateAssistant } from "@/lib/db/privateStorageClient";
 import type { TraderApprovalResult, TraderAssistantAnswer, TraderBatch, TraderPreview } from "@shared/traderAssistant";
@@ -9,7 +10,7 @@ import birdPortrait from "./bird.webp";
 import "./traderAssistant.css";
 
 const endpoint = "/api/private/assistant";
-const sectionLabels = { entities: "جهة", items: "صنف", prices: "سعر" };
+const sectionLabels = { entities: "entity", items: "item", prices: "price" };
 const money = new Intl.NumberFormat("en", { maximumFractionDigits: 2 });
 
 async function askServer<T>(path: string, body: unknown, csrf: string, signal: AbortSignal) {
@@ -19,7 +20,7 @@ async function askServer<T>(path: string, body: unknown, csrf: string, signal: A
     body: JSON.stringify(body),
   });
   const result = await response.json();
-  if (!response.ok) throw Object.assign(new Error(result.error || "تعذّر إكمال الطلب."), { status: response.status });
+  if (!response.ok) throw Object.assign(new Error(result.error || "ASSISTANT_REQUEST_FAILED"), { status: response.status });
   return result as T;
 }
 
@@ -57,6 +58,11 @@ export function TraderAssistant() {
 }
 
 function OwnerAssistant() {
+  const { t, direction } = useLanguage();
+  const translateError = (error: unknown, fallback: string) => {
+    if (!(error instanceof Error)) return t(fallback);
+    return error.message.startsWith("ASSISTANT_") ? t(`assistant.${error.message}`) : error.message;
+  };
   const search = useSearch();
   const runId = new URLSearchParams(search).get("runId");
   const [enabled, setEnabled] = useState(false);
@@ -137,7 +143,7 @@ function OwnerAssistant() {
     } catch (error) {
       if (!controller.signal.aborted) {
         if ((error as { status?: number }).status === 401) changeOpen(false);
-        setError(error instanceof Error ? error.message : "تعذّر إكمال الطلب.");
+        setError(translateError(error, "assistant.ASSISTANT_REQUEST_FAILED"));
       }
     } finally {
       if (pending.current === controller) { pending.current = null; setBusy(null); }
@@ -180,10 +186,10 @@ function OwnerAssistant() {
       setApproved(result);
       setBatch(null);
       setPreview(null);
-      if (!cacheUpdated) setError("حُفظت الدفعة على الخادم. حدّث مساحة العمل لعرض السجلات.");
+      if (!cacheUpdated) setError(t("assistant.cacheRefresh"));
     } catch (error) {
       if ((error as { status?: number }).status === 409) setPreview(null);
-      setError(error instanceof Error ? error.message : "تعذّر تأكيد الحفظ. تحقّق من السجلات قبل إعادة الاعتماد.");
+      setError(translateError(error, "assistant.confirmError"));
     } finally {
       committing.current = false;
       setBusy(null);
@@ -193,30 +199,30 @@ function OwnerAssistant() {
   if (!enabled) return null;
   return <Dialog open={open} onOpenChange={changeOpen}>
     <DialogTrigger asChild>
-      <button type="button" className="trader-bird" aria-label="افتح رفيق التاجر"
+      <button type="button" className="trader-bird" aria-label={t("assistant.open")}
         onMouseEnter={() => setStationary(true)} onMouseLeave={() => setStationary(false)}
         onFocus={() => setStationary(true)} onBlur={() => setStationary(false)}>
         <TraderBird stationary={stationary || open} />
-        <span className="trader-bird__label">رفيق التاجر</span>
+        <span className="trader-bird__label">{t("assistant.title")}</span>
       </button>
     </DialogTrigger>
-    <DialogContent dir="rtl" showCloseButton={busy !== "commit"}
+    <DialogContent dir={direction} showCloseButton={busy !== "commit"}
       className="trader-assistant-panel grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden p-0">
       <header className="border-b border-emerald-700/20 px-5 py-4 ps-5 pe-11">
-        <DialogTitle>رفيق التاجر</DialogTitle>
+        <DialogTitle>{t("assistant.title")}</DialogTitle>
         <DialogDescription className="mt-1">
-          {runId ? "ملف الشحنة المفتوح مرتبط بهذا الطلب." : "مساحة عمل المالك لإعداد السجلات ومراجعة تكاليف الشحنات."}
+          {runId ? t("assistant.contextCargo") : t("assistant.workspace")}
         </DialogDescription>
       </header>
       <div className="space-y-4 overflow-y-auto overscroll-contain px-4 py-4 sm:px-5">
         {!turns.length && <div className="grid gap-2 text-sm">
           {[
-            "أضف المورد شركة النور والصنف موكيت بسعر 25 SAR بتاريخ 2027-01-15",
-            "قارن تكاليف الشحنات المحفوظة",
+            t("assistant.sampleCreate"),
+            t("assistant.sampleCompare"),
           ].map(prompt => <button key={prompt} type="button" className="rounded-lg border bg-background/80 px-3 py-2 text-start hover:border-emerald-700"
             disabled={Boolean(busy)} onClick={() => setQuestion(prompt)}>{prompt}</button>)}
         </div>}
-        {turns.length > 0 && <ol className="space-y-3" aria-label="سياق العمل">
+        {turns.length > 0 && <ol className="space-y-3" aria-label={t("assistant.history")}>
           {turns.map((turn, idx) => <li key={idx} className="space-y-1 break-words text-sm">
             <p className="rounded-lg bg-emerald-950/10 px-3 py-2 font-semibold dark:bg-emerald-300/10">{turn.request}</p>
             <p className="px-3">{turn.reply}</p>
@@ -227,35 +233,35 @@ function OwnerAssistant() {
           <p className="text-xs text-muted-foreground">{cargo.route}</p>
           <dl className="grid grid-cols-2 gap-2">
             {[
-              ["التكلفة الإجمالية", cargo.total], ["تكلفة الوحدة", cargo.unitCost],
-              ["الفاتورة", cargo.invoice], ["اللوجستيات", cargo.logistics], ["الجمارك", cargo.customs],
+              [t("assistant.total"), cargo.total], [t("assistant.unitCost"), cargo.unitCost],
+              [t("assistant.invoice"), cargo.invoice], [t("assistant.logistics"), cargo.logistics], [t("assistant.customs"), cargo.customs],
             ].map(([label, number]) => <div key={label}><dt className="text-xs text-muted-foreground">{label}</dt>
               <dd><bdi>{typeof number === "number" ? `${money.format(number)} ${cargo.currency}` : "—"}</bdi></dd></div>)}
           </dl>
-          {cargo.missing > 0 && <p className="text-xs">بنود تكلفة ناقصة: {cargo.missing}</p>}
+          {cargo.missing > 0 && <p className="text-xs">{t("assistant.missingCosts").replace("{count}", String(cargo.missing))}</p>}
         </article>)}
         {batch && <TraderAssistantReview batch={batch} preview={preview} busy={Boolean(busy)}
           onChange={next => { setBatch(next); setPreview(null); }} onPreview={previewBatch} onApprove={() => void approve()} />}
         {approved && <section className="rounded-xl border border-emerald-600/30 bg-background/85 p-3 text-sm" role="status">
-          <p>حُفظت الدفعة بنجاح. الإضافات الجديدة: {approved.created}</p>
+          <p>{t("assistant.saved").replace("{count}", String(approved.created))}</p>
           <div className="mt-2 flex flex-wrap gap-3">
             {approved.records.map((record, i) => <a key={i} className="font-semibold underline"
-              href={`/${record.section}?record=${encodeURIComponent(record.id)}`}>{sectionLabels[record.section]} · {record.name}</a>)}
+              href={`/${record.section}?record=${encodeURIComponent(record.id)}`}>{t(`assistant.${sectionLabels[record.section]}`)} · {record.name}</a>)}
           </div>
         </section>}
-        {busy && <p role="status" className="text-sm">{busy === "commit" ? "جارٍ حفظ الدفعة المعتمدة…" : "جارٍ تجهيز النتيجة…"}</p>}
+        {busy && <p role="status" className="text-sm">{busy === "commit" ? t("assistant.saving") : t("assistant.working")}</p>}
         {error && <p role="alert" className="rounded-lg bg-red-500/10 p-2 text-sm text-red-800 dark:text-red-300">{error}</p>}
       </div>
       <form onSubmit={submit} className="space-y-2 border-t border-emerald-700/20 bg-background/65 px-4 py-3 sm:px-5">
-        <label className="block text-sm font-semibold" htmlFor="trader-assistant-question">ماذا تريد أن تنجز؟</label>
+        <label className="block text-sm font-semibold" htmlFor="trader-assistant-question">{t("assistant.question")}</label>
         <textarea id="trader-assistant-question" rows={2} maxLength={6000} value={question} disabled={Boolean(busy)}
           onChange={event => setQuestion(event.target.value)} className="w-full resize-y rounded-xl border bg-background p-2 text-sm" />
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <button type="submit" disabled={Boolean(busy) || question.trim().length < 2} className="rounded-lg bg-emerald-800 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">إرسال الطلب</button>
+          <button type="submit" disabled={Boolean(busy) || question.trim().length < 2} className="rounded-lg bg-emerald-800 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{t("assistant.send")}</button>
           {turns.length > 0 && <button type="button" className="text-xs underline" disabled={Boolean(busy)}
-            onClick={() => { setTurns([]); setAnswer(null); setBatch(null); setApproved(null); setPreview(null); setError(""); setQuestion(""); }}>جلسة عمل جديدة</button>}
+            onClick={() => { setTurns([]); setAnswer(null); setBatch(null); setApproved(null); setPreview(null); setError(""); setQuestion(""); }}>{t("assistant.newSession")}</button>}
         </div>
-        <p className="text-xs text-muted-foreground">يُرسل نص طلبك والتوضيحات السابقة في هذه الجلسة إلى Gemini.</p>
+        <p className="text-xs text-muted-foreground">{t("assistant.privacy")}</p>
       </form>
     </DialogContent>
   </Dialog>;

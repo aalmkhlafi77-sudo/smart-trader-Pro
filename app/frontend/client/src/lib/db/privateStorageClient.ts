@@ -250,7 +250,7 @@ export function queuePrivateStorageSync() {
 export async function runRepositoryMutation<T>(mutation: () => Promise<T>) {
   const privateMode = state.authenticated;
   const token = state.csrfToken;
-  if (privateMode && assistantCommit) throw new Error("انتظر اكتمال حفظ المساعد.");
+  if (privateMode && assistantCommit) throw new Error("ASSISTANT_BUSY");
   if (privateMode) privateMutations++;
   try {
     const result = await mutation();
@@ -262,17 +262,17 @@ export async function runRepositoryMutation<T>(mutation: () => Promise<T>) {
 }
 
 export async function preparePrivateAssistant() {
-  if (!state.authenticated || !state.ready) throw new Error("تسجيل دخول المالك مطلوب.");
+  if (!state.authenticated || !state.ready) throw new Error("ASSISTANT_OWNER_REQUIRED");
   await syncQueue;
   if (!state.hasSnapshot && state.syncState === "idle") await flushPrivateStorageSync();
   if (!state.authenticated || !state.hasSnapshot || state.syncState !== "idle" || privateMutations) {
-    throw new Error("أكمل مزامنة مساحة العمل الخاصة قبل المتابعة.");
+    throw new Error("ASSISTANT_SYNC_REQUIRED");
   }
   return state.csrfToken;
 }
 
 export async function commitPrivateAssistant<T>(body: unknown) {
-  if (assistantCommit || privateMutations) throw new Error("انتظر اكتمال الحفظ الجاري.");
+  if (assistantCommit || privateMutations) throw new Error("ASSISTANT_BUSY");
   assistantCommit = true;
   try {
     const csrf = await preparePrivateAssistant();
