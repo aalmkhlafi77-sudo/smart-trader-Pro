@@ -102,14 +102,14 @@ function SalesPricingPage(){
   if(bulk.mode==="cost"){
     for(const p of next.products.filter(p=>!bulk.product||p.id===bulk.product)){if(p.costMinor===amount)continue;changes.push({name:p.name,old:p.costMinor??0,next:amount});p.costMinor=amount;}
   }else{
-    for(const p of data.products.filter(p=>!bulk.product||p.id===bulk.product))for(const b of data.branches.filter(b=>b.active&&p.branchIds.includes(b.id)&&(!bulk.branch||b.id===bulk.branch)))for(const t of data.types.filter(t=>!bulk.type||t.id===bulk.type)){
-      const old=currentSalesPrice(data,p.id,b.id,t.id,bulk.date);if(!old)continue;
+    for(const p of data.products.filter(p=>!bulk.product||p.id===bulk.product))for(const b of data.branches.filter(b=>b.active&&p.branchIds.includes(b.id)&&(!bulk.branch||b.id===bulk.branch)))for(const priceType of data.types.filter(t=>!bulk.type||t.id===bulk.type)){
+      const old=currentSalesPrice(data,p.id,b.id,priceType.id,bulk.date);if(!old)continue;
       let value=bulk.mode==="fixed"?amount:bulk.mode==="amount"?old.amountMinor+amount:bulk.mode==="subtract"?old.amountMinor-amount:Number((BigInt(old.amountMinor)*BigInt(10000+(bulk.mode==="percentDown"?-amount:amount))+BigInt(5000))/BigInt(10000));
       if(value<0||!Number.isSafeInteger(value))throw Error(t("sales.invalidResult"));
       if(value===old.amountMinor)continue;
-      const candidate:SalesPrice={id:newId("sales"),productId:p.id,branchId:b.id,typeId:t.id,effectiveDate:bulk.date,amountMinor:value,notes:t("sales.bulkNote")};
+      const candidate:SalesPrice={id:newId("sales"),productId:p.id,branchId:b.id,typeId:priceType.id,effectiveDate:bulk.date,amountMinor:value,notes:t("sales.bulkNote")};
       const exists=next.prices.find(x=>priceKey(x)===priceKey(candidate));if(exists)throw Error(t("sales.sameDate"));
-      next.prices.push(candidate);changes.push({name:p.name+" / "+b.name+" / "+t.name,old:old.amountMinor,next:value});
+      next.prices.push(candidate);changes.push({name:p.name+" / "+b.name+" / "+priceType.name,old:old.amountMinor,next:value});
     }
   }
   validateSalesPricing(next);if(!changes.length)throw Error(t("sales.noChanges"));setBulkPlan({data:next,revision:snapshot.revision,changes});
