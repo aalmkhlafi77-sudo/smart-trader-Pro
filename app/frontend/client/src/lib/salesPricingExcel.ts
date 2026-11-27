@@ -27,10 +27,13 @@ export function previewSalesExcel(buffer:ArrayBuffer, current:SalesPricingData):
   function process<T extends {id:string}>(sheet:string, rows:T[], identity:(r:T)=>string, build:(r:Record<string,string>,rows:T[])=>T){
     const ws=wb.Sheets[sheet];if(!ws)return;
     const source=XLSX.utils.sheet_to_json<Record<string,unknown>>(ws,{defval:"",raw:false,dateNF:"yyyy-mm-dd"});
+    const rawSource=XLSX.utils.sheet_to_json<Record<string,unknown>>(ws,{defval:"",raw:true});
     if(source.length>20000){result.errors.push(sheet+a("sales.rowLimit"));return;}
     source.forEach((raw,i)=>{
       try{
         const row=Object.fromEntries(Object.entries(raw).map(([k,v])=>[k.trim(),clean(v)]));
+        // Read currency from raw numeric cells; formatted strings preserve identifiers.
+        for(const [header,v] of Object.entries(rawSource[i]??{})) if(typeof v==="number" && [a("sales.cost"),a("sales.price")].includes(header.trim())) row[header.trim()]=String(v);
         const candidate=build(row,rows);
         const k=identity(candidate), old=rows.find(r=>identity(r)===k);
         if(!k)throw Error(a("sales.idRequired"));
@@ -86,7 +89,7 @@ export function buildSalesWorkbook(sheets:Sheet[]):Uint8Array{
   sheets.forEach((s,i)=>{
     const all:Cell[][]=[s.headers,...s.rows];
     const last=XLSX.utils.encode_col(s.headers.length-1);
-    const cols=s.headers.map((h,j)=>'<col min="'+(j+1)+'" max="'+(j+1)+'" width="'+Math.min(46,Math.max(14,h.length+5,...s.rows.map(r=>String(r[j]??"").length+3)))+'" customWidth="1"/>').join("");
+    const cols=s.headers.map((h,j)=>'<col min="'+(j+1)+'" max="'+(j+1)+'" width="'+Math.min(46,s.rows.reduce((width,r)=>Math.max(width,String(r[j]??"").length+3),Math.max(14,h.length+5)))+'" customWidth="1"/>').join("");
     const rows=all.map((r,k)=>'<row r="'+(k+1)+'"'+(k===0?' ht="30" customHeight="1"':'')+'>'+r.map((v,j)=>{
       const a=XLSX.utils.encode_cell({r:k,c:j}),style=k===0?1:typeof v==="string"?4:s.money?.includes(j)?2:s.percent?.includes(j)?3:0;
       return typeof v==="number"&&Number.isFinite(v)?'<c r="'+a+'" s="'+style+'"><v>'+v+'</v></c>':'<c r="'+a+'" s="'+style+'" t="inlineStr"><is><t xml:space="preserve">'+xml(v)+'</t></is></c>';
