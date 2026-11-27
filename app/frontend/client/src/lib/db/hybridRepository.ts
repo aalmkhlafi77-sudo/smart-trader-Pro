@@ -1,6 +1,6 @@
 import type { Repository } from "./repository";
 import { indexedDbRepository } from "./indexedDbRepository";
-import { queuePrivateStorageSync } from "./privateStorageClient";
+import { runRepositoryMutation } from "./privateStorageClient";
 
 const MUTATING_METHODS = new Set<keyof Repository>([
   "saveEntity", "deleteEntity",
@@ -42,12 +42,9 @@ export const hybridRepository: Repository = new Proxy(indexedDbRepository, {
     const value = Reflect.get(target, property, receiver);
     if (typeof value !== "function") return value;
     const key = property as keyof Repository;
-    return async (...args: unknown[]) => {
-      const result = await (value as (...params: unknown[]) => Promise<unknown>)(
-        ...args
-      );
-      if (MUTATING_METHODS.has(key)) queuePrivateStorageSync();
-      return result;
+    return (...args: unknown[]) => {
+      const call = () => (value as (...params: unknown[]) => Promise<unknown>)(...args);
+      return MUTATING_METHODS.has(key) ? runRepositoryMutation(call) : call();
     };
   },
 }) as Repository;

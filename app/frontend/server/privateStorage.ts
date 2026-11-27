@@ -2,6 +2,9 @@ import type { Express, Request, Response } from "express";
 import { createHash, pbkdf2, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { createPool, type Pool, type RowDataPacket } from "mysql2/promise";
+import type { BackupPayload } from "../client/src/lib/db/repository";
+import { createTraderAssistantRouter } from "./traderAssistant";
+import { TraderAssistantError } from "./traderAssistantBatch";
 
 const pbkdf2Async = promisify(pbkdf2);
 const SESSION_COOKIE = "smart_trader_private";
@@ -273,6 +276,60 @@ async function snapshotMeta(userId: string) {
 }
 
 export function registerPrivateStorageRoutes(app: Express) {
+  function assistantSnapshot(row: RowDataPacket | undefined) {
+    if (!row?.payload) throw new TraderAssistantError(409, "جهّز مساحة العمل الخاصة بالمزامنة، ثم أعد المحاولة.");
+    const payload = JSON.parse(String(row.payload)) as BackupPayload;
+    if (payload.format !== "smart-trader-backup" || !payload.tables) {
+      throw new TraderAssistantError(409, "تعذّر قراءة نسخة مساحة العمل. حدّث بيانات المالك أولًا.");
+    }
+    return { revision: Number(row.revision), payload };
+  }
+
+  app.use("/api/private/assistant", createTraderAssistantRouter({
+    session: sessionFromRequest,
+    async read(ownerId) {
+      if (!pool) throw new TraderAssistantError(503, "تخزين المالك غير متاح.");
+      const [rows] = await pool.execute<RowDataPacket[]>(
+        "SELECT revision, payload FROM smart_trader_private_snapshots WHERE owner_id = ? LIMIT 1",
+        [ownerId],
+      );
+      return assistantSnapshot(rows[0]);
+    },
+    async change(ownerId, revision, apply) {
+      if (!pool) throw new TraderAssistantError(503, "تخزين المالك غير متاح.");
+      const connection = await pool.getConnection();
+      try {
+        await connection.beginTransaction();
+        const [rows] = await connection.execute<RowDataPacket[]>(
+          "SELECT revision, payload FROM smart_trader_private_snapshots WHERE owner_id = ? FOR UPDATE",
+          [ownerId],
+        );
+        const current = assistantSnapshot(rows[0]);
+        if (current.revision !== revision) {
+          throw new TraderAssistantError(409, "تغيّرت مساحة العمل. أعد عرض معاينة الحفظ.");
+        }
+        const { result, payload } = apply(current);
+        if (payload) {
+          const serialized = JSON.stringify(payload);
+          if (Buffer.byteLength(serialized, "utf8") > 32 * 1024 * 1024) {
+            throw new TraderAssistantError(413, "مساحة العمل تجاوزت الحد المتاح للحفظ.");
+          }
+          await connection.execute(
+            "UPDATE smart_trader_private_snapshots SET revision = ?, payload = ?, updated_at = ? WHERE owner_id = ?",
+            [revision + 1, serialized, new Date(), ownerId],
+          );
+        }
+        await connection.commit();
+        return result;
+      } catch (error) {
+        await connection.rollback();
+        throw error;
+      } finally {
+        connection.release();
+      }
+    },
+  }));
+
   app.get("/api/private/status", async (req, res) => {
     if (!ready || !pool) {
       res.json({ databaseReady: false, authenticated: false });

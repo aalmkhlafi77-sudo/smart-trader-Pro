@@ -92,6 +92,11 @@ export default function Items() {
 
   useEffect(() => {
     void load();
+    const id = new URLSearchParams(window.location.search).get("record");
+    if (!id) return;
+    let active = true;
+    void db.getItem(id).then(row => { if (active && row) return view(row); });
+    return () => { active = false; };
   }, []);
 
   const reset = () => {
