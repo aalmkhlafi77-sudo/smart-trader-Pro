@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/pricing";
 import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, FilePenLine, Plus, Save, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
@@ -581,7 +582,7 @@ export default function QuickEntryDrafts() {
                           {t("quickEntry.rows")}: {draftRows.length} · {t("quickEntry.transferred")}: {transferred}
                         </p>
                         <p className="mt-1 text-[10px] text-muted-foreground">
-                          {t("quickEntry.lastUpdated")}: {new Date(draft.updatedAt).toLocaleString()}
+                          {t("quickEntry.lastUpdated")}: {formatDateTime(draft.updatedAt)}
                         </p>
                       </button>
                       <div className="mt-3 flex gap-2">

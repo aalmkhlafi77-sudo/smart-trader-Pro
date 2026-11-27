@@ -1,3 +1,4 @@
+import EnglishDatePicker from "@/components/EnglishDatePicker";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { TraderBatch, TraderPreview } from "@shared/traderAssistant";
 
@@ -59,8 +60,8 @@ export function TraderAssistantReview({ batch, preview, busy, onChange, onPrevie
           <label className="min-w-0 text-xs">{t("assistant.unit")}<input className={control} maxLength={180} value={item.unit} onChange={e => change({ unit: e.target.value })} /></label>
           <label className="min-w-0 text-xs">{t("assistant.currency")}<input dir="ltr" className={control} maxLength={3} value={item.currency ?? ""} onChange={e => change({ currency: e.target.value.toUpperCase() || null })} /></label>
           {item.price && <>
-            <label className="min-w-0 text-xs">{t("assistant.purchasePrice")}<input type="number" dir="ltr" min="0" step="any" className={control} value={item.price.amount || ""} onChange={e => change({ price: { ...item.price!, amount: Number(e.target.value) } })} /></label>
-            <label className="min-w-0 text-xs">{t("assistant.priceDate")}<input type="date" dir="ltr" className={control} value={item.price.date} onChange={e => change({ price: { ...item.price!, date: e.target.value } })} /></label>
+            <label className="min-w-0 text-xs">{t("assistant.purchasePrice")}<input type="number" dir="ltr" lang="en-US" min="0" step="any" className={control} value={item.price.amount || ""} onChange={e => change({ price: { ...item.price!, amount: Number(e.target.value) } })} /></label>
+            <label className="min-w-0 text-xs">{t("assistant.priceDate")}<EnglishDatePicker className={control} ariaLabel={t("assistant.priceDate")} value={item.price.date} disabled={busy} onChange={date => change({ price: { ...item.price!, date } })} /></label>
           </>}
         </div>
         <div className="flex gap-3">

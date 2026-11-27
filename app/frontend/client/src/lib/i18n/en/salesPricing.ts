@@ -1,4 +1,5 @@
 const dict: Record<string,string> = {
+  "sales.clearDate": "Clear date",
   "sales.reports": "Reports center",
   "sales.categories": "Categories",
   "sales.categoryHint": "Categories come from products. Deleting a category clears the assignment without deleting products or prices.",
