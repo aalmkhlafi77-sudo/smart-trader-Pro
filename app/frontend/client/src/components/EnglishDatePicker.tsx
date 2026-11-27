@@ -52,7 +52,7 @@ export default function EnglishDatePicker({
 }: EnglishDatePickerProps) {
   const [open, setOpen] = useState(false);
   const {t} = useLanguage();
-  const selected = useMemo(() => parseEnglishCalendarDate(value), [value]);
+  const selected = useMemo(() => parseEnglishCalendarDate(value.split("T")[0]), [value]);
   const time = value.includes("T") ? toEnglishDigits(value.split("T")[1]).slice(0, 5) : "00:00";
   const display = selected ? `${isoDate(selected)}${withTime ? ` · ${time}` : ""}` : "YYYY-MM-DD";
 
