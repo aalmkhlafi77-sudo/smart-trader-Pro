@@ -1,4 +1,5 @@
 const dict: Record<string,string> = {
+  "sales.clearDate": "مسح التاريخ",
   "sales.reports": "مركز التقارير",
   "sales.categories": "التصنيفات",
   "sales.categoryHint": "التصنيفات مأخوذة من بيانات الأصناف. حذف التصنيف يزيل ارتباطه بالأصناف دون حذف الأصناف أو أسعارها.",
