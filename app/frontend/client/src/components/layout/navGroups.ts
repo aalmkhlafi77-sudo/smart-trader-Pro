@@ -34,6 +34,10 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    groupKey: "nav.groupSalesPricing",
+    items: [{href: "/sales-pricing", labelKey: "nav.salesPricing", icon: Tags}],
+  },
+  {
     groupKey: "nav.groupOperations",
     items: [
       { href: "/cargo", labelKey: "nav.cargo", icon: Calculator },
