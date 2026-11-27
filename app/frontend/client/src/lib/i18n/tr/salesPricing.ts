@@ -1,4 +1,5 @@
 const dict: Record<string,string> = {
+  "sales.clearDate": "Tarihi temizle",
   "sales.reports": "Rapor merkezi",
   "sales.categories": "Kategoriler",
   "sales.categoryHint": "Kategoriler ürünlerden alınır. Kategori silinirse ürünler ve fiyatlar korunur.",
