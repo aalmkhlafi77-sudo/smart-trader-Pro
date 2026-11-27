@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { once } from "node:events";
 import { test } from "node:test";
 import express from "express";
+import { zipSync, strToU8 } from "fflate";
+import { utils, write } from "xlsx";
 import type { BackupPayload } from "../client/src/lib/db/repository";
 import { prepareTraderBatch, TraderAssistantError } from "./traderAssistantBatch";
 import { createTraderAssistantRouter } from "./traderAssistant";
@@ -48,6 +50,15 @@ test("plans a linked supplier and three dated prices without mutating the snapsh
   assert.equal(first.payload.tables.items.length, 3);
 });
 
+const cost = {
+  name: "دفعة موكيت", currency: "SAR",
+  items: [
+    { name: "موكيت", code: "A", unit: "متر", currency: "SAR", quantity: 2, unitPrice: 10, exchangeRate: null },
+    { name: "سجاد", code: "B", unit: "متر", currency: "SAR", quantity: 3, unitPrice: 20, exchangeRate: null },
+  ],
+  expenses: [{ name: "شحن", currency: "SAR", amount: 10, exchangeRate: null, basis: "quantity" }],
+};
+
 test("owner-only API denies guests, requires CSRF and creates records only after approval", async t => {
   const key = process.env.GEMINI_API_KEY;
   process.env.GEMINI_API_KEY = "test";
@@ -57,9 +68,16 @@ test("owner-only API denies guests, requires CSRF and creates records only after
   t.mock.method(globalThis, "fetch", async (url: string, init: RequestInit) => {
     assert.match(url, /^https:\/\/generativelanguage\.googleapis\.com\//);
     const sent = JSON.parse(String(init.body));
-    assert.doesNotMatch(JSON.stringify(sent.generationConfig.responseJsonSchema), /"maxItems"/);
+    if (!sent.systemInstruction.parts[0].text.includes("استخرج البيانات المذكورة")) {
+      assert.doesNotMatch(JSON.stringify(sent.generationConfig.responseJsonSchema), /"maxItems"/);
+    }
     assert.doesNotMatch(String(init.body), /private-id/);
     providerCalls++;
+    if (sent.systemInstruction.parts[0].text.includes("استخرج البيانات المذكورة")) {
+      return Response.json({ candidates: [{ content: { parts: [{ text: JSON.stringify(
+        sent.systemInstruction.parts[0].text.includes("عملة الحساب") ? cost : batch,
+      ) }] } }] });
+    }
     return Response.json({ candidates: [{ content: { parts: [{ text: JSON.stringify({
       action: "draft", message: "جاهز", cargoName: "", ...batch,
     }) }] } }] });
@@ -117,4 +135,35 @@ test("owner-only API denies guests, requires CSRF and creates records only after
   assert.equal((await approve()).status, 409);
   assert.equal(writes, 1);
   assert.equal(providerCalls, 1);
+  const attach = (mode: string, format: string, file: Uint8Array, headers: Record<string, string> = identity) =>
+    realFetch(`${url}/import?mode=${mode}&format=${format}`, {
+      method: "POST", headers: { ...headers, "Content-Type": "application/octet-stream" },
+      body: Buffer.concat([Buffer.alloc(4), file]),
+    });
+  const pdf = Buffer.from("%PDF-1.4");
+  assert.equal((await attach("cost", "pdf", pdf, {})).status, 401);
+  assert.equal((await attach("cost", "pdf", pdf, { Cookie: identity.Cookie })).status, 403);
+  assert.equal((await attach("cost", "pdf", Buffer.from("wrong"))).status, 422);
+  const workbook = utils.book_new();
+  utils.book_append_sheet(workbook, utils.aoa_to_sheet([["Item", "Price"], ["Rug", 25]]), "Invoice");
+  assert.equal((await attach("records", "xlsx", write(workbook, { bookType: "xlsx", type: "buffer" }))).status, 200);
+  const docx = zipSync({ "word/document.xml": strToU8("<w:document><w:p><w:t>Rug</w:t></w:p></w:document>") });
+  assert.equal((await attach("records", "docx", docx)).status, 200);
+  const imported = await attach("cost", "pdf", pdf);
+  assert.equal(imported.status, 200);
+  const extracted = (await imported.json()).cost;
+  assert.equal((await post("cost/preview", { ...extracted, items: [{ ...cost.items[0], quantity: null }] }, identity)).status, 422);
+  const costResponse = await post("cost/preview", extracted, identity);
+  assert.equal(costResponse.status, 200);
+  const costReview = await costResponse.json();
+  assert.equal(costReview.total, 90);
+  assert.deepEqual(costReview.items.map((row: { total: number }) => row.total), [24, 66]);
+  assert.equal(writes, 1);
+  const save = () => post("cost/commit", { draft: extracted, revision: costReview.revision }, identity);
+  assert.equal((await save()).status, 200);
+  assert.equal(payload.tables.cargo_cost_runs[0].status, "draft");
+  assert.equal(payload.tables.cargo_cost_allocations.length, 2);
+  assert.equal((await save()).status, 409);
+  assert.equal(writes, 2);
+
 });

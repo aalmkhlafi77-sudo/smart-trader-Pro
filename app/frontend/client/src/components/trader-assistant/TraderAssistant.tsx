@@ -6,6 +6,10 @@ import { usePrivateStorage } from "@/contexts/PrivateStorageContext";
 import { commitPrivateAssistant, preparePrivateAssistant } from "@/lib/db/privateStorageClient";
 import type { TraderApprovalResult, TraderAssistantAnswer, TraderBatch, TraderPreview } from "@shared/traderAssistant";
 import { TraderAssistantReview } from "./TraderAssistantReview";
+import { Mic, Paperclip } from "lucide-react";
+import { MAX_TRADER_ATTACHMENT, traderFormats, type TraderCostDraft, type TraderCostPreview, type TraderFormat, type TraderImportMode } from "@shared/traderAssistantImport";
+import { TraderCostReview } from "./TraderCostReview";
+import { useTraderDictation } from "./useTraderDictation";
 import birdPortrait from "./bird.webp";
 import "./traderAssistant.css";
 
@@ -71,6 +75,15 @@ function OwnerAssistant() {
   const [question, setQuestion] = useState("");
   const [turns, setTurns] = useState<Array<{ request: string; reply: string }>>([]);
   const [answer, setAnswer] = useState<TraderAssistantAnswer | null>(null);
+  const [attachment, setAttachment] = useState<{ file: File; format: TraderFormat } | null>(null);
+  const [importMode, setImportMode] = useState<TraderImportMode>("records");
+  const [cost, setCost] = useState<TraderCostDraft | null>(null);
+  const [costPreview, setCostPreview] = useState<TraderCostPreview | null>(null);
+  const [savedCost, setSavedCost] = useState("");
+  const dictation = useTraderDictation(
+    text => setQuestion(previous => [previous.trim(), text.trim()].filter(Boolean).join(" ").slice(0, 6000)),
+    () => setError(t("assistant.dictationError")),
+  );
   const [batch, setBatch] = useState<TraderBatch | null>(null);
   const [preview, setPreview] = useState<TraderPreview | null>(null);
   const [approved, setApproved] = useState<TraderApprovalResult | null>(null);
@@ -89,6 +102,11 @@ function OwnerAssistant() {
       setTurns([]);
       setAnswer(null);
       setBatch(null);
+      setCost(null);
+      setCostPreview(null);
+      setSavedCost("");
+      setAttachment(null);
+      dictation.reset();
       setPreview(null);
       setApproved(null);
       setQuestion("");
@@ -127,6 +145,8 @@ function OwnerAssistant() {
       pending.current = null;
       setBusy(null);
       setStationary(false);
+      dictation.reset();
+      setAttachment(null);
     }
     setOpen(value);
   }
@@ -150,8 +170,69 @@ function OwnerAssistant() {
     }
   }
 
+  async function importAttachment(csrf: string, signal: AbortSignal) {
+    if (!attachment) return;
+    const instructions = new TextEncoder().encode(question.trim());
+    const header = new ArrayBuffer(4);
+    new DataView(header).setUint32(0, instructions.byteLength);
+    const query = new URLSearchParams({ format: attachment.format, mode: importMode });
+    const response = await fetch(`${endpoint}/import?${query}`, {
+      method: "POST", credentials: "same-origin", signal,
+      headers: { "Content-Type": "application/octet-stream", "x-csrf-token": csrf },
+      body: new Blob([header, instructions, attachment.file]),
+    });
+    const result = await response.json() as { error?: string; batch?: TraderBatch; cost?: TraderCostDraft };
+    if (!response.ok) throw Object.assign(new Error(result.error || "ASSISTANT_REQUEST_FAILED"), { status: response.status });
+    if (signal.aborted) return;
+    const batch = result.batch;
+    if (!result.cost?.items.length && !batch?.entities.length && !batch?.items.length) {
+      throw new Error(t("assistant.emptyImport"));
+    }
+    setAnswer(null);
+    setApproved(null);
+    setPreview(null);
+    setCostPreview(null);
+    setSavedCost("");
+    setBatch(batch ?? null);
+    setCost(result.cost ?? null);
+    setAttachment(null);
+    setQuestion("");
+  }
+
+  function previewCost() {
+    if (!cost) return;
+    void run("preview", async (csrf, signal) => {
+      const result = await askServer<TraderCostPreview>("cost/preview", cost, csrf, signal);
+      if (!signal.aborted) setCostPreview(result);
+    });
+  }
+
+  async function saveCost() {
+    if (!cost || !costPreview || pending.current || committing.current) return;
+    committing.current = true;
+    setBusy("commit");
+    setError("");
+    try {
+      const { result, cacheUpdated } = await commitPrivateAssistant<{ runId: string }>(
+        { draft: cost, revision: costPreview.revision }, "cost",
+      );
+      setSavedCost(result.runId);
+      setCost(null);
+      setCostPreview(null);
+      if (!cacheUpdated) setError(t("assistant.cacheRefresh"));
+    } catch (error) {
+      setCostPreview(null);
+      setError(translateError(error, "assistant.confirmError"));
+    } finally {
+      committing.current = false;
+      setBusy(null);
+    }
+  }
+
   function submit(event: FormEvent) {
     event.preventDefault();
+    dictation.reset();
+    if (attachment) { void run("ask", importAttachment); return; }
     const request = question.trim();
     if (request.length < 2) return;
     void run("ask", async (csrf, signal) => {
@@ -161,6 +242,9 @@ function OwnerAssistant() {
       if (signal.aborted) return;
       setTurns(old => [...old.slice(-5), { request, reply: result.message }]);
       setAnswer(result);
+      setCost(null);
+      setCostPreview(null);
+      setSavedCost("");
       setBatch(result.batch ?? null);
       setPreview(null);
       setApproved(null);
@@ -249,6 +333,9 @@ function OwnerAssistant() {
               href={`/${record.section}?record=${encodeURIComponent(record.id)}`}>{t(`assistant.${sectionLabels[record.section]}`)} · {record.name}</a>)}
           </div>
         </section>}
+        {cost && <TraderCostReview draft={cost} preview={costPreview} busy={Boolean(busy)}
+          onChange={draft => { setCost(draft); setCostPreview(null); }} onPreview={previewCost} onSave={() => void saveCost()} />}
+        {savedCost && <a className="text-sm underline" href={`/cargo?runId=${encodeURIComponent(savedCost)}`}>{t("assistant.openSavedCost")}</a>}
         {busy && <p role="status" className="text-sm">{busy === "commit" ? t("assistant.saving") : t("assistant.working")}</p>}
         {error && <p role="alert" className="rounded-lg bg-red-500/10 p-2 text-sm text-red-800 dark:text-red-300">{error}</p>}
       </div>
@@ -257,10 +344,44 @@ function OwnerAssistant() {
         <textarea id="trader-assistant-question" rows={2} maxLength={6000} value={question} disabled={Boolean(busy)}
           onChange={event => setQuestion(event.target.value)} className="w-full resize-y rounded-xl border bg-background p-2 text-sm" />
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <button type="submit" disabled={Boolean(busy) || question.trim().length < 2} className="rounded-lg bg-emerald-800 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{t("assistant.send")}</button>
-          {turns.length > 0 && <button type="button" className="text-xs underline" disabled={Boolean(busy)}
-            onClick={() => { setTurns([]); setAnswer(null); setBatch(null); setApproved(null); setPreview(null); setError(""); setQuestion(""); }}>{t("assistant.newSession")}</button>}
+          <button type="submit" disabled={Boolean(busy) || (!attachment && question.trim().length < 2)} className="rounded-lg bg-emerald-800 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{t("assistant.send")}</button>
+          {(turns.length > 0 || attachment || cost || batch || savedCost) && <button type="button" className="text-xs underline" disabled={Boolean(busy)}
+            onClick={() => { dictation.reset(); setAttachment(null); setCost(null); setCostPreview(null); setSavedCost(""); setTurns([]); setAnswer(null); setBatch(null); setApproved(null); setPreview(null); setError(""); setQuestion(""); }}>{t("assistant.newSession")}</button>}
         </div>
+        <div className="flex flex-wrap gap-3 text-sm">
+          <button type="button" disabled={Boolean(busy)} aria-pressed={dictation.listening}
+            onClick={dictation.toggle} className="inline-flex items-center gap-1 rounded border px-2 py-1">
+            <Mic size={16} aria-hidden="true" />{t(dictation.listening ? "assistant.stopDictation" : "assistant.dictate")}
+          </button>
+          <label className="inline-flex cursor-pointer items-center gap-1 rounded border px-2 py-1 focus-within:ring-2">
+            <Paperclip size={16} aria-hidden="true" />{t("assistant.attach")}
+            <input type="file" className="sr-only" accept=".xlsx,.docx,.pdf" disabled={Boolean(busy)}
+              onChange={event => {
+                const file = event.target.files?.[0];
+                event.target.value = "";
+                if (!file) return;
+                const format = traderFormats.find(value => file.name.toLowerCase().endsWith("." + value));
+                if (!format || file.size > MAX_TRADER_ATTACHMENT || !file.size) {
+                  setError(t("assistant.invalidFile"));
+                  return;
+                }
+                setError("");
+                setAttachment({ file, format });
+              }} />
+          </label>
+        </div>
+        {attachment && <div className="space-y-2 rounded border p-2 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <bdi className="break-all">{attachment.file.name}</bdi>
+            <button type="button" disabled={Boolean(busy)} className="underline" onClick={() => setAttachment(null)}>{t("assistant.removeFile")}</button>
+          </div>
+          <label>{t("assistant.importMode")} <select className="rounded border bg-background p-1" value={importMode}
+            disabled={Boolean(busy)} onChange={event => setImportMode(event.target.value === "cost" ? "cost" : "records")}>
+            <option value="records">{t("assistant.importRecords")}</option>
+            <option value="cost">{t("assistant.importCost")}</option>
+          </select></label>
+          <p>{t("assistant.filePrivacy")}</p>
+        </div>}
         <p className="text-xs text-muted-foreground">{t("assistant.privacy")}</p>
       </form>
     </DialogContent>

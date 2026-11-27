@@ -25,6 +25,7 @@ export function prepareTraderBatch(original: BackupPayload, batch: TraderBatch, 
   const prices = [...tables.item_prices];
   const history = [...tables.price_history];
   const rows: PreviewRow[] = [];
+  const itemIds: string[] = [];
   const records: TraderApprovalResult["records"] = [];
   const settings = tables.settings[0];
   const currencies = new Set((tables.currencies.length ? tables.currencies : DEFAULT_CURRENCIES)
@@ -83,6 +84,7 @@ export function prepareTraderBatch(original: BackupPayload, batch: TraderBatch, 
       type: "item", name: item.name, outcome: found ? "reuse" : "create",
       detail: [item.code, entity?.name, item.unit, item.currency].filter(Boolean).join(" · "),
     });
+    itemIds.push(item.id);
     if (!entry.price) continue;
 
     const { amount, date } = entry.price;
@@ -122,7 +124,7 @@ export function prepareTraderBatch(original: BackupPayload, batch: TraderBatch, 
   }
 
   return {
-    rows,
+    rows, itemIds,
     result: { created: records.length, records },
     payload: { ...original, exportedAt: now, tables: { ...tables, entities, items, item_prices: prices, price_history: history } },
   };
