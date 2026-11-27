@@ -18,13 +18,15 @@ const headers={
 const names={regions:"المناطق",branches:"الفروع",products:"الأصناف",types:"أنواع الأسعار",prices:"أسعار البيع"};
 export type SalesImportPreview={data:SalesPricingData;errors:string[];inserted:number;updated:number;unchanged:number};
 export function previewSalesExcel(buffer:ArrayBuffer, current:SalesPricingData):SalesImportPreview{
-  const wb=XLSX.read(buffer,{type:"array"});
+  const wb=XLSX.read(buffer,{type:"array",cellDates:true,dateNF:"yyyy-mm-dd"});
   const next=structuredClone(current);
   const result:SalesImportPreview={data:next,errors:[],inserted:0,updated:0,unchanged:0};
   const seen=new Map<string,string>();
+  if(wb.SheetNames.length>30)throw Error("عدد أوراق الملف يتجاوز الحد المسموح");
   function process<T extends {id:string}>(sheet:string, rows:T[], identity:(r:T)=>string, build:(r:Record<string,string>,rows:T[])=>T){
     const ws=wb.Sheets[sheet];if(!ws)return;
-    const source=XLSX.utils.sheet_to_json<Record<string,unknown>>(ws,{defval:"",raw:false});
+    const source=XLSX.utils.sheet_to_json<Record<string,unknown>>(ws,{defval:"",raw:false,dateNF:"yyyy-mm-dd"});
+    if(source.length>20000){result.errors.push(sheet+": عدد الصفوف يتجاوز 20000");return;}
     source.forEach((raw,i)=>{
       try{
         const row=Object.fromEntries(Object.entries(raw).map(([k,v])=>[k.trim(),clean(v)]));
@@ -52,7 +54,7 @@ export function previewSalesExcel(buffer:ArrayBuffer, current:SalesPricingData):
   });
   process(names.products,next.products,r=>key(r.code),(r,rows)=>{
     const code=required(r["كود الصنف"]),old=rows.find(x=>key(x.code)===key(code));
-    return {id:old?.id??newId("sp"),code,name:required(r["اسم الصنف"]||old?.name),category:r["التصنيف"]||old?.category||"",unit:r["الوحدة"]||old?.unit||"",costMinor:r["التكلفة"]?moneyMinor(r["التكلفة"]):old?.costMinor??null,branchIds:r["أرقام الفروع"]?[...new Set(split(r["أرقام الفروع"]).map(v=>resolve(next.branches,x=>x.number,v).id))]:old?.branchIds??[],notes:r["ملاحظات"]||old?.notes||""};
+    return {id:old?.id??newId("sp"),code,name:required(r["اسم الصنف"]||old?.name),category:r["التصنيف"]||old?.category||"",unit:r["الوحدة"]||old?.unit||"",costMinor:r["التكلفة"]?moneyMinor(r["التكلفة"]):old?.costMinor??null,branchIds:r["أرقام الفروع"]?Array.from(new Set(split(r["أرقام الفروع"]).map(v=>resolve(next.branches,x=>x.number,v).id))):old?.branchIds??[],notes:r["ملاحظات"]||old?.notes||""};
   });
   process(names.types,next.types,r=>key(r.code),(r,rows)=>{const code=required(r["كود نوع السعر"]),old=rows.find(x=>key(x.code)===key(code));return {id:old?.id??newId("st"),code,name:required(r["نوع السعر"]||old?.name)};});
   process(names.prices,next.prices,priceKey,(r,rows)=>{
