@@ -27,13 +27,13 @@ export default function SidebarNav() {
   return (
     <aside
       className={cn(
-        "hidden shrink-0 flex-col bg-sidebar text-sidebar-foreground transition-[width] duration-200 lg:flex",
+        "hidden shrink-0 flex-col bg-sidebar text-sidebar-foreground transition-[width] duration-200 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:self-start",
         sidebarCollapsed ? "w-[4.5rem]" : "w-64"
       )}
     >
       <div
         className={cn(
-          "flex items-center gap-3 border-b border-sidebar-border px-4 py-5",
+          "flex shrink-0 items-center gap-3 border-b border-sidebar-border px-4 py-5",
           sidebarCollapsed && "flex-col gap-2 px-2"
         )}
       >
@@ -71,7 +71,7 @@ export default function SidebarNav() {
           )}
         </Button>
       </div>
-      <nav className="flex-1 space-y-3 overflow-y-auto px-2.5 py-4">
+      <nav className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-2.5 py-4">
         {NAV_GROUPS.map((group, groupIndex) => (
           <div key={group.groupKey}>
             {sidebarCollapsed ? (
@@ -118,7 +118,7 @@ export default function SidebarNav() {
       </nav>
       <div
         className={cn(
-          "border-t border-sidebar-border px-3 py-3",
+          "shrink-0 border-t border-sidebar-border px-3 py-3",
           sidebarCollapsed && "px-2"
         )}
       >
