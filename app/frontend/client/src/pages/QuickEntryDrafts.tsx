@@ -581,7 +581,7 @@ export default function QuickEntryDrafts() {
                           {t("quickEntry.rows")}: {draftRows.length} · {t("quickEntry.transferred")}: {transferred}
                         </p>
                         <p className="mt-1 text-[10px] text-muted-foreground">
-                          {t("quickEntry.lastUpdated")}: {new Date(draft.updatedAt).toLocaleString()}
+                          {t("quickEntry.lastUpdated")}: {new Date(draft.updatedAt).toLocaleString("en-GB-u-ca-gregory-nu-latn")}
                         </p>
                       </button>
                       <div className="mt-3 flex gap-2">
