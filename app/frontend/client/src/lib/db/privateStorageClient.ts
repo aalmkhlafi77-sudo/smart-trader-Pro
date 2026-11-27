@@ -271,12 +271,12 @@ export async function preparePrivateAssistant() {
   return state.csrfToken;
 }
 
-export async function commitPrivateAssistant<T>(body: unknown) {
+export async function commitPrivateAssistant<T>(body: unknown, mode: "records" | "cost" = "records") {
   if (assistantCommit || privateMutations) throw new Error("ASSISTANT_BUSY");
   assistantCommit = true;
   try {
     const csrf = await preparePrivateAssistant();
-    const result = await request<T>("/api/private/assistant/commit", {
+    const result = await request<T>(mode === "cost" ? "/api/private/assistant/cost/commit" : "/api/private/assistant/commit", {
       method: "POST", headers: { "x-csrf-token": csrf }, body: JSON.stringify(body),
     });
     try {
