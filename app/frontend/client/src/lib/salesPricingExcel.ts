@@ -1,3 +1,4 @@
+import { salesArabic as a } from "./i18n/salesPricingText";
 import * as XLSX from "xlsx";
 import { zipSync, strToU8 } from "fflate";
 import { newId } from "./id";
@@ -9,62 +10,62 @@ const key=normalizeSalesKey;
 const split=(v:string)=>v.split("|").map(x=>x.trim()).filter(Boolean);
 const clean=(v:unknown)=>String(v??"").trim();
 const headers={
-  regions:["اسم المنطقة"],
-  branches:["رقم الفرع","اسم الفرع","المنطقة","الحالة"],
-  products:["كود الصنف","اسم الصنف","التصنيف","الوحدة","التكلفة","أرقام الفروع","ملاحظات"],
-  types:["كود نوع السعر","نوع السعر"],
-  prices:["كود الصنف","رقم الفرع","كود نوع السعر","تاريخ السريان","السعر","ملاحظات"],
+  regions:[a("sales.regionName")],
+  branches:[a("sales.branchNumber"),a("sales.branchName"),a("sales.region"),a("sales.status")],
+  products:[a("sales.productCode"),a("sales.productName"),a("sales.category"),a("sales.unit"),a("sales.cost"),a("sales.branchNumbers"),a("sales.notes")],
+  types:[a("sales.typeCode"),a("sales.priceType")],
+  prices:[a("sales.productCode"),a("sales.branchNumber"),a("sales.typeCode"),a("sales.effectiveDate"),a("sales.price"),a("sales.notes")],
 };
-const names={regions:"المناطق",branches:"الفروع",products:"الأصناف",types:"أنواع الأسعار",prices:"أسعار البيع"};
+const names={regions:a("sales.regions"),branches:a("sales.branches"),products:a("sales.products"),types:a("sales.priceTypes"),prices:a("sales.salesPrices")};
 export type SalesImportPreview={data:SalesPricingData;errors:string[];inserted:number;updated:number;unchanged:number};
 export function previewSalesExcel(buffer:ArrayBuffer, current:SalesPricingData):SalesImportPreview{
   const wb=XLSX.read(buffer,{type:"array",cellDates:true,dateNF:"yyyy-mm-dd"});
   const next=structuredClone(current);
   const result:SalesImportPreview={data:next,errors:[],inserted:0,updated:0,unchanged:0};
   const seen=new Map<string,string>();
-  if(wb.SheetNames.length>30)throw Error("عدد أوراق الملف يتجاوز الحد المسموح");
+  if(wb.SheetNames.length>30)throw Error(a("sales.sheetLimit"));
   function process<T extends {id:string}>(sheet:string, rows:T[], identity:(r:T)=>string, build:(r:Record<string,string>,rows:T[])=>T){
     const ws=wb.Sheets[sheet];if(!ws)return;
     const source=XLSX.utils.sheet_to_json<Record<string,unknown>>(ws,{defval:"",raw:false,dateNF:"yyyy-mm-dd"});
-    if(source.length>20000){result.errors.push(sheet+": عدد الصفوف يتجاوز 20000");return;}
+    if(source.length>20000){result.errors.push(sheet+a("sales.rowLimit"));return;}
     source.forEach((raw,i)=>{
       try{
         const row=Object.fromEntries(Object.entries(raw).map(([k,v])=>[k.trim(),clean(v)]));
         const candidate=build(row,rows);
         const k=identity(candidate), old=rows.find(r=>identity(r)===k);
-        if(!k)throw Error("المعرف مطلوب");
+        if(!k)throw Error(a("sales.idRequired"));
         const merged={...candidate,id:old?.id??candidate.id};
         const serial=JSON.stringify(merged);
         const seenKey=sheet+":"+k;
-        if(seen.has(seenKey)){if(seen.get(seenKey)!==serial)throw Error("سجلات متعارضة لنفس المعرف");return;}
+        if(seen.has(seenKey)){if(seen.get(seenKey)!==serial)throw Error(a("sales.rowConflict"));return;}
         seen.set(seenKey,serial);
         if(!old){rows.push(merged);result.inserted++;}
         else if(JSON.stringify(old)===serial)result.unchanged++;
         else{rows[rows.indexOf(old)]=merged;result.updated++;}
-      }catch(e){result.errors.push(sheet+" — صف "+(i+2)+": "+(e instanceof Error?e.message:String(e)));}
+      }catch(e){result.errors.push(sheet+a("sales.rowLabel")+(i+2)+": "+(e instanceof Error?e.message:String(e)));}
     });
   }
-  const required=(v:string|undefined)=>{if(!v)throw Error("حقل إلزامي فارغ");return v;};
-  function resolve<T>(rows:T[], fn:(r:T)=>string, value:string){const matches=rows.filter(r=>key(fn(r))===key(required(value)));if(matches.length!==1)throw Error("مرجع غير معروف أو متعارض: "+value);return matches[0];}
-  process(names.regions,next.regions,r=>key(r.name),(r,rows)=>({id:rows.find(x=>key(x.name)===key(r["اسم المنطقة"]??""))?.id??newId("sr"),name:required(r["اسم المنطقة"])}));
+  const required=(v:string|undefined)=>{if(!v)throw Error(a("sales.required"));return v;};
+  function resolve<T>(rows:T[], fn:(r:T)=>string, value:string){const matches=rows.filter(r=>key(fn(r))===key(required(value)));if(matches.length!==1)throw Error(a("sales.reference")+value);return matches[0];}
+  process(names.regions,next.regions,r=>key(r.name),(r,rows)=>({id:rows.find(x=>key(x.name)===key(r[a("sales.regionName")]??""))?.id??newId("sr"),name:required(r[a("sales.regionName")])}));
   process(names.branches,next.branches,r=>key(r.number),(r,rows)=>{
-    const number=required(r["رقم الفرع"]),old=rows.find(x=>key(x.number)===key(number));
-    const status=r["الحالة"];if(status&&!["نشط","موقوف"].includes(status))throw Error("الحالة غير صالحة");
-    return {id:old?.id??newId("sb"),number,name:required(r["اسم الفرع"]||old?.name),regionId:r["المنطقة"]?resolve(next.regions,x=>x.name,r["المنطقة"]).id:old?.regionId??null,active:status?status==="نشط":old?.active??true};
+    const number=required(r[a("sales.branchNumber")]),old=rows.find(x=>key(x.number)===key(number));
+    const status=r[a("sales.status")];if(status&&![a("sales.active"),a("sales.inactive")].includes(status))throw Error(a("sales.invalidStatus"));
+    return {id:old?.id??newId("sb"),number,name:required(r[a("sales.branchName")]||old?.name),regionId:r[a("sales.region")]?resolve(next.regions,x=>x.name,r[a("sales.region")]).id:old?.regionId??null,active:status?status===a("sales.active"):old?.active??true};
   });
   process(names.products,next.products,r=>key(r.code),(r,rows)=>{
-    const code=required(r["كود الصنف"]),old=rows.find(x=>key(x.code)===key(code));
-    return {id:old?.id??newId("sp"),code,name:required(r["اسم الصنف"]||old?.name),category:r["التصنيف"]||old?.category||"",unit:r["الوحدة"]||old?.unit||"",costMinor:r["التكلفة"]?moneyMinor(r["التكلفة"]):old?.costMinor??null,branchIds:r["أرقام الفروع"]?Array.from(new Set(split(r["أرقام الفروع"]).map(v=>resolve(next.branches,x=>x.number,v).id))):old?.branchIds??[],notes:r["ملاحظات"]||old?.notes||""};
+    const code=required(r[a("sales.productCode")]),old=rows.find(x=>key(x.code)===key(code));
+    return {id:old?.id??newId("sp"),code,name:required(r[a("sales.productName")]||old?.name),category:r[a("sales.category")]||old?.category||"",unit:r[a("sales.unit")]||old?.unit||"",costMinor:r[a("sales.cost")]?moneyMinor(r[a("sales.cost")]):old?.costMinor??null,branchIds:r[a("sales.branchNumbers")]?Array.from(new Set(split(r[a("sales.branchNumbers")]).map(v=>resolve(next.branches,x=>x.number,v).id))):old?.branchIds??[],notes:r[a("sales.notes")]||old?.notes||""};
   });
-  process(names.types,next.types,r=>key(r.code),(r,rows)=>{const code=required(r["كود نوع السعر"]),old=rows.find(x=>key(x.code)===key(code));return {id:old?.id??newId("st"),code,name:required(r["نوع السعر"]||old?.name)};});
+  process(names.types,next.types,r=>key(r.code),(r,rows)=>{const code=required(r[a("sales.typeCode")]),old=rows.find(x=>key(x.code)===key(code));return {id:old?.id??newId("st"),code,name:required(r[a("sales.priceType")]||old?.name)};});
   process(names.prices,next.prices,priceKey,(r,rows)=>{
-    const product=resolve(next.products,x=>x.code,r["كود الصنف"]);
-    const branch=resolve(next.branches,x=>x.number,r["رقم الفرع"]);
-    const type=resolve(next.types,x=>x.code,r["كود نوع السعر"]);
-    const p:SalesPrice={id:newId("spr"),productId:product.id,branchId:branch.id,typeId:type.id,effectiveDate:required(r["تاريخ السريان"]),amountMinor:moneyMinor(required(r["السعر"])),notes:r["ملاحظات"]||""};
+    const product=resolve(next.products,x=>x.code,r[a("sales.productCode")]);
+    const branch=resolve(next.branches,x=>x.number,r[a("sales.branchNumber")]);
+    const type=resolve(next.types,x=>x.code,r[a("sales.typeCode")]);
+    const p:SalesPrice={id:newId("spr"),productId:product.id,branchId:branch.id,typeId:type.id,effectiveDate:required(r[a("sales.effectiveDate")]),amountMinor:moneyMinor(required(r[a("sales.price")])),notes:r[a("sales.notes")]||""};
     const old=rows.find(x=>priceKey(x)===priceKey(p));return {...p,id:old?.id??p.id,notes:p.notes||old?.notes||""};
   });
-  if(!Object.values(names).some(n=>wb.SheetNames.includes(n)))result.errors.push("الملف لا يحتوي على أوراق القالب المعتمدة");
+  if(!Object.values(names).some(n=>wb.SheetNames.includes(n)))result.errors.push(a("sales.missingSheets"));
   try{validateSalesPricing(next);}catch(e){result.errors.push(e instanceof Error?e.message:String(e));}
   return result;
 }
