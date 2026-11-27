@@ -26,6 +26,7 @@ export function moneyMinor(value: string): number {
 export const priceKey = (p: Pick<SalesPrice,"productId"|"branchId"|"typeId"|"effectiveDate">) => JSON.stringify([p.productId,p.branchId,p.typeId,p.effectiveDate]);
 const validMoney = (n: number) => Number.isSafeInteger(n) && n >= 0;
 export function validateSalesPricing(data: SalesPricingData): void {
+  if(!data || ![data.regions,data.branches,data.products,data.types,data.prices,data.offers].every(Array.isArray)) throw new Error("بنية أسعار البيع غير صالحة");
   function unique<T>(rows: T[], key: (r:T)=>string, label:string) {
     const seen = new Set<string>();
     for (const row of rows) { const k=key(row); if (!k || seen.has(k)) throw new Error("معرف فارغ أو مكرر: "+label); seen.add(k); }
@@ -39,11 +40,11 @@ export function validateSalesPricing(data: SalesPricingData): void {
   const regionIds=new Set(data.regions.map(r=>r.id)), branchIds=new Set(data.branches.map(r=>r.id)), typeIds=new Set(data.types.map(r=>r.id));
   const products=new Map(data.products.map(r=>[r.id,r]));
   for (const r of [...data.regions,...data.branches,...data.products,...data.types]) if (!r.name.trim()) throw new Error("الاسم مطلوب");
-  for(const b of data.branches) if(b.regionId!==null&&!regionIds.has(b.regionId)) throw new Error("منطقة غير موجودة");
+  for(const b of data.branches) if(typeof b.active!=="boolean" || (b.regionId!==null&&!regionIds.has(b.regionId))) throw new Error("منطقة غير موجودة");
   for(const p of data.products) if ((p.costMinor!==null&&!validMoney(p.costMinor)) || p.branchIds.some(id=>!branchIds.has(id)) || new Set(p.branchIds).size!==p.branchIds.length) throw new Error("تكلفة أو فروع غير صالحة");
   for(const p of data.prices) if(!products.get(p.productId)?.branchIds.includes(p.branchId)||!typeIds.has(p.typeId)||!validSalesDate(p.effectiveDate)||!validMoney(p.amountMinor)) throw new Error("سجل سعر غير صالح");
-  for(const o of data.offers) if(!typeIds.has(o.typeId)||!o.productIds.length||o.productIds.some(id=>!products.has(id))||o.branchIds.some(id=>!branchIds.has(id))||!validSalesDate(o.startDate)||!validSalesDate(o.endDate)||o.startDate>o.endDate||!validMoney(o.value)||!Number.isFinite(o.minimumQuantity)||o.minimumQuantity<0||!["fixed","percent","amount"].includes(o.mode)||(o.mode==="percent"&&o.value>10000)) throw new Error("عرض غير صالح");
-  for (const [i,a] of data.offers.entries()) for (const b of data.offers.slice(i+1)) if(a.typeId===b.typeId && a.startDate<=b.endDate && b.startDate<=a.endDate && a.productIds.some(id=>b.productIds.includes(id)) && (!a.branchIds.length||!b.branchIds.length||a.branchIds.some(id=>b.branchIds.includes(id)))) throw new Error("تداخل عروض لنفس الصنف والفرع والفترة");
+  for(const o of data.offers) if(!typeIds.has(o.typeId)||!o.productIds.length||o.productIds.some(id=>!products.has(id))||o.branchIds.some(id=>!branchIds.has(id))||!validSalesDate(o.startDate)||!validSalesDate(o.endDate)||o.startDate>o.endDate||new Set(o.productIds).size!==o.productIds.length||new Set(o.branchIds).size!==o.branchIds.length||!validMoney(o.value)||!Number.isFinite(o.minimumQuantity)||o.minimumQuantity<0||!["fixed","percent","amount"].includes(o.mode)||(o.mode==="percent"&&o.value>10000)) throw new Error("عرض غير صالح");
+  for (let i=0; i<data.offers.length; i++) for (const b of data.offers.slice(i+1)) { const a=data.offers[i]; if(a.typeId===b.typeId && a.startDate<=b.endDate && b.startDate<=a.endDate && a.productIds.some(id=>b.productIds.includes(id)) && (!a.branchIds.length||!b.branchIds.length||a.branchIds.some(id=>b.branchIds.includes(id)))) throw new Error("تداخل عروض لنفس الصنف والفرع والفترة"); }
 }
 export function currentSalesPrice(data: SalesPricingData, productId:string, branchId:string, typeId:string, date:string): SalesPrice | undefined {
   if(!validSalesDate(date)) throw new Error("تاريخ غير صالح");
