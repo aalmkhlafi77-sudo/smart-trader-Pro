@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/pricing";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { db, type TaskRow } from "@/lib/db";
@@ -60,7 +61,7 @@ export default function TaskAlertEngine() {
             Notification.permission === "granted"
           ) {
             const priorityLabel = t(`followup.priority${task.priority[0].toUpperCase()}${task.priority.slice(1)}`);
-            const body = `${t("taskAlerts.due")}: ${new Date(due).toLocaleString()} · ${priorityLabel}`;
+            const body = `${t("taskAlerts.due")}: ${formatDateTime(due)} · ${priorityLabel}`;
             new Notification(task.title, {
               body,
               icon: "/assets/port-ledger-mark.webp",
