@@ -13,6 +13,9 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ENGLISH_GREGORIAN_LOCALE, toEnglishDigits, parseEnglishCalendarDate, formatEnglishCalendarDate } from "@/lib/englishDisplay";
+import { enUS } from "react-day-picker/locale";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type EnglishDatePickerProps = {
   value: string;
@@ -21,30 +24,11 @@ type EnglishDatePickerProps = {
   className?: string;
   disabled?: boolean;
   ariaLabel?: string;
+  allowClear?: boolean;
 };
 
-const toEnglishDigits = (value: string) =>
-  value
-    .replace(/[٠-٩]/g, digit => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
-    .replace(/[۰-۹]/g, digit => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)));
-
-const pad = (value: number) => String(value).padStart(2, "0");
-const isoDate = (date: Date) =>
-  `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-
-const parseValue = (value: string) => {
-  const [datePart, timePart = "00:00"] = value.split("T");
-  const [year, month, day] = datePart.split("-").map(Number);
-  const [hour, minute] = timePart.split(":").map(Number);
-  if (![year, month, day].every(Number.isFinite)) return new Date();
-  return new Date(
-    year,
-    month - 1,
-    day,
-    Number.isFinite(hour) ? hour : 0,
-    Number.isFinite(minute) ? minute : 0
-  );
-};
+const pad = (value:number) => String(value).padStart(2,"0");
+const isoDate = formatEnglishCalendarDate;
 
 const normalizeTime = (value: string) => {
   const cleaned = toEnglishDigits(value)
@@ -64,11 +48,13 @@ export default function EnglishDatePicker({
   className,
   disabled,
   ariaLabel,
+  allowClear = false,
 }: EnglishDatePickerProps) {
   const [open, setOpen] = useState(false);
-  const selected = useMemo(() => parseValue(value), [value]);
-  const time = value.includes("T") ? value.split("T")[1].slice(0, 5) : "00:00";
-  const display = `${isoDate(selected)}${withTime ? ` · ${time}` : ""}`;
+  const {t} = useLanguage();
+  const selected = useMemo(() => parseEnglishCalendarDate(value), [value]);
+  const time = value.includes("T") ? toEnglishDigits(value.split("T")[1]).slice(0, 5) : "00:00";
+  const display = selected ? `${isoDate(selected)}${withTime ? ` · ${time}` : ""}` : "YYYY-MM-DD";
 
   const selectDate = (date?: Date) => {
     if (!date) return;
@@ -85,6 +71,7 @@ export default function EnglishDatePicker({
           disabled={disabled}
           aria-label={ariaLabel}
           dir="ltr"
+          lang="en-US"
           className={cn(
             "field-input english-date-picker w-full justify-start gap-2 font-medium tabular-nums",
             className
@@ -98,21 +85,25 @@ export default function EnglishDatePicker({
         align="start"
         className="w-auto border-[var(--field-border)] bg-card p-2"
         dir="ltr"
+        lang="en-US"
       >
         <Calendar
           mode="single"
           selected={selected}
+          defaultMonth={selected ?? new Date()}
+          locale={enUS}
           onSelect={selectDate}
           dir="ltr"
           className="english-date-calendar p-1"
           formatters={{
             formatCaption: date =>
-              date.toLocaleString("en-US", { month: "long", year: "numeric" }),
+              date.toLocaleString(ENGLISH_GREGORIAN_LOCALE, { month: "long", year: "numeric" }),
             formatWeekdayName: date =>
               ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()],
             formatDay: date => String(date.getDate()),
           }}
         />
+        {allowClear && value ? <Button type="button" variant="ghost" size="sm" className="mt-1 w-full" onClick={()=>{onChange("");setOpen(false);}}>{t("sales.clearDate")}</Button> : null}
         {withTime ? (
           <div className="mt-1 flex items-center gap-2 border-t border-[var(--field-border)] px-2 pt-2">
             <Clock3 className="h-4 w-4 text-[var(--guidance)]" />
@@ -126,7 +117,7 @@ export default function EnglishDatePicker({
               placeholder="HH:MM"
               onChange={event =>
                 onChange(
-                  `${isoDate(selected)}T${normalizeTime(event.target.value)}`
+                  `${isoDate(selected ?? new Date())}T${normalizeTime(event.target.value)}`
                 )
               }
             />
