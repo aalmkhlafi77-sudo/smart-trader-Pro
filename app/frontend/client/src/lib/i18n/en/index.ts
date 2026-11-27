@@ -1,3 +1,4 @@
+import dict_salesPricing from "./salesPricing";
 import dict_assistant from "./assistant";
 import dict_access from "./access";
 import dict_backup from "./backup";
@@ -23,6 +24,7 @@ import dict_validation from "./validation";
 import dict_taskAlerts from "./taskAlerts";
 
 const merged: Record<string, string> = {
+  ...dict_salesPricing,
   ...dict_assistant,
   ...dict_access,
   ...dict_backup,
