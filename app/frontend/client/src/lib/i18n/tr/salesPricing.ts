@@ -1,4 +1,7 @@
 const dict: Record<string,string> = {
+  "sales.newVersionConfirm": "Yürürlük tarihi veya fiyat anahtarı değişti. Önceki kaydı koruyarak ayrı fiyat eklensin mi?",
+  "sales.correctPriceConfirm": "Aynı yürürlük tarihindeki fiyat düzeltmesi onaylansın mı?",
+  "sales.previewDetail": "Kaydetmeden önce kayıt ayrıntılarını önizleyin",
   "sales.pricingControl": "Fiyat kontrolü",
   "sales.productsCost": "Ürünler ve maliyet",
   "sales.regions": "Bölgeler",
