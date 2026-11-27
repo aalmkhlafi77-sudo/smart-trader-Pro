@@ -1,4 +1,6 @@
 const dict: Record<string, string> = {
+  "nav.groupSalesPricing": "Ticari kontrol",
+  "nav.salesPricing": "Satış fiyatı kontrolü",
   "nav.backup": "Yedekleme",
   "nav.cargo": "Maliyet dosyası",
   "nav.entities": "Taraflar",
