@@ -5,8 +5,10 @@ export interface SalesProduct { id: string; code: string; name: string; category
 export interface SalesPriceType { id: string; code: string; name: string }
 export interface SalesPrice { id: string; productId: string; branchId: string; typeId: string; effectiveDate: string; amountMinor: number; notes: string }
 export interface SalesOffer { id: string; productIds: string[]; branchIds: string[]; typeId: string; startDate: string; endDate: string; mode: "fixed" | "percent" | "amount"; value: number; minimumQuantity: number; notes: string }
+export interface SalesPricingSnapshot { id: "sales-pricing"; revision: number; data: SalesPricingData }
 export interface SalesPricingData { regions: SalesRegion[]; branches: SalesBranch[]; products: SalesProduct[]; types: SalesPriceType[]; prices: SalesPrice[]; offers: SalesOffer[] }
 export const emptySalesPricing = (): SalesPricingData => ({regions:[],branches:[],products:[],types:[],prices:[],offers:[]});
+export const emptySalesSnapshot = (): SalesPricingSnapshot => ({id:"sales-pricing",revision:0,data:emptySalesPricing()});
 export const normalizeSalesKey = (value: string) => value.normalize("NFC").trim().toLowerCase();
 export function validSalesDate(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
@@ -33,6 +35,7 @@ export function validateSalesPricing(data: SalesPricingData): void {
   unique(data.products,r=>normalizeSalesKey(r.code),"كود الصنف");
   unique(data.types,r=>normalizeSalesKey(r.code),"نوع السعر");
   unique(data.prices,priceKey,"السعر وتاريخ السريان");
+  unique(data.regions,r=>normalizeSalesKey(r.name),"اسم المنطقة");
   const regionIds=new Set(data.regions.map(r=>r.id)), branchIds=new Set(data.branches.map(r=>r.id)), typeIds=new Set(data.types.map(r=>r.id));
   const products=new Map(data.products.map(r=>[r.id,r]));
   for (const r of [...data.regions,...data.branches,...data.products,...data.types]) if (!r.name.trim()) throw new Error("الاسم مطلوب");
@@ -40,6 +43,7 @@ export function validateSalesPricing(data: SalesPricingData): void {
   for(const p of data.products) if ((p.costMinor!==null&&!validMoney(p.costMinor)) || p.branchIds.some(id=>!branchIds.has(id)) || new Set(p.branchIds).size!==p.branchIds.length) throw new Error("تكلفة أو فروع غير صالحة");
   for(const p of data.prices) if(!products.get(p.productId)?.branchIds.includes(p.branchId)||!typeIds.has(p.typeId)||!validSalesDate(p.effectiveDate)||!validMoney(p.amountMinor)) throw new Error("سجل سعر غير صالح");
   for(const o of data.offers) if(!typeIds.has(o.typeId)||!o.productIds.length||o.productIds.some(id=>!products.has(id))||o.branchIds.some(id=>!branchIds.has(id))||!validSalesDate(o.startDate)||!validSalesDate(o.endDate)||o.startDate>o.endDate||!validMoney(o.value)||!Number.isFinite(o.minimumQuantity)||o.minimumQuantity<0||!["fixed","percent","amount"].includes(o.mode)||(o.mode==="percent"&&o.value>10000)) throw new Error("عرض غير صالح");
+  for (const [i,a] of data.offers.entries()) for (const b of data.offers.slice(i+1)) if(a.typeId===b.typeId && a.startDate<=b.endDate && b.startDate<=a.endDate && a.productIds.some(id=>b.productIds.includes(id)) && (!a.branchIds.length||!b.branchIds.length||a.branchIds.some(id=>b.branchIds.includes(id)))) throw new Error("تداخل عروض لنفس الصنف والفرع والفترة");
 }
 export function currentSalesPrice(data: SalesPricingData, productId:string, branchId:string, typeId:string, date:string): SalesPrice | undefined {
   if(!validSalesDate(date)) throw new Error("تاريخ غير صالح");
@@ -54,7 +58,7 @@ export function quoteSalesPrice(data:SalesPricingData, productId:string,branchId
   if(offers.length>1) throw new Error("عروض متعارضة؛ يلزم تحديد عرض واحد");
   const offer=offers[0];
   let net=price.amountMinor;
-  if(offer) net=offer.mode==="fixed"?offer.value:offer.mode==="amount"?Math.max(0,net-offer.value):Number((BigInt(net)*BigInt(10000-offer.value)+5000n)/10000n);
+  if(offer) net=offer.mode==="fixed"?offer.value:offer.mode==="amount"?Math.max(0,net-offer.value):Number((BigInt(net)*BigInt(10000-offer.value)+BigInt(5000))/BigInt(10000));
   const cost=product?.costMinor??null;
   return {price,offer,netMinor:net,costMinor:cost,profitMinor:cost===null?null:net-cost,marginPercent:cost===null||net===0?null:(net-cost)/net*100};
 }
