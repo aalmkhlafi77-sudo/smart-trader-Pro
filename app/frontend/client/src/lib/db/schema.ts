@@ -4,7 +4,7 @@
  * لا كائنات متداخلة، المفاتيح نصية، التواريخ ISO، القيم المالية أرقام.
  */
 
-export const SCHEMA_VERSION = 15;
+export const SCHEMA_VERSION = 16;
 export const DB_NAME = "smart_trader_db";
 
 export type EntityKind = "supplier" | "customer" | "factory" | "other";
@@ -578,6 +578,7 @@ export const DEFAULT_UNITS: UnitRow[] = [
 ];
 
 export const TABLES = {
+  salesPricing: "sales_pricing",
   entities: "entities",
   categories: "categories",
   items: "items",
