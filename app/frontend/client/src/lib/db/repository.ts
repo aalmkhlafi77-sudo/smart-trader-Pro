@@ -35,6 +35,7 @@ import type {
   TaskRow,
   UnitRow,
 } from "./schema";
+import type { SalesPricingData, SalesPricingSnapshot } from "../salesPricing";
 import type { ExcelImportPlan } from "../excelImport";
 
 export interface BackupPayload {
@@ -42,6 +43,7 @@ export interface BackupPayload {
   schemaVersion: number;
   exportedAt: string;
   tables: {
+    sales_pricing?: SalesPricingSnapshot[];
     entities: EntityRow[];
     categories: CategoryRow[];
     items: ItemRow[];
@@ -76,6 +78,8 @@ export interface BackupPayload {
 
 export interface Repository {
   init(): Promise<void>;
+  getSalesPricing(): Promise<SalesPricingSnapshot>;
+  saveSalesPricing(data: SalesPricingData, expectedRevision: number): Promise<SalesPricingSnapshot>;
 
   listEntities(): Promise<EntityRow[]>;
   getEntity(id: string): Promise<EntityRow | null>;

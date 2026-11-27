@@ -1,9 +1,11 @@
+import { salesArabic as a } from "../i18n/salesPricingText";
 /**
  * تنفيذ المستودع باستخدام IndexedDB — اتجاه التصميم: "دفتر الميناء"
  * كل السجلات مسطحة ومطابقة لأسماء حقول SQLite، لتسهيل التحويل لاحقاً.
  */
 
 import type { BackupPayload, Repository } from "./repository";
+import { emptySalesSnapshot, validateSalesPricing, type SalesPricingSnapshot, type SalesPricingData } from "../salesPricing";
 import type { ExcelImportPlan } from "../excelImport";
 import { assertExcelImportPlan } from "./excelImportRepository";
 import { invalidateCargoData, withCargoDataBatch } from "./cargoDataEvents";
@@ -244,6 +246,7 @@ function normalizeBackupPayload(payload: BackupPayload): BackupPayload {
       typeof raw.schemaVersion === "number" ? raw.schemaVersion : 1,
     exportedAt: typeof raw.exportedAt === "string" ? raw.exportedAt : nowIso(),
     tables: {
+      sales_pricing: rows<SalesPricingSnapshot>("sales_pricing"),
       entities: rows<EntityRow>("entities").map(entity => ({
         ...entity,
         defaultCurrency: entity.defaultCurrency ?? "USD",
@@ -379,7 +382,7 @@ const DEFAULT_SPEC_TEMPLATES: Array<
   {
     id: "tpl_price",
     category: "",
-    label: "السعر",
+    label: a("sales.price"),
     defaultUnit: "",
     unitOptions: "دولار|ريال",
     placeholder: "مثال: 9.00",
@@ -754,7 +757,29 @@ export async function migrateLegacyCargoSalePrices(): Promise<{
   };
 }
 
+async function saveSalesPricingAtomic(data: SalesPricingData, expectedRevision: number): Promise<SalesPricingSnapshot> {
+  validateSalesPricing(data);
+  const db = await openDb();
+  return new Promise((resolve,reject) => {
+    const tx = db.transaction(TABLES.salesPricing,"readwrite");
+    const store = tx.objectStore(TABLES.salesPricing);
+    const request = store.get("sales-pricing");
+    let next: SalesPricingSnapshot;
+    let failure: Error | undefined;
+    tx.onabort = () => reject(failure ?? tx.error ?? new Error(a("sales.saveFailed")));
+    tx.onerror = () => reject(failure ?? tx.error ?? new Error(a("sales.saveFailed")));
+    tx.oncomplete = () => resolve(next);
+    request.onsuccess = () => {
+      const current = (request.result as SalesPricingSnapshot | undefined) ?? emptySalesSnapshot();
+      if(current.revision !== expectedRevision) { failure = new Error(a("sales.stale")); tx.abort(); return; }
+      next = {id:"sales-pricing",revision:current.revision+1,data};
+      store.put(next);
+    };
+  });
+}
 export const indexedDbRepository: Repository = {
+  getSalesPricing: async () => (await getById<SalesPricingSnapshot>(TABLES.salesPricing,"sales-pricing")) ?? emptySalesSnapshot(),
+  saveSalesPricing: saveSalesPricingAtomic,
   async init() {
     await openDb();
     const settings = await getById<SettingsRow>(TABLES.settings, "app");
@@ -1208,6 +1233,7 @@ export const indexedDbRepository: Repository = {
 
   async exportBackup() {
     const [
+      sales_pricing,
       entities,
       categories,
       items,
@@ -1238,6 +1264,7 @@ export const indexedDbRepository: Repository = {
       units,
       entity_contacts,
     ] = await Promise.all([
+      getAll<SalesPricingSnapshot>(TABLES.salesPricing),
       getAll<EntityRow>(TABLES.entities),
       getAll<CategoryRow>(TABLES.categories),
       getAll<ItemRow>(TABLES.items),
@@ -1273,6 +1300,7 @@ export const indexedDbRepository: Repository = {
       schemaVersion: SCHEMA_VERSION,
       exportedAt: nowIso(),
       tables: {
+        sales_pricing,
         entities,
         categories,
         items,
@@ -1323,6 +1351,16 @@ export const indexedDbRepository: Repository = {
         throw new Error("صيغة الملف غير صحيحة");
       }
       const normalized = normalizeBackupPayload(payload);
+      const sales = normalized.tables.sales_pricing ?? [];
+      if(sales.length>1) throw new Error(a("sales.invalidBackup"));
+      for(const row of sales) {
+        if(row.id!=="sales-pricing" || !Number.isSafeInteger(row.revision) || row.revision<0) throw new Error(a("sales.invalidBackupId"));
+        validateSalesPricing(row.data);
+      }
+      if(mode==="merge" && sales.length) {
+        const current = await getById<SalesPricingSnapshot>(TABLES.salesPricing,"sales-pricing");
+        if(current && JSON.stringify(current.data)!==JSON.stringify(sales[0].data)) throw new Error(a("sales.backupConflict"));
+      }
       console.info(
         "[S5] restore counts:",
         Object.fromEntries(
@@ -1335,6 +1373,7 @@ export const indexedDbRepository: Repository = {
       if (mode === "replace") {
         await Promise.all(
           [
+            TABLES.salesPricing,
             TABLES.entities,
             TABLES.categories,
             TABLES.items,
@@ -1367,6 +1406,7 @@ export const indexedDbRepository: Repository = {
       }
       const t = normalized.tables;
       const jobs: Promise<void>[] = [];
+      t.sales_pricing?.forEach(r => jobs.push(put(TABLES.salesPricing,r)));
       t.entities?.forEach(r => jobs.push(put(TABLES.entities, r)));
       t.categories?.forEach(r => jobs.push(put(TABLES.categories, r)));
       t.items?.forEach(r => jobs.push(put(TABLES.items, r)));
@@ -1458,6 +1498,7 @@ export const indexedDbRepository: Repository = {
       invalidateCargoData();
       await Promise.all(
         [
+          TABLES.salesPricing,
           TABLES.entities,
           TABLES.categories,
           TABLES.items,

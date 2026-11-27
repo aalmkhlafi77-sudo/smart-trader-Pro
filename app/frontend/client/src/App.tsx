@@ -18,6 +18,7 @@ import Home from "./pages/Home";
 import Entities from "./pages/Entities";
 import Items from "./pages/Items";
 import Prices from "./pages/Prices";
+import SalesPricing from "./pages/SalesPricing";
 import Pricing from "./pages/Pricing";
 import Runs from "./pages/cargo/Runs";
 import ExportLists from "./pages/ExportLists";
@@ -44,6 +45,7 @@ function Router() {
       <Route path="/entities" component={Entities} />
       <Route path="/items" component={Items} />
       <Route path="/prices" component={Prices} />
+      <Route path="/sales-pricing" component={SalesPricing} />
       <Route path="/cargo" component={Pricing} />
       <Route path="/quick-calculator" component={QuickCalculator} />
       <Route path="/multi-quick-calculator" component={MultiQuickCalculator} />

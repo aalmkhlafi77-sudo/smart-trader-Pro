@@ -11,6 +11,7 @@ import {
 } from "./schema";
 
 const EXPECTED_KEY_PATHS: Record<string, "id" | "code"> = {
+  [TABLES.salesPricing]: "id",
   [TABLES.entities]: "id",
   [TABLES.categories]: "id",
   [TABLES.items]: "id",
