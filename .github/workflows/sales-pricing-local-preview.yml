@@ -1,0 +1,25 @@
+name: Sales pricing disposable preview
+on:
+  push:
+    branches: [qa/sales-pricing-preview]
+permissions:
+  contents: read
+jobs:
+  build-preview:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: disposable-preview
+          path: app/frontend/dist/public
+          retention-days: 1
