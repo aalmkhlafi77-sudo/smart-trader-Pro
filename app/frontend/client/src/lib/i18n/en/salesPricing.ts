@@ -1,4 +1,7 @@
 const dict: Record<string,string> = {
+  "sales.newVersionConfirm": "The effective date or price key changed. Add a separate price and retain the prior record?",
+  "sales.correctPriceConfirm": "Confirm correction of the price on the same effective date?",
+  "sales.previewDetail": "Preview record details before saving",
   "sales.pricingControl": "Price control",
   "sales.productsCost": "Products and costs",
   "sales.regions": "Regions",
