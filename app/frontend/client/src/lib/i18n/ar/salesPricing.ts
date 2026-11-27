@@ -1,4 +1,7 @@
 const dict: Record<string,string> = {
+  "sales.newVersionConfirm": "تغير تاريخ السريان أو مفتاح السعر. هل تريد إضافة سعر مستقل مع الاحتفاظ بالسجل السابق؟",
+  "sales.correctPriceConfirm": "هل تؤكد تصحيح السعر المسجل في التاريخ نفسه؟",
+  "sales.previewDetail": "معاينة تفاصيل السجلات قبل الحفظ",
   "sales.pricingControl": "الرقابة السعرية",
   "sales.productsCost": "الأصناف والتكلفة",
   "sales.regions": "المناطق",
