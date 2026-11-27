@@ -53,6 +53,16 @@ describe("independent sales pricing",()=>{
   expect(parsed.data.branches[0].number).toBe("001");
   expect(parsed.data.products[0].code).toBe("0007");
  });
+ it("round trips monetary amounts formatted with a thousands separator",()=>{
+  const large=structuredClone(data);
+  large.products[0].costMinor=123456;
+  large.prices[0].amountMinor=150025;
+  const parsed=previewSalesExcel(buffer(buildSalesWorkbook(salesTemplateSheets(large))),large);
+  expect(parsed.errors).toEqual([]);
+  expect(parsed.updated+parsed.inserted).toBe(0);
+  expect(parsed.data.products[0].costMinor).toBe(123456);
+  expect(parsed.data.prices[0].amountMinor).toBe(150025);
+ });
  it("blocks conflicting duplicate branch rows before saving",()=>{
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([["رقم الفرع","اسم الفرع"],["002","جدة"],["002","مكة"]]),"الفروع");
