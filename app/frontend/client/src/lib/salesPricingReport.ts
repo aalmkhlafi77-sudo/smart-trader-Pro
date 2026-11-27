@@ -1,5 +1,5 @@
 import { salesArabic as a } from "./i18n/salesPricingText";
-import { priceKey, validSalesDate, type SalesPricingData, type SalesPrice, type SalesOffer, type SalesProduct, type SalesBranch, type SalesPriceType } from "./salesPricing";
+import { normalizeSalesKey, validSalesDate, type SalesPricingData, type SalesPrice, type SalesOffer, type SalesProduct, type SalesBranch, type SalesPriceType } from "./salesPricing";
 
 export type SalesReportMode="current"|"history";
 export type SalesReportStatus=""|"loss"|"profit"|"breakEven"|"missingPrice"|"missingCost"|"offer";
@@ -46,7 +46,7 @@ export function buildSalesReport(data:SalesPricingData,f:SalesReportFilters):Sal
   const result:SalesReportRow[]=[];
   const add=(p:SalesProduct,b:SalesBranch,t:SalesPriceType,price:SalesPrice|undefined)=>{
     if((f.product&&p.id!==f.product)||(f.region&&b.regionId!==f.region)||(f.branch&&b.id!==f.branch)||(f.type&&t.id!==f.type)
-      ||(f.category&&p.category.trim()!==f.category)||(f.unit&&p.unit.trim()!==f.unit)
+      ||(f.category&&normalizeSalesKey(p.category)!==normalizeSalesKey(f.category))||(f.unit&&p.unit.trim()!==f.unit)
       ||(f.branchStatus==="active"&&!b.active)||(f.branchStatus==="inactive"&&b.active))return;
     const date=f.mode==="history"?price?.effectiveDate??"":f.date;
     if(f.mode==="history"&&((f.from&&date<f.from)||(f.to&&date>f.to)))return;
@@ -92,7 +92,7 @@ export function buildSalesReport(data:SalesPricingData,f:SalesReportFilters):Sal
 export function salesReportSheets(rows:SalesReportRow[],f:SalesReportFilters) {
  const ar=(key:string)=>a("sales."+key);
  const n=(x:number|null)=>x===null?"":x/100;
- const fields=[["reportMode",ar(f.mode==="current"?"currentReport":"historyReport")],["reportDate",f.mode==="current"?f.date:[f.from||"—",f.to||"—"].join(" / ")],["discountQuantity",f.mode==="current"?f.quantity:"—"],["search",f.query||"—"],["region",f.region?rows[0]?.regionName??"—":ar("all")],["branch",f.branch?rows[0]?.branch.name??"—":ar("all")],["product",f.product?rows[0]?.product.name??"—":ar("all")],["category",f.category||ar("all")],["unit",f.unit||ar("all")],["priceType",f.type?rows[0]?.type.name??"—":ar("all")],["status",f.status?ar(f.status):ar("all")],["minPrice",f.minPrice||"—"],["maxPrice",f.maxPrice||"—"],["sortBy",ar("sort_"+f.sort)],["sortDirection",ar(f.descending?"descending":"ascending")],["result",String(rows.length)]];
+ const fields=[["reportMode",ar(f.mode==="current"?"currentReport":"historyReport")],["reportDate",f.mode==="current"?f.date:[f.from||"—",f.to||"—"].join(" / ")],["discountQuantity",f.mode==="current"?f.quantity:"—"],["search",f.query||"—"],["region",f.region?rows[0]?.regionName??"—":ar("all")],["branch",f.branch?rows[0]?.branch.name??"—":ar("all")],["product",f.product?rows[0]?.product.name??"—":ar("all")],["category",f.category||ar("all")],["unit",f.unit||ar("all")],["priceType",f.type?rows[0]?.type.name??"—":ar("all")],["branchStatus",f.branchStatus?ar(f.branchStatus):ar("all")],["status",f.status?ar(f.status):ar("all")],["minPrice",f.minPrice||"—"],["maxPrice",f.maxPrice||"—"],["sortBy",ar("sort_"+f.sort)],["sortDirection",ar(f.descending?"descending":"ascending")],["result",String(rows.length)]];
  return [
   {name:ar("reports"),headers:["reportDate","effectiveDate","productCode","product","category","unit","region","branchNumber","branchName","priceType","currentCost","basePrice","netPrice","unitProfit","margin","offers","remark"].map(ar),
    rows:rows.map(r=>[r.date,r.price?.effectiveDate??"",r.product.code,r.product.name,r.product.category,r.product.unit,r.regionName,r.branch.number,r.branch.name,r.type.name,n(r.product.costMinor),n(r.base),n(r.net),n(r.profit),r.margin===null?"":r.margin/100,r.offer?ar("activeOffer"):"",r.issue?ar(r.issue):""]),
